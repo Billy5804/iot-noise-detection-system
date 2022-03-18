@@ -1,0 +1,32 @@
+.bootstrap-table {
+  table {
+    border-style: hidden !important;
+  }
+
+  .float-right {
+    float: right !important;
+  }
+
+  .float-left {
+    float: left !important;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+
+  .fixed-table-toolbar {
+    .dropdown-menu {
+      padding-top: 0.5rem;
+    }
+
+    .search {
+      box-shadow: none;
+    }
+  }
+
+  .fixed-table-body {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 0 1px var(--mdb-gray-400);
+  }
+}

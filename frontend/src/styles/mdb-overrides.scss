@@ -1,0 +1,13 @@
+// You should use them in scss, because we calculate it by sass.
+// comment next lines to use default color
+@forward "mdb-vue-ui-kit/src/scss/index.free.scss" with (
+    // do not use same name, it will override.
+    $enable-negative-margins: true,
+    // $button-padding-horizontal: ("default": 50px)
+);
+
+// if you want to import all
+// @use "element-plus/theme-chalk/src/index.scss" as *;
+
+// You can comment it to hide debug info.
+// @debug $--colors;
