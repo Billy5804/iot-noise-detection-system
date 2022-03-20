@@ -5,3 +5,8 @@ server:
     key-store-password: ""
     keyStoreType: PKCS12
     keyAlias: tomcat
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
