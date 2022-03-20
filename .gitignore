@@ -153,3 +153,4 @@ dist
 
 # TernJS port file
 .tern-port
+backend/src/main/resources/serviceAccountKey.json
