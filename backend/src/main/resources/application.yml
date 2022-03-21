@@ -1,0 +1,13 @@
+server:
+  port: 443
+  ssl:
+    key-store: C:/Certbot/live/noise.alexroyle.com/keystore.p12
+    key-store-password: ""
+    keyStoreType: PKCS12
+    keyAlias: tomcat
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+    static-locations: classpath:/public/
