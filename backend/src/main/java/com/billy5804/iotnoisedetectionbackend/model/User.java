@@ -8,10 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import com.google.firebase.auth.UserRecord;
 
 public class User implements Authentication {
-	
+
 	private final UserRecord userRecord;
-	
-	public User (UserRecord userRecord) {
+
+	public User(UserRecord userRecord) {
 		this.userRecord = userRecord;
 	}
 
@@ -47,14 +47,11 @@ public class User implements Authentication {
 
 	@Override
 	public boolean isAuthenticated() {
-		// TODO Auto-generated method stub
-		return false;
+		return !userRecord.isDisabled() && userRecord.isEmailVerified();
 	}
 
 	@Override
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
