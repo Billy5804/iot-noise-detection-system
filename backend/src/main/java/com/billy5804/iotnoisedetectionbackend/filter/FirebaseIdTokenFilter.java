@@ -20,7 +20,7 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter {
 		final String authorization = request.getHeader("Authorization");
 		final String idToken = authorization != null ? authorization.replace("Bearer ", "") : "";
 		SecurityContextHolder.getContext().setAuthentication(new FirebaseAuthenticationToken(idToken));
-		filterChain.doFilter(request, response);		
+		filterChain.doFilter(request, response);
 	}
 
 }
