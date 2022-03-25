@@ -75,6 +75,7 @@ export const useUserStore = defineStore("UserStore", {
     },
     sendEmailVerification: async () =>
       await sendEmailVerification(authUser.value),
+    getIdToken: async () => await getIdToken(authUser.value),
   },
 });
 
