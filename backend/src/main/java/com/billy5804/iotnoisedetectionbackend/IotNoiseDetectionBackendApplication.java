@@ -14,22 +14,23 @@ import com.google.firebase.FirebaseOptions;
 
 @SpringBootApplication
 public class IotNoiseDetectionBackendApplication {
-	
+
 	private final static Logger logger = LoggerFactory.getLogger(IotNoiseDetectionBackendApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(IotNoiseDetectionBackendApplication.class, args);
 
 		try {
-			InputStream serviceAccount = IotNoiseDetectionBackendApplication.class.getResourceAsStream("/serviceAccountKey.json");
+			InputStream serviceAccount = IotNoiseDetectionBackendApplication.class
+					.getResourceAsStream("/serviceAccountKey.json");
 
 			@SuppressWarnings("deprecation")
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
 
 			FirebaseApp.initializeApp(options);
-			
-			logger.info("Firebase app {} initalised", FirebaseApp.getInstance().getName());			
+
+			logger.info("Firebase app {} initalised", FirebaseApp.getInstance().getName());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

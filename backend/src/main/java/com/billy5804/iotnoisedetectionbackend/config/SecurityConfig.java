@@ -16,22 +16,20 @@ import com.billy5804.iotnoisedetectionbackend.provider.FirebaseIdTokenAuthentica
 @Component
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	private final FirebaseIdTokenAuthenticationProvider authenticationProvider;
-	
+
 	@Autowired
 	public SecurityConfig(FirebaseIdTokenAuthenticationProvider authenticationProvider) {
 		this.authenticationProvider = authenticationProvider;
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.addFilterBefore(new FirebaseIdTokenFilter(), BasicAuthenticationFilter.class)
-			.authorizeRequests()
-			.antMatchers("/api/v1/*")
-			.authenticated();
+		http.addFilterBefore(new FirebaseIdTokenFilter(), BasicAuthenticationFilter.class).csrf().disable()
+				.authorizeRequests().antMatchers("/api/v1/*").authenticated();
 	}
-	
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authenticationProvider);

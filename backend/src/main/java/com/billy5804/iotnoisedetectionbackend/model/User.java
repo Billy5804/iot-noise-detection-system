@@ -9,6 +9,11 @@ import com.google.firebase.auth.UserRecord;
 
 public class User implements Authentication {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4833866484002586294L;
+
 	private final UserRecord userRecord;
 
 	public User(UserRecord userRecord) {
@@ -17,8 +22,7 @@ public class User implements Authentication {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return userRecord.getUid();
 	}
 
 	@Override
