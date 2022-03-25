@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path ../.gitignore"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "bootstrap": "^4.6.1",
     "bootstrap-table": "^1.19.1",
     "csvtojson": "^2.0.10",
