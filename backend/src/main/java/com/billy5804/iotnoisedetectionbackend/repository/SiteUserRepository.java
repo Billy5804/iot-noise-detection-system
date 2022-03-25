@@ -9,5 +9,5 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 // CRUD refers Create, Read, Update, Delete
 
 public interface SiteUserRepository extends CrudRepository<SiteUser, SiteUserPK> {
-
+	Iterable<SiteUser> findBySiteUserPKUserId(byte[] userId);
 }

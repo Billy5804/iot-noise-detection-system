@@ -1,7 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
+import java.util.Base64;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,8 @@ public class SiteController {
 
 	@GetMapping
 	public Iterable<SiteUser> getSites() {
-		return siteUserRepository.findAll();
+		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		return siteUserRepository.findBySiteUserPKUserId(Base64.getDecoder().decode(user.getName()));
 	}
 
 	@PutMapping

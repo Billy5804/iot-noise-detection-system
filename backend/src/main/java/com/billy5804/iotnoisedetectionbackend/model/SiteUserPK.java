@@ -48,7 +48,6 @@ public class SiteUserPK implements Serializable {
 
 	public void setUserId(String userId) {
 		this.userId = Base64.getDecoder().decode(userId);
-		;
 	}
 
 	public void setUserId(byte[] userId) {
