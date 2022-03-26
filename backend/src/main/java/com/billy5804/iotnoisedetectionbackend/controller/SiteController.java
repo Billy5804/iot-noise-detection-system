@@ -38,12 +38,6 @@ public class SiteController {
 	@Autowired
 	private SiteUserRepository siteUserRepository;
 
-	@GetMapping
-	public Iterable<SiteUser> getSites() {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
-		return siteUserRepository.findBySiteUserPKUserId(Base64.getDecoder().decode(user.getName()));
-	}
-
 	@PutMapping
 	public ResponseEntity<Site> updateSite(@RequestBody Site updateSite) {
 		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
