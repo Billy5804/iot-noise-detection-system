@@ -112,7 +112,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >delete Site</AjaxButton
+        >Delete Site</AjaxButton
       >
     </MDBCol>
   </MDBRow>

@@ -65,11 +65,11 @@ public class SiteUserController {
 	}
 	
 	@DeleteMapping
-	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID SiteId) {
+	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
 		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
 		try {
-			currentSiteUser = siteUserRepository.findById(new SiteUserPK(SiteId, user.getName())).get();
+			currentSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, user.getName())).get();
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
