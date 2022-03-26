@@ -95,7 +95,6 @@ export default {
   <main id="site-management-view">
     <h1 class="text-center">Site Management</h1>
     <hr />
-
     <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
       <template v-if="loading">
         <MDBCol>
