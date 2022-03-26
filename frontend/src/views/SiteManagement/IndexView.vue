@@ -18,6 +18,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import siteRoles from "@/utilitys/SiteRoles";
+import SiteOptionsView from "./SiteOptionsView.vue";
 
 export default {
   components: {
@@ -35,6 +36,7 @@ export default {
     MDBModalFooter,
     RouterLink,
     RouterView,
+    SiteOptionsView,
   },
 
   props: {
@@ -112,34 +114,7 @@ export default {
           <MDBCard>
             <MDBCardHeader>{{ site.displayName }}</MDBCardHeader>
             <MDBCardBody>
-              <RouterLink
-                v-if="[siteRoles.OWNER, siteRoles.EDITOR].includes(site.role)"
-                :to="{ name: 'site-edit', params: { siteId } }"
-                class="m-1 text-warning"
-                type="button"
-              >
-                <MDBIcon iconStyle="fas" icon="edit" size="lg" />
-              </RouterLink>
-              <RouterLink
-                v-if="site.role === siteRoles.OWNER"
-                :to="{ name: 'site-delete', params: { siteId } }"
-                class="m-1 text-danger"
-                type="button"
-              >
-                <MDBIcon iconStyle="fas" icon="trash-can" size="lg" />
-              </RouterLink>
-              <RouterLink
-                v-else
-                :to="{ name: 'site-leave', params: { siteId } }"
-                class="m-1 text-danger"
-                type="button"
-              >
-                <MDBIcon
-                  iconStyle="fas"
-                  icon="arrow-right-from-bracket"
-                  size="lg"
-                />
-              </RouterLink>
+              <SiteOptionsView :siteId="siteId" :sites="sites" />
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
@@ -162,7 +137,7 @@ export default {
       <template v-if="sites[siteId] || siteId === 'new'">
         <MDBModalHeader>
           <MDBModalTitle id="siteModalTitle">{{
-            siteId === 'new' ? "New Site" : sites[siteId]?.displayName
+            siteId === "new" ? "New Site" : sites[siteId]?.displayName
           }}</MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
