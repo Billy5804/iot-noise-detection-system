@@ -8,6 +8,7 @@ import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import SiteManagementView from "../views/SiteManagement/IndexView.vue";
 import SiteEditView from "../views/SiteManagement/SiteEditView.vue";
 import SiteDeleteView from "../views/SiteManagement/SiteDeleteView.vue";
+import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,19 @@ const router = createRouter({
       path: "/account",
       name: "account",
       component: AccountView,
+    },
+    {
+      path: "/sites/create",
+      alias: "/sites/new/:pathMatch?",
+      name: "site-create",
+      component: SiteManagementView,
+      props: { siteId: "new" },
+      children: [
+        {
+          path: "",
+          component: SiteCreateView,
+        },
+      ],
     },
     {
       path: "/sites/:siteId?",
