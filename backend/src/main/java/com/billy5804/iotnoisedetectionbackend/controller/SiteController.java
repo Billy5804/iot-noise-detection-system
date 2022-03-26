@@ -56,14 +56,15 @@ public class SiteController {
 	}
 
 	@PostMapping
-	public SiteUser createSite(@RequestBody Site newSite) {
+	public Site createSite(@RequestBody Site newSite) {
 		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
 		final Site site = siteRepository.save(newSite);
 		final SiteUser siteUser = new SiteUser();
 		siteUser.setSite(site);
 		siteUser.setUserId(user.getName());
 		siteUser.setRole(SiteUserRole.OWNER);
-		return siteUserRepository.save(siteUser);
+		siteUserRepository.save(siteUser);
+		return site;
 	}
 	
 	@DeleteMapping
