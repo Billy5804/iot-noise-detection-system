@@ -10,6 +10,7 @@ import SiteEditView from "../views/SiteManagement/SiteEditView.vue";
 import SiteDeleteView from "../views/SiteManagement/SiteDeleteView.vue";
 import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
+import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,14 @@ const router = createRouter({
           name: "site-leave",
           component: SiteLeaveView,
           props: true,
+        },
+        {
+          path: ":pathMatch?",
+          component: SiteOptionsView,
+          props: ({ params }) => ({
+            siteId: params.siteId,
+            iconSize: "2x"
+          })
         },
       ],
     },
