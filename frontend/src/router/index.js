@@ -5,7 +5,9 @@ import LogoutView from "../views/LogoutView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import AccountView from "../views/AccountView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
-import SiteManagementView from "../views/SiteManagementView/IndexView.vue";
+import SiteManagementView from "../views/SiteManagement/IndexView.vue";
+import SiteEditView from "../views/SiteManagement/SiteEditView.vue";
+import SiteDeleteView from "../views/SiteManagement/SiteDeleteView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
