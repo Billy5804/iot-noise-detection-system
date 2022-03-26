@@ -1,6 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +28,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.addFilterBefore(new FirebaseIdTokenFilter(), BasicAuthenticationFilter.class).csrf().disable()
-				.authorizeRequests().antMatchers("/api/v1/*").authenticated();
+				.authorizeRequests()
+				.antMatchers(HttpMethod.GET, "/api/v1/*").authenticated()
+				.antMatchers(HttpMethod.PUT, "/api/v1/*").authenticated()
+				.antMatchers(HttpMethod.POST, "/api/v1/*").authenticated()
+				.antMatchers(HttpMethod.DELETE, "/api/v1/*").authenticated();
 	}
 
 	@Override
