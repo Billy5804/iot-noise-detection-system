@@ -56,4 +56,8 @@ public class SiteUser extends CommonAttributes implements Serializable {
 	public int hashCode() {
 		return Objects.hash(siteUserPK);
 	}
+
+	public SiteUserPK getPK() {
+		return siteUserPK;
+	}
 }
