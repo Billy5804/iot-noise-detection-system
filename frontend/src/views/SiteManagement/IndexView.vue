@@ -118,7 +118,7 @@ export default {
                 class="m-1 text-warning"
                 type="button"
               >
-                <MDBIcon iconStyle="fas" icon="edit" size="lg"></MDBIcon>
+                <MDBIcon iconStyle="fas" icon="edit" size="lg" />
               </RouterLink>
               <RouterLink
                 v-if="site.role === siteRoles.OWNER"
@@ -126,7 +126,7 @@ export default {
                 class="m-1 text-danger"
                 type="button"
               >
-                <MDBIcon iconStyle="fas" icon="trash-can" size="lg"></MDBIcon>
+                <MDBIcon iconStyle="fas" icon="trash-can" size="lg" />
               </RouterLink>
               <RouterLink
                 v-else
@@ -138,7 +138,7 @@ export default {
                   iconStyle="fas"
                   icon="arrow-right-from-bracket"
                   size="lg"
-                ></MDBIcon>
+                />
               </RouterLink>
             </MDBCardBody>
           </MDBCard>
