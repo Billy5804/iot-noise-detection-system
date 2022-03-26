@@ -46,6 +46,12 @@ const router = createRouter({
           component: SiteEditView,
           props: true,
         },
+        {
+          path: "delete",
+          name: "site-delete",
+          component: SiteDeleteView,
+          props: true,
+        },
       ],
     },
     {
