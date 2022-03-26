@@ -45,7 +45,7 @@ export default {
 };
 </script>
 <template>
-  <div class="alert alert-warning text-center" role="alert">
+  <div class="alert alert-warning text-center mx-3" role="alert">
     <span class="d-inline-block"
       >Your account will be limited until you have verified your
       email.&nbsp;</span

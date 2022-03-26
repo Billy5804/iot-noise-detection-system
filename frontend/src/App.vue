@@ -104,7 +104,7 @@ export default {
     <template v-else-if="authorised || bypassAuth">
       <ConfirmEmailBanner
         v-if="!userEmailVerified && authorised"
-        class="container m-auto mt-3 mb-n4"
+        class="mt-3 mb-n4"
       />
       <ForbiddenView
         v-if="!userEmailVerified && viewRequiresEmailVerification"
