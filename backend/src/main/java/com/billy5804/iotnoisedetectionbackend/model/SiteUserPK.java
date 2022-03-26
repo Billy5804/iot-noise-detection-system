@@ -2,6 +2,7 @@ package com.billy5804.iotnoisedetectionbackend.model;
 
 import java.io.Serializable;
 import java.util.Base64;
+import java.util.UUID;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -31,7 +32,14 @@ public class SiteUserPK implements Serializable {
 	public SiteUserPK(Site site, String userId) {
 		this.site = site;
 		this.userId = Base64.getDecoder().decode(userId);
-		;
+	}
+
+	public SiteUserPK(UUID siteId, String userId) {
+		final Site site = new Site();
+		site.setId(siteId);
+
+		this.site = site;
+		this.userId = Base64.getDecoder().decode(userId);
 	}
 
 	public Site getSite() {
