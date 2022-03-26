@@ -143,6 +143,13 @@ export default {
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
+        <RouterLink
+          :to="{ name: 'site-create' }"
+          title="Add Site"
+          class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"
+        >
+          <MDBIcon iconStyle="fas" size="2x" icon="plus" />
+        </RouterLink>
       </template>
     </MDBRow>
     <MDBModal
@@ -152,11 +159,11 @@ export default {
       v-model="showModal"
       staticBackdrop
     >
-      <template v-if="sites[siteId]">
+      <template v-if="sites[siteId] || siteId === 'new'">
         <MDBModalHeader>
-          <MDBModalTitle id="siteModalTitle">
-            {{ sites[siteId].displayName }}
-          </MDBModalTitle>
+          <MDBModalTitle id="siteModalTitle">{{
+            siteId === 'new' ? "New Site" : sites[siteId]?.displayName
+          }}</MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
           <RouterView :sites="sites" @done="showModal = false" />
