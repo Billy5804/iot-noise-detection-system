@@ -55,7 +55,7 @@ export default {
           const siteId = data.id;
           delete data.id;
           data.role = siteRoles.OWNER;
-          props.sites[siteId] = data;
+          Object.assign(props.sites, { [siteId]: data });
           context.emit("done");
         })
         .catch((error) => (createError.value = error.message || error))

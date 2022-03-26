@@ -1,17 +1,15 @@
 <script>
-import { ref, shallowRef, watch } from "vue";
+import { ref, shallowRef } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
-import FormInput from "@/components/FormInput.vue";
 
 export default {
   components: {
     MDBRow,
     MDBCol,
     AjaxButton,
-    FormInput,
   },
 
   emits: ["done"],
@@ -29,7 +27,7 @@ export default {
 
   setup: function (props, context) {
     const { getIdToken } = useUserStore();
-  
+
     const syncing = ref(false);
 
     const leaveError = shallowRef(null);
@@ -63,7 +61,8 @@ export default {
 <template>
   <h2>Are you sure you want to leave this site?</h2>
   <p>
-    This action cannot be undone.<br />If you want to rejoin this site in the future you will need an invite from the owner.
+    This action cannot be undone.<br />If you want to rejoin this site in the
+    future you will need an invite from the owner.
   </p>
   <MDBRow
     tag="form"
