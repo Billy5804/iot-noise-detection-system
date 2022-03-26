@@ -1,7 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
-import java.util.Base64;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.billy5804.iotnoisedetectionbackend.helper.updateHelper;
@@ -68,11 +68,11 @@ public class SiteController {
 	}
 	
 	@DeleteMapping
-	public ResponseEntity<String> deleteSite(@RequestBody Site deleteSite) {
+	public ResponseEntity<String> deleteSite(@RequestParam UUID siteId) {
 		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
 		try {
-			currentSiteUser = siteUserRepository.findById(new SiteUserPK(deleteSite, user.getName())).get();
+			currentSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, user.getName())).get();
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
