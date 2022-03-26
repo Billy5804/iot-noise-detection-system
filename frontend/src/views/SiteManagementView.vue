@@ -7,10 +7,16 @@ import {
   MDBCardBody,
   MDBIcon,
   MDBBtn,
+  MDBModal,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
 } from "mdb-vue-ui-kit";
 import axios from "axios";
-import { useUserStore } from "../stores/UserStore";
-import { onBeforeMount, ref } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+import { onBeforeMount, ref, computed } from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
 
 export default {
   components: {
@@ -21,34 +27,66 @@ export default {
     MDBCardBody,
     MDBIcon,
     MDBBtn,
+    MDBModal,
+    MDBModalHeader,
+    MDBModalTitle,
+    MDBModalBody,
+    MDBModalFooter,
+    RouterLink,
+    RouterView,
   },
 
-  setup: function () {
+  props: {
+    siteId: {
+      type: String,
+    },
+  },
+
+  setup: function (props) {
     const user = useUserStore();
+    const router = useRouter();
+
+    const siteRoles = {
+      UNAUTHORISED: "UNAUTHORISED",
+      OWNER: "OWNER",
+      EDITOR: "EDITOR",
+      VIEWER: "VIEWER",
+    };
+
+    const showModal = computed({
+      get: () => !!props.siteId && !loading.value && !loadingError.value,
+      set: (value) => {
+        if (value === false) {
+          router.push({ name: "site-management" });
+        }
+      },
+    });
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const sitesAPIPath = "/api/v1/sites";
-    const sites = ref(new Array(10));
+    const sitesAPIPath = "https://noise.alexroyle.com/api/v1/sites";
+    const sites = ref(null);
 
     onBeforeMount(async () => {
       const sitesResponse = await axios
         .get(sitesAPIPath, {
-          timeout: 1000,
+          timeout: 5000,
           headers: { authorization: `Bearer ${await user.getIdToken()}` },
         })
         .catch((error) => (loadingError.value = error.message || error));
 
-      sites.value = sitesResponse.data.reduce((result, {site, role}) => {
+      sites.value = sitesResponse.data.reduce((result, { site, role }) => {
+        const siteId = site.id;
+        delete site.id;
         site.role = role;
-        result.push(site);
+        result[siteId] = site;
         return result;
-      }, []);
+      }, {});
 
       loading.value = false;
     });
 
-    return { loading, loadingError, sites };
+    return { loading, loadingError, sites, siteRoles, showModal };
   },
 };
 </script>
@@ -60,7 +98,7 @@ export default {
 
     <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
       <template v-if="loading">
-        <MDBCol v-for="index in articles" :key="index">
+        <MDBCol>
           <MDBCard aria-hidden="true">
             <MDBCardHeader class="placeholder-glow">
               <span class="placeholder col-8"></span>
@@ -77,20 +115,69 @@ export default {
         {{ loadingError }}
       </div>
       <template v-else>
-        <MDBCol v-for="(site, index) in sites" :key="index">
+        <MDBCol v-for="(site, siteId) in sites" :key="siteId">
           <MDBCard>
             <MDBCardHeader>{{ site.displayName }}</MDBCardHeader>
             <MDBCardBody>
-              <MDBBtn class="m-1" type="button" style="color: rgb(59, 89, 152)">
+              <RouterLink
+                v-if="[siteRoles.OWNER, siteRoles.EDITOR].includes(site.role)"
+                :to="{ name: 'site-edit', params: { siteId } }"
+                class="m-1 text-warning"
+                type="button"
+              >
                 <MDBIcon iconStyle="fas" icon="edit" size="lg"></MDBIcon>
-              </MDBBtn>
-              <MDBBtn class="m-1" type="button" style="color: rgb(59, 89, 152)">
+              </RouterLink>
+              <RouterLink
+                v-if="site.role === siteRoles.OWNER"
+                :to="{ name: 'site-delete', params: { siteId } }"
+                class="m-1 text-danger"
+                type="button"
+              >
                 <MDBIcon iconStyle="fas" icon="trash-can" size="lg"></MDBIcon>
-              </MDBBtn>
+              </RouterLink>
+              <RouterLink
+                v-else
+                :to="{ name: 'site-leave', params: { siteId } }"
+                class="m-1 text-danger"
+                type="button"
+              >
+                <MDBIcon
+                  iconStyle="fas"
+                  icon="arrow-right-from-bracket"
+                  size="lg"
+                ></MDBIcon>
+              </RouterLink>
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
       </template>
     </MDBRow>
+    <MDBModal
+      id="siteModal"
+      tabindex="-1"
+      labelledby="siteModalTitle"
+      v-model="showModal"
+      staticBackdrop
+    >
+      <template v-if="sites[siteId]">
+        <MDBModalHeader>
+          <MDBModalTitle id="siteModalTitle">
+            {{ sites[siteId].displayName }}
+          </MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>
+          <RouterView :sites="sites" @done="showModal = false" />
+        </MDBModalBody>
+      </template>
+      <template v-else>
+        <MDBModalHeader>
+          <MDBModalTitle id="siteModalTitle">Unknown Site</MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>Please choose a different site.</MDBModalBody>
+      </template>
+      <MDBModalFooter>
+        <MDBBtn color="secondary" @click="showModal = false">Close</MDBBtn>
+      </MDBModalFooter>
+    </MDBModal>
   </main>
 </template>
