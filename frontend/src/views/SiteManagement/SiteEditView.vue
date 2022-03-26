@@ -46,14 +46,17 @@ export default {
       }
       syncing.value = true;
       axios
-        .put("https://noise.alexroyle.com/api/v1/sites", {
-          timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
-          data: {
+        .put(
+          "https://noise.alexroyle.com/api/v1/sites",
+          {
             id: props.siteId,
             displayName: newDisplayName.value,
           },
-        })
+          {
+            timeout: 5000,
+            headers: { authorization: `Bearer ${await getIdToken()}` },
+          }
+        )
         .then(({ data }) => {
           Object.assign(props.sites[props.siteId], data);
           context.emit("done");
@@ -88,7 +91,7 @@ export default {
       v-model.trim="newDisplayName"
       label="New Display Name"
       :placeholder="sites[siteId].displayName"
-      invalidFeedback="Please provide your new display name"
+      invalidFeedback="Please provide a new display name"
       @update:validity="newDisplayNameValidity = $event"
       required
       :formChecked="formChecked"
