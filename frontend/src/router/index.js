@@ -39,6 +39,14 @@ const router = createRouter({
       name: "site-management",
       component: SiteManagementView,
       props: true,
+      children: [
+        {
+          path: "edit",
+          name: "site-edit",
+          component: SiteEditView,
+          props: true,
+        },
+      ],
     },
     {
       path: "/logout",
