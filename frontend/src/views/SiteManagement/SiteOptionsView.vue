@@ -15,8 +15,8 @@ const props = defineProps({
   },
   iconSize: {
     type: String,
-    default: "lg"
-  }
+    default: "lg",
+  },
 });
 
 const siteRole = computed(() => props.sites[props.siteId].role);

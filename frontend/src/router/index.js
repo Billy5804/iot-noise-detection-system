@@ -12,6 +12,13 @@ import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
 import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
 
+function siteManagementProps({ params }, staticProps) {
+  return {
+    siteId: params.siteId !== "new" ? params.siteId : "unknown",
+    ...staticProps,
+  };
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,7 +48,6 @@ const router = createRouter({
     },
     {
       path: "/sites/create",
-      alias: "/sites/new/:pathMatch?",
       name: "site-create",
       component: SiteManagementView,
       props: { siteId: "new" },
@@ -56,33 +62,30 @@ const router = createRouter({
       path: "/sites/:siteId?",
       name: "site-management",
       component: SiteManagementView,
-      props: true,
+      props: siteManagementProps,
       children: [
         {
           path: "edit",
           name: "site-edit",
           component: SiteEditView,
-          props: true,
+          props: siteManagementProps,
         },
         {
           path: "delete",
           name: "site-delete",
           component: SiteDeleteView,
-          props: true,
+          props: siteManagementProps,
         },
         {
           path: "leave",
           name: "site-leave",
           component: SiteLeaveView,
-          props: true,
+          props: siteManagementProps,
         },
         {
           path: ":pathMatch?",
           component: SiteOptionsView,
-          props: ({ params }) => ({
-            siteId: params.siteId,
-            iconSize: "2x"
-          })
+          props: (route) => siteManagementProps(route, { iconSize: "2x" }),
         },
       ],
     },
