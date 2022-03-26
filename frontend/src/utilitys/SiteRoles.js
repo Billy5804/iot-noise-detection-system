@@ -1,0 +1,6 @@
+export default {
+  UNAUTHORISED: "UNAUTHORISED",
+  OWNER: "OWNER",
+  EDITOR: "EDITOR",
+  VIEWER: "VIEWER",
+};

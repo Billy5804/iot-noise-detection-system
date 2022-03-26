@@ -17,6 +17,7 @@ import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
 import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
+import siteRoles from "@/utilitys/SiteRoles";
 
 export default {
   components: {
@@ -45,13 +46,6 @@ export default {
   setup: function (props) {
     const user = useUserStore();
     const router = useRouter();
-
-    const siteRoles = {
-      UNAUTHORISED: "UNAUTHORISED",
-      OWNER: "OWNER",
-      EDITOR: "EDITOR",
-      VIEWER: "VIEWER",
-    };
 
     const showModal = computed({
       get: () => !!props.siteId && !loading.value && !loadingError.value,
