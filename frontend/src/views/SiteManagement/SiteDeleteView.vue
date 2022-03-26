@@ -54,7 +54,7 @@ export default {
         .delete("https://noise.alexroyle.com/api/v1/sites", {
           timeout: 5000,
           headers: { authorization: `Bearer ${await getIdToken()}` },
-          data: { id: props.siteId },
+          params: { siteId: props.siteId },
         })
         .then(() => {
           delete props.sites[props.siteId];

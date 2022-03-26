@@ -5,6 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
+import siteRoles from "@/utilitys/SiteRoles";
 
 export default {
   components: {
@@ -51,10 +52,10 @@ export default {
           }
         )
         .then(({ data }) => {
-          const siteId = data.site.id;
-          delete data.site.id;
-          data.site.role = data.role;
-          props.sites[siteId] = data.site;
+          const siteId = data.id;
+          delete data.id;
+          data.role = siteRoles.OWNER;
+          props.sites[siteId] = data;
           context.emit("done");
         })
         .catch((error) => (createError.value = error.message || error))
