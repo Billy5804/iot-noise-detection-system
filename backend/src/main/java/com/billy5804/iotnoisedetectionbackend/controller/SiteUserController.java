@@ -1,6 +1,5 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
-import java.util.Base64;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -36,7 +35,7 @@ public class SiteUserController {
 	@GetMapping
 	public Iterable<SiteUser> getCurrentUsersSiteUsers() {
 		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
-		return siteUserRepository.findBySiteUserPKUserId(Base64.getDecoder().decode(user.getName()));
+		return siteUserRepository.getByUserId(user.getName());
 	}
 
 	@PutMapping
