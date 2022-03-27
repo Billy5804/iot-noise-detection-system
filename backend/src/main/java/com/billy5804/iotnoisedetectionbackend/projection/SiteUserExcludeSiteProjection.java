@@ -2,13 +2,13 @@ package com.billy5804.iotnoisedetectionbackend.projection;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public interface SiteUserExcludeSiteProjection {
-	@Value("#{target.userId}")
-	public String getUserId();
+	@JsonProperty("userId")
+	public byte[] getSiteUserPKUserId();
 	public SiteUserRole getRole();
 	public Date getCreatedAt();
 	public Date getUpdatedAt();
