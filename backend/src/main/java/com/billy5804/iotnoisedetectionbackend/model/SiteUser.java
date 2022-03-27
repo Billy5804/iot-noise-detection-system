@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity // This tells Hibernate to make a table out of this class
 public class SiteUser extends CommonAttributes implements Serializable {
 	/**
@@ -57,6 +59,7 @@ public class SiteUser extends CommonAttributes implements Serializable {
 		return Objects.hash(siteUserPK);
 	}
 
+	@JsonIgnore
 	public SiteUserPK getPK() {
 		return siteUserPK;
 	}
