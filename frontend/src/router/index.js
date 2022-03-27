@@ -12,13 +12,6 @@ import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
 import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
 
-function siteManagementProps({ params }, staticProps) {
-  return {
-    siteId: params.siteId !== "new" ? params.siteId : "unknown",
-    ...staticProps,
-  };
-}
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -47,45 +40,41 @@ const router = createRouter({
       component: AccountView,
     },
     {
-      path: "/sites/create",
-      name: "site-create",
-      component: SiteManagementView,
-      props: { siteId: "new" },
-      children: [
-        {
-          path: "",
-          component: SiteCreateView,
-        },
-      ],
-    },
-    {
-      path: "/sites/:siteId?",
+      path: "/sites",
       name: "site-management",
       component: SiteManagementView,
-      props: siteManagementProps,
+      props: ({ params, name }) => ({
+        siteId: name === "site-create" ? "create" : params.siteId,
+      }),
       children: [
         {
-          path: "edit",
+          path: "create",
+          name: "site-create",
+          component: SiteCreateView,
+        },
+        {
+          path: ":siteId",
+          name: "site-options",
+          component: SiteOptionsView,
+          props: ({ params }) => ({ siteId: params.siteId, iconSize: "2x" }),
+        },
+        {
+          path: ":siteId/edit",
           name: "site-edit",
           component: SiteEditView,
-          props: siteManagementProps,
+          props: true,
         },
         {
-          path: "delete",
+          path: ":siteId/delete",
           name: "site-delete",
           component: SiteDeleteView,
-          props: siteManagementProps,
+          props: true,
         },
         {
-          path: "leave",
+          path: ":siteId/leave",
           name: "site-leave",
           component: SiteLeaveView,
-          props: siteManagementProps,
-        },
-        {
-          path: ":pathMatch?",
-          component: SiteOptionsView,
-          props: (route) => siteManagementProps(route, { iconSize: "2x" }),
+          props: true,
         },
       ],
     },

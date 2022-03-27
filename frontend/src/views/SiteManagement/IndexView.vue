@@ -134,10 +134,10 @@ export default {
       v-model="showModal"
       staticBackdrop
     >
-      <template v-if="sites[siteId] || siteId === 'new'">
+      <template v-if="sites[siteId] || siteId === 'create'">
         <MDBModalHeader>
           <MDBModalTitle id="siteModalTitle">{{
-            siteId === "new" ? "New Site" : sites[siteId]?.displayName
+            siteId === "create" ? "New Site" : sites[siteId]?.displayName
           }}</MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
