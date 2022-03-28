@@ -42,6 +42,14 @@ const siteRole = computed(() => props.sites[props.siteId].role);
       </RouterLink>
       <template v-if="siteRole === siteRoles.OWNER">
         <RouterLink
+          :to="{ name: 'site-users', params: { siteId } }"
+          class="text-info"
+          type="button"
+          title="Manage site users"
+        >
+          <MDBIcon iconStyle="fas" icon="users" :size="iconSize" />
+        </RouterLink>
+        <RouterLink
           :to="{ name: 'site-delete', params: { siteId } }"
           class="text-danger"
           type="button"
