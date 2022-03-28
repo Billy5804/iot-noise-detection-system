@@ -97,7 +97,7 @@ export default {
 </script>
 
 <template>
-  <LoadingView v-if="userLoading" />
+  <main v-if="userLoading"><LoadingView /></main>
   <template v-else>
     <PageHeader />
     <RouterView v-if="onEntranceView" class="container m-auto mt-5" />
