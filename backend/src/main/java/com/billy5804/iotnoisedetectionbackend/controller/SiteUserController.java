@@ -23,6 +23,7 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
 import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeUserProjection;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
 @RestController
@@ -34,7 +35,7 @@ public class SiteUserController {
 	private SiteUserRepository siteUserRepository;
 
 	@GetMapping
-	public Iterable<SiteUser> getCurrentUsersSiteUsers() {
+	public Iterable<SiteUserExcludeUserProjection> getCurrentUsersSiteUsers() {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		return siteUserRepository.getByUserId(user.getName());
 	}
