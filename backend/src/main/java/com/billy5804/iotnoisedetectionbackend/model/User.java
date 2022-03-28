@@ -16,8 +16,13 @@ public class User {
 		} catch (FirebaseAuthException e) {
 			e.printStackTrace();
 		}
-		this.id = userRecord.getUid();
-		this.displayName = userRecord.getDisplayName();
+		if (userRecord != null) {
+			this.id = userRecord.getUid();
+			this.displayName = userRecord.getDisplayName();
+		} else {
+			this.id = id;
+			this.displayName = "Unknown User";
+		}
 	}
 
 	public String getId() {
