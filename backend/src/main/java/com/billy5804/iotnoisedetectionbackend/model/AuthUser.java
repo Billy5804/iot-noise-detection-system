@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.google.firebase.auth.UserRecord;
 
-public class User implements Authentication {
+public class AuthUser implements Authentication {
 
 	/**
 	 * 
@@ -16,7 +16,7 @@ public class User implements Authentication {
 
 	private final UserRecord userRecord;
 
-	public User(UserRecord userRecord) {
+	public AuthUser(UserRecord userRecord) {
 		this.userRecord = userRecord;
 	}
 

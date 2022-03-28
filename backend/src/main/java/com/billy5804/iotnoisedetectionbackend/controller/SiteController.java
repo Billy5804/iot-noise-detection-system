@@ -22,7 +22,7 @@ import com.billy5804.iotnoisedetectionbackend.model.Site;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUser;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
-import com.billy5804.iotnoisedetectionbackend.model.User;
+import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
@@ -40,7 +40,7 @@ public class SiteController {
 
 	@PutMapping
 	public ResponseEntity<Site> updateSite(@RequestBody Site updateSite) {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
 		try {
 			currentSiteUser = siteUserRepository.findById(new SiteUserPK(updateSite, user.getName())).get();
@@ -57,7 +57,7 @@ public class SiteController {
 
 	@PostMapping
 	public Site createSite(@RequestBody Site newSite) {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		final Site site = siteRepository.save(newSite);
 		final SiteUser siteUser = new SiteUser();
 		siteUser.setSite(site);
@@ -69,7 +69,7 @@ public class SiteController {
 	
 	@DeleteMapping
 	public ResponseEntity<String> deleteSite(@RequestParam UUID siteId) {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
 		try {
 			currentSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, user.getName())).get();

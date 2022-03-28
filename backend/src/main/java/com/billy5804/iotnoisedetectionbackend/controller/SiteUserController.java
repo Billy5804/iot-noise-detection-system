@@ -21,7 +21,7 @@ import com.billy5804.iotnoisedetectionbackend.helper.updateHelper;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUser;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
-import com.billy5804.iotnoisedetectionbackend.model.User;
+import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeSiteProjection;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
@@ -35,13 +35,13 @@ public class SiteUserController {
 
 	@GetMapping
 	public Iterable<SiteUser> getCurrentUsersSiteUsers() {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		return siteUserRepository.getByUserId(user.getName());
 	}
 	
 	@GetMapping(params="siteId")
 	public ResponseEntity<Iterable<SiteUserExcludeSiteProjection>> getSitesSiteUsers(@RequestParam UUID siteId) {
-		final User authUser = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser authUserSiteUser = null;
 		try {
 			authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName())).get();
@@ -56,7 +56,7 @@ public class SiteUserController {
 
 	@PutMapping
 	public ResponseEntity<SiteUser> updateSpecifiedUsersSiteUser(@RequestBody SiteUser updateSiteUser) {
-		final User authUser = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(updateSiteUser.getSite(), authUser.getName())).get();
 			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
@@ -81,7 +81,7 @@ public class SiteUserController {
 	
 	@DeleteMapping
 	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
-		final User user = (User) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
 		try {
 			currentSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, user.getName())).get();

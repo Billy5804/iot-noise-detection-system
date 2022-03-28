@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import com.billy5804.iotnoisedetectionbackend.model.FirebaseAuthenticationToken;
-import com.billy5804.iotnoisedetectionbackend.model.User;
+import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -27,7 +27,7 @@ public class FirebaseIdTokenAuthenticationProvider implements AuthenticationProv
 			String userId = firebaseToken.getUid();
 			UserRecord userRecord = FirebaseAuth.getInstance().getUser(userId);
 			logger.info("Requesting user, uid: {}", userRecord.getUid());
-			return new User(userRecord);
+			return new AuthUser(userRecord);
 		} catch (FirebaseAuthException e) {
 			if (e.getErrorCode().equals("id-token-revoked")) {
 				throw new SecurityException("User token has been revoked");
