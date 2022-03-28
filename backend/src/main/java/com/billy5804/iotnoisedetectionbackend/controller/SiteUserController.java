@@ -24,6 +24,7 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
 import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeSiteProjection;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeUserProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteUserOnlyUserIdProjection;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
 @RestController
@@ -109,6 +110,26 @@ public class SiteUserController {
 		}
 		try {
 			siteUserRepository.deleteById(new SiteUserPK(siteId, userId));
+		} catch (IllegalArgumentException e) {
+			// Should be fine if this is thrown as record doesn't exist which is the outcome we wanted anyway.
+			e.printStackTrace();
+		}
+		return ResponseEntity.ok(null);
+	}
+
+	@DeleteMapping(params={ "siteId", "unauthorised" })
+	public ResponseEntity<Iterable<SiteUserOnlyUserIdProjection>> deleteUnauthorisedSiteUser(@RequestParam UUID siteId) {
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
+		try {
+			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName())).get();
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+			}
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		try {
+			return ResponseEntity.ok(siteUserRepository.deleteUnauthorisedBySiteId(siteId));
 		} catch (IllegalArgumentException e) {
 			// Should be fine if this is thrown as record doesn't exist which is the outcome we wanted anyway.
 			e.printStackTrace();
