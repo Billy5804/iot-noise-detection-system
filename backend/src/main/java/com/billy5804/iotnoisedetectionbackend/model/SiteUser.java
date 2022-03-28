@@ -34,6 +34,11 @@ public class SiteUser extends CommonAttributes implements Serializable {
 		siteUserPK.setSite(site);
 	}
 
+	public User getUser() {
+		return new User(siteUserPK.getUserId());
+	}
+	
+	@JsonIgnore
 	public String getUserId() {
 		return siteUserPK.getUserId();
 	}
