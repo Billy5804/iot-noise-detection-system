@@ -56,7 +56,11 @@ const router = createRouter({
           path: ":siteId",
           name: "site-options",
           component: SiteOptionsView,
-          props: ({ params }) => ({ siteId: params.siteId, iconSize: "2x" }),
+          props: ({ params }) => ({
+            siteId: params.siteId,
+            iconSize: "2x",
+            roleSize: 2,
+          }),
         },
         {
           path: ":siteId/edit",
