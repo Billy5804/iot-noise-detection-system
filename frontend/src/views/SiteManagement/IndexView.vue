@@ -71,7 +71,7 @@ export default {
         })
         .catch((error) => (loadingError.value = error.message || error));
 
-      sites.value = sitesResponse.data.reduce((result, { site, role }) => {
+      sites.value = sitesResponse?.data.reduce((result, { site, role }) => {
         const siteId = site.id;
         delete site.id;
         site.role = role;
