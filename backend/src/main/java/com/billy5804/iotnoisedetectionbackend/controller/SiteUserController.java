@@ -80,7 +80,7 @@ public class SiteUserController {
 		return ResponseEntity.ok(siteUserRepository.save(currentSpecifiedUsersSiteUser));
 	}
 	
-	@DeleteMapping
+	@DeleteMapping(params="siteId")
 	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
@@ -93,6 +93,26 @@ public class SiteUserController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 		}
 		siteUserRepository.delete(currentSiteUser);
+		return ResponseEntity.ok(null);
+	}
+	
+	@DeleteMapping(params={ "siteId", "userId" })
+	public ResponseEntity<String> deleteSpecifiedUsersSiteUser(@RequestParam UUID siteId, @RequestParam String userId) {
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
+		try {
+			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName())).get();
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+			}
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		try {
+			siteUserRepository.deleteById(new SiteUserPK(siteId, userId));
+		} catch (IllegalArgumentException e) {
+			// Should be fine if this is thrown as record doesn't exist which is the outcome we wanted anyway.
+			e.printStackTrace();
+		}
 		return ResponseEntity.ok(null);
 	}
 }
