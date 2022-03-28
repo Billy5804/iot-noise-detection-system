@@ -19,6 +19,7 @@ import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import siteRoles from "@/utilitys/SiteRoles";
 import SiteOptionsView from "./SiteOptionsView.vue";
+import VerticalRule from "@/components/VerticalRule.vue";
 
 export default {
   components: {
@@ -37,6 +38,7 @@ export default {
     RouterLink,
     RouterView,
     SiteOptionsView,
+    VerticalRule,
   },
 
   props: {
@@ -71,7 +73,7 @@ export default {
         })
         .catch((error) => (loadingError.value = error.message || error));
 
-      sites.value = sitesResponse?.data.reduce((result, { site, role }) => {
+      sites.value = sitesResponse?.data?.reduce((result, { site, role }) => {
         const siteId = site.id;
         delete site.id;
         site.role = role;
@@ -92,19 +94,23 @@ export default {
     <h1 class="text-center">Site Management</h1>
     <hr />
     <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
-      <template v-if="loading">
-        <MDBCol>
-          <MDBCard aria-hidden="true">
-            <MDBCardHeader class="placeholder-glow">
-              <span class="placeholder col-8"></span>
-            </MDBCardHeader>
-            <MDBCardBody></MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </template>
+      <MDBCol v-if="loading">
+        <MDBCard aria-hidden="true">
+          <MDBCardHeader class="placeholder-glow">
+            <span class="placeholder col-8"></span>
+          </MDBCardHeader>
+          <MDBCardBody class="placeholder-glow">
+            <span class="placeholder col-5"></span>
+            <span class="col-1 d-inline-block"></span>
+            <VerticalRule class="placeholder" />
+            <span class="col-1 d-inline-block"></span>
+            <span class="placeholder col-5"></span>
+          </MDBCardBody>
+        </MDBCard>
+      </MDBCol>
       <div
         v-else-if="loadingError"
-        class="alert alert-danger text-center p-2 mb-0"
+        class="alert alert-danger text-center p-2 mb-0 mx-auto"
         role="alert"
       >
         {{ loadingError }}
@@ -136,9 +142,9 @@ export default {
     >
       <template v-if="sites[siteId] || siteId === 'create'">
         <MDBModalHeader>
-          <MDBModalTitle id="siteModalTitle">{{
-            siteId === "create" ? "New Site" : sites[siteId]?.displayName
-          }}</MDBModalTitle>
+          <MDBModalTitle id="siteModalTitle">
+            {{ siteId === "create" ? "New Site" : sites[siteId]?.displayName }}
+          </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
           <RouterView :sites="sites" @done="showModal = false" />
