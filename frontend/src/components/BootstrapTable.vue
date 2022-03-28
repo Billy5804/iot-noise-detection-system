@@ -1,5 +1,7 @@
 <template>
-  <table :ref="setTable" />
+  <div>
+    <table :ref="setTable" />
+  </div>
 </template>
 
 <script>
