@@ -22,6 +22,7 @@ public class SiteUserPK implements Serializable {
 	private byte[] userId;
 
 	public SiteUserPK() {
+		this.site = new Site();
 	}
 
 	public SiteUserPK(Site site, byte[] userId) {
