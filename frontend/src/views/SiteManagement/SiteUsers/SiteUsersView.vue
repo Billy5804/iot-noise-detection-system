@@ -3,7 +3,7 @@ import { ref, onBeforeMount, computed, shallowRef } from "vue";
 import { useRouter, RouterView } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
-import SiteRoles from "@/utilitys/SiteRoles";
+import SiteUserRoles from "@/utilitys/SiteUserRoles";
 import BootstrapTable from "@/components/BootstrapTable.vue";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
@@ -37,7 +37,7 @@ export default {
     const siteUsers = ref([]);
 
     const siteHasUnauthorisedUsers = computed(() =>
-      siteUsers.value.some(({ role }) => role === SiteRoles.UNAUTHORISED)
+      siteUsers.value.some(({ role }) => role === SiteUserRoles.UNAUTHORISED)
     );
 
     onBeforeMount(async () => {
