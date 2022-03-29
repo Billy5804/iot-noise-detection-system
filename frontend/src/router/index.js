@@ -12,6 +12,7 @@ import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
 import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
 import SiteUsersView from "../views/SiteManagement/SiteUsers/SiteUsersView.vue";
+import SiteUserEditView from "../views/SiteManagement/SiteUsers/SiteUserEditView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,6 +87,14 @@ const router = createRouter({
           name: "site-users",
           component: SiteUsersView,
           props: true,
+          children: [
+            {
+              path: ":userId",
+              name: "site-user-edit",
+              component: SiteUserEditView,
+              props: true,
+            },
+          ],
         },
       ],
     },
