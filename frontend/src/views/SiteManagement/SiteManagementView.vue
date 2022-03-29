@@ -42,9 +42,7 @@ export default {
   },
 
   props: {
-    siteId: {
-      type: String,
-    },
+    siteId: String,
   },
 
   setup: function (props) {
