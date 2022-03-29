@@ -1,7 +1,17 @@
 <script setup>
 import ErrorRedirect from "@/components/ErrorRedirect.vue";
+
+defineProps({
+  redirectRoute: {
+    type: String,
+  },
+});
 </script>
 
 <template>
-  <ErrorRedirect :code="403" message="Forbidden" />
+  <ErrorRedirect
+    :code="403"
+    message="Forbidden"
+    :redirectRoute="redirectRoute"
+  />
 </template>
