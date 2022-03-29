@@ -1,61 +1,35 @@
 package com.billy5804.iotnoisedetectionbackend.model;
 
-import java.util.Collection;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
-public class User implements Authentication {
+public class User {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4833866484002586294L;
+	private String id;
+	private String displayName;
 
-	private final UserRecord userRecord;
-
-	public User(UserRecord userRecord) {
-		this.userRecord = userRecord;
+	public User(String id) {
+		UserRecord userRecord = null;
+		try {
+			userRecord = FirebaseAuth.getInstance().getUser(id);
+		} catch (FirebaseAuthException e) {
+			e.printStackTrace();
+		}
+		if (userRecord != null) {
+			this.id = userRecord.getUid();
+			this.displayName = userRecord.getDisplayName();
+		} else {
+			this.id = id;
+			this.displayName = "Unknown User";
+		}
 	}
 
-	@Override
-	public String getName() {
-		return userRecord.getUid();
+	public String getId() {
+		return id;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getDisplayName() {
+		return displayName;
 	}
-
-	@Override
-	public Object getCredentials() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getDetails() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getPrincipal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isAuthenticated() {
-		return !userRecord.isDisabled() && userRecord.isEmailVerified();
-	}
-
-	@Override
-	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-	}
-
 }

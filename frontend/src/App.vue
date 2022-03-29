@@ -97,14 +97,14 @@ export default {
 </script>
 
 <template>
-  <LoadingView v-if="userLoading" />
+  <main v-if="userLoading"><LoadingView /></main>
   <template v-else>
     <PageHeader />
     <RouterView v-if="onEntranceView" class="container m-auto mt-5" />
     <template v-else-if="authorised || bypassAuth">
       <ConfirmEmailBanner
         v-if="!userEmailVerified && authorised"
-        class="container m-auto mt-3 mb-n4"
+        class="mt-3 mb-n4"
       />
       <ForbiddenView
         v-if="!userEmailVerified && viewRequiresEmailVerification"
