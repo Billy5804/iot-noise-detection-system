@@ -69,7 +69,7 @@ public class SiteUserController {
 		}
 		SiteUser currentSpecifiedUsersSiteUser = null;
 		try {
-			currentSpecifiedUsersSiteUser = siteUserRepository.findById(updateSiteUser.getPK()).get();
+			currentSpecifiedUsersSiteUser = siteUserRepository.findById(updateSiteUser.getSiteUserPK()).get();
 			if (currentSpecifiedUsersSiteUser.getRole() == SiteUserRole.OWNER) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
