@@ -6,7 +6,7 @@ import SiteRoles from "@/utilitys/SiteRoles";
 import BootstrapTable from "@/components/BootstrapTable.vue";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
-import LoadingView from "../LoadingView.vue";
+import LoadingView from "@/views/LoadingView.vue";
 
 export default {
   components: { BootstrapTable, MDBRow, MDBCol, AjaxButton, LoadingView },
@@ -39,9 +39,9 @@ export default {
         })
         .catch((error) => (loadingError.value = error.message || error));
 
-      siteUsers.value = siteUsersResponse?.data.reduce(
-        (result, { user, role }) => {
-          result.push({ ...user, role });
+      siteUsers.value = siteUsersResponse?.data?.reduce(
+        (result, { user, ...siteUser }) => {
+          result.push({ ...user, ...siteUser });
           return result;
         },
         []
@@ -56,7 +56,6 @@ export default {
         visible: false,
       },
       {
-        field: "remove",
         align: "center",
         formatter: (index, { removing }) =>
           `<button type="button" id="table-remove-user" class="btn text-danger shadow-none p-0 m-0" 
@@ -84,6 +83,9 @@ export default {
         title: "Role",
         sortable: true,
         class: "w-50",
+        formatter: (index, { role }) =>
+          `${role[0]}${role.slice(1).toLowerCase()}`,
+      },
       },
     ];
 

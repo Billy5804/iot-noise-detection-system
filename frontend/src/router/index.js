@@ -11,7 +11,7 @@ import SiteDeleteView from "../views/SiteManagement/SiteDeleteView.vue";
 import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
 import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
 import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
-import SiteUsersView from "../views/SiteManagement/SiteUsersView.vue";
+import SiteUsersView from "../views/SiteManagement/SiteUsers/SiteUsersView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
