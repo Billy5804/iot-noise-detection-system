@@ -6,13 +6,6 @@ import NotFoundView from "../views/NotFoundView.vue";
 import AccountView from "../views/AccountView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import SiteManagementView from "../views/SiteManagement/SiteManagementView.vue";
-import SiteEditView from "../views/SiteManagement/SiteEditView.vue";
-import SiteDeleteView from "../views/SiteManagement/SiteDeleteView.vue";
-import SiteCreateView from "../views/SiteManagement/SiteCreateView.vue";
-import SiteLeaveView from "../views/SiteManagement/SiteLeaveView.vue";
-import SiteOptionsView from "../views/SiteManagement/SiteOptionsView.vue";
-import SiteUsersView from "../views/SiteManagement/SiteUsers/SiteUsersView.vue";
-import SiteUserEditView from "../views/SiteManagement/SiteUsers/SiteUserEditView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,12 +45,12 @@ const router = createRouter({
         {
           path: "create",
           name: "site-create",
-          component: SiteCreateView,
+          component: () => import("../views/SiteManagement/SiteCreateView.vue"),
         },
         {
           path: ":siteId",
           name: "site-options",
-          component: SiteOptionsView,
+          component: () => import("../views/SiteManagement/SiteOptionsView.vue"),
           props: ({ params }) => ({
             siteId: params.siteId,
             iconSize: "2x",
@@ -67,31 +60,31 @@ const router = createRouter({
         {
           path: ":siteId/edit",
           name: "site-edit",
-          component: SiteEditView,
+          component: () => import("../views/SiteManagement/SiteEditView.vue"),
           props: true,
         },
         {
           path: ":siteId/delete",
           name: "site-delete",
-          component: SiteDeleteView,
+          component: () => import("../views/SiteManagement/SiteDeleteView.vue"),
           props: true,
         },
         {
           path: ":siteId/leave",
           name: "site-leave",
-          component: SiteLeaveView,
+          component: () => import("../views/SiteManagement/SiteLeaveView.vue"),
           props: true,
         },
         {
           path: ":siteId/users",
           name: "site-users",
-          component: SiteUsersView,
+          component: () => import("../views/SiteManagement/SiteUsers/SiteUsersView.vue"),
           props: true,
           children: [
             {
               path: ":userId",
               name: "site-user-edit",
-              component: SiteUserEditView,
+              component: () => import("../views/SiteManagement/SiteUsers/SiteUserEditView.vue"),
               props: true,
             },
           ],
