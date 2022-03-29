@@ -19,6 +19,7 @@ import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import SiteOptionsView from "./SiteOptionsView.vue";
 import VerticalRule from "@/components/VerticalRule.vue";
+import ForbiddenView from "../ForbiddenView.vue";
 
 export default {
   components: {
@@ -38,6 +39,7 @@ export default {
     RouterView,
     SiteOptionsView,
     VerticalRule,
+    ForbiddenView,
   },
 
   props: {
@@ -55,6 +57,16 @@ export default {
           router.push({ name: "site-management" });
         }
       },
+    });
+
+    const allowedModal = computed(() => {
+      const allowedRoles = router.currentRoute.value.meta.allowedRoles;
+      return (
+        showModal.value &&
+        (allowedRoles
+          ? allowedRoles.includes(sites.value[props.siteId]?.role)
+          : true)
+      );
     });
 
     const loading = ref(true);
@@ -81,7 +93,7 @@ export default {
       loading.value = false;
     });
 
-    return { loading, loadingError, sites, showModal };
+    return { loading, loadingError, sites, showModal, allowedModal };
   },
 };
 </script>
@@ -144,7 +156,12 @@ export default {
           </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
-          <RouterView :sites="sites" @done="showModal = false" />
+          <RouterView
+            v-if="allowedModal"
+            :sites="sites"
+            @done="showModal = false"
+          />
+          <ForbiddenView v-else redirectRoute="/sites" />
         </MDBModalBody>
       </template>
       <template v-else>
