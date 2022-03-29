@@ -1,5 +1,6 @@
 <script>
 import { ref, onBeforeMount, computed, shallowRef } from "vue";
+import { useRouter, RouterView } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import SiteRoles from "@/utilitys/SiteRoles";
@@ -9,17 +10,26 @@ import AjaxButton from "@/components/AjaxButton.vue";
 import LoadingView from "@/views/LoadingView.vue";
 
 export default {
-  components: { BootstrapTable, MDBRow, MDBCol, AjaxButton, LoadingView },
+  components: {
+    BootstrapTable,
+    MDBRow,
+    MDBCol,
+    AjaxButton,
+    LoadingView,
+    RouterView,
+  },
 
   props: {
     siteId: {
       type: String,
       required: true,
     },
+    userId: String,
   },
 
   setup: function (props) {
     const { getIdToken } = useUserStore();
+    const router = useRouter();
 
     const loading = ref(true);
     const loadingError = ref(null);
@@ -86,6 +96,17 @@ export default {
         formatter: (index, { role }) =>
           `${role[0]}${role.slice(1).toLowerCase()}`,
       },
+      {
+        align: "center",
+        formatter: (index, { removing }) =>
+          `<button type="button" id="table-edit-user" class="btn text-warning shadow-none p-0 m-0" 
+            title="Edit user"${removing ? " disabled" : ""}>
+            <i class="fas fa-edit fa-xl"></i>
+          </button>`,
+        events: {
+          "click #table-edit-user": (event, field, { id }) =>
+            router.push({ name: "site-user-edit", params: { userId: id } }),
+        },
       },
     ];
 
@@ -171,35 +192,41 @@ export default {
     >
       {{ loadingError }}
     </div>
-    <BootstrapTable
-      v-else
-      :columns="tableColumns"
-      :data="siteUsers"
-      :options="tableOptions"
+    <RouterView
+      v-else-if="userId"
+      :users="siteUsers"
+      @done="$router.push({ name: 'site-users' })"
     />
-    <MDBRow
-      v-if="siteHasUnauthorisedUsers"
-      tag="form"
-      class="g-3 mb-3"
-      novalidate
-      @submit.prevent="submitRemoveForm"
-    >
-      <MDBCol md="12" v-if="removeError">
-        <div class="alert alert-danger text-center p-2 mb-0" role="alert">
-          {{ removeError }}
-        </div>
-      </MDBCol>
-      <MDBCol md="12">
-        <AjaxButton
-          color="danger"
-          type="submit"
-          size="lg"
-          class="w-100"
-          :syncing="syncing"
-          >Remove All Unauthorised Users</AjaxButton
-        >
-      </MDBCol>
-    </MDBRow>
+    <template v-else>
+      <BootstrapTable
+        :columns="tableColumns"
+        :data="siteUsers"
+        :options="tableOptions"
+      />
+      <MDBRow
+        v-if="siteHasUnauthorisedUsers"
+        tag="form"
+        class="g-3 mb-3"
+        novalidate
+        @submit.prevent="submitRemoveForm"
+      >
+        <MDBCol md="12" v-if="removeError">
+          <div class="alert alert-danger text-center p-2 mb-0" role="alert">
+            {{ removeError }}
+          </div>
+        </MDBCol>
+        <MDBCol md="12">
+          <AjaxButton
+            color="danger"
+            type="submit"
+            size="lg"
+            class="w-100"
+            :syncing="syncing"
+            >Remove All Unauthorised Users</AjaxButton
+          >
+        </MDBCol>
+      </MDBRow>
+    </template>
   </div>
 </template>
 
