@@ -58,6 +58,9 @@ public class SiteUserController {
 
 	@PutMapping
 	public ResponseEntity<SiteUser> updateSpecifiedUsersSiteUser(@RequestBody SiteUser updateSiteUser) {
+		if (updateSiteUser.getRole() == SiteUserRole.OWNER) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
