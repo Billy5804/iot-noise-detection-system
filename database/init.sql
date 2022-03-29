@@ -13,16 +13,17 @@ CREATE TABLE `site` (
 
 
 CREATE TABLE `site_invitation` (
-  `token` binary(16) NOT NULL,
+  `id` binary(16) NOT NULL,
   `site_id` binary(16) NOT NULL,
-  `require_auth` tinyint(1) NOT NULL DEFAULT 1,
-  `expires_at` timestamp NULL,
+  `available_uses` int NULL,
+  `expires_at` timestamp NOT NULL,-- DEFAULT TIMESTAMPADD(WEEK, 1, CURRENT_TIMESTAMP),
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`token`),
+  PRIMARY KEY (`id`),
   CONSTRAINT `site_invitation_ibfk_1` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `site_invitation_chk_1` CHECK (IS_UUID(BIN_TO_UUID(`token`))),
-  CONSTRAINT `site_invitation_chk_2` CHECK ((`require_auth` in (0,1)))
+  CONSTRAINT `site_invitation_chk_1` CHECK (IS_UUID(BIN_TO_UUID(`id`))),
+  CONSTRAINT `site_invitation_chk_2` CHECK (TIMESTAMPDIFF(YEAR,`created_at`,`expires_at`) < 1)
+  -- CONSTRAINT `site_invitation_chk_3` CHECK (`expires_at` >= CURRENT_TIMESTAMP)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `device` (
