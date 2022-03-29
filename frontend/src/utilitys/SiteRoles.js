@@ -1,6 +1,7 @@
-export default {
-  UNAUTHORISED: "UNAUTHORISED",
-  OWNER: "OWNER",
-  EDITOR: "EDITOR",
-  VIEWER: "VIEWER",
-};
+export default ["UNAUTHORISED", "OWNER", "EDITOR", "VIEWER"].reduce(
+  (result, value) => {
+    result[value] = value;
+    return result;
+  },
+  {}
+);
