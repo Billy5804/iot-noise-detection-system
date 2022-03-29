@@ -40,8 +40,8 @@ public class SiteUserController {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		return siteUserRepository.getByUserId(user.getName());
 	}
-	
-	@GetMapping(params="siteId")
+
+	@GetMapping(params = "siteId")
 	public ResponseEntity<Iterable<SiteUserExcludeSiteProjection>> getSitesSiteUsers(@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser authUserSiteUser = null;
@@ -60,7 +60,8 @@ public class SiteUserController {
 	public ResponseEntity<SiteUser> updateSpecifiedUsersSiteUser(@RequestBody SiteUser updateSiteUser) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
-			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(updateSiteUser.getSite(), authUser.getName())).get();
+			final SiteUser authUserSiteUser = siteUserRepository
+					.findById(new SiteUserPK(updateSiteUser.getSite(), authUser.getName())).get();
 			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
@@ -80,8 +81,8 @@ public class SiteUserController {
 		updateHelper.copyNonNullProperties(updateSiteUser, currentSpecifiedUsersSiteUser);
 		return ResponseEntity.ok(siteUserRepository.save(currentSpecifiedUsersSiteUser));
 	}
-	
-	@DeleteMapping(params="siteId")
+
+	@DeleteMapping(params = "siteId")
 	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteUser currentSiteUser = null;
@@ -96,12 +97,13 @@ public class SiteUserController {
 		siteUserRepository.delete(currentSiteUser);
 		return ResponseEntity.ok(null);
 	}
-	
-	@DeleteMapping(params={ "siteId", "userId" })
+
+	@DeleteMapping(params = { "siteId", "userId" })
 	public ResponseEntity<String> deleteSpecifiedUsersSiteUser(@RequestParam UUID siteId, @RequestParam String userId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
-			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName())).get();
+			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName()))
+					.get();
 			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
@@ -111,17 +113,20 @@ public class SiteUserController {
 		try {
 			siteUserRepository.deleteById(new SiteUserPK(siteId, userId));
 		} catch (IllegalArgumentException e) {
-			// Should be fine if this is thrown as record doesn't exist which is the outcome we wanted anyway.
+			// Should be fine if this is thrown as record doesn't exist which is the outcome
+			// we wanted anyway.
 			e.printStackTrace();
 		}
 		return ResponseEntity.ok(null);
 	}
 
-	@DeleteMapping(params={ "siteId", "unauthorised" })
-	public ResponseEntity<Iterable<SiteUserOnlyUserIdProjection>> deleteUnauthorisedSiteUser(@RequestParam UUID siteId) {
+	@DeleteMapping(params = { "siteId", "unauthorised" })
+	public ResponseEntity<Iterable<SiteUserOnlyUserIdProjection>> deleteUnauthorisedSiteUser(
+			@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
-			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName())).get();
+			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName()))
+					.get();
 			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
@@ -131,7 +136,8 @@ public class SiteUserController {
 		try {
 			return ResponseEntity.ok(siteUserRepository.deleteUnauthorisedBySiteId(siteId));
 		} catch (IllegalArgumentException e) {
-			// Should be fine if this is thrown as record doesn't exist which is the outcome we wanted anyway.
+			// Should be fine if this is thrown as record doesn't exist which is the outcome
+			// we wanted anyway.
 			e.printStackTrace();
 		}
 		return ResponseEntity.ok(null);
