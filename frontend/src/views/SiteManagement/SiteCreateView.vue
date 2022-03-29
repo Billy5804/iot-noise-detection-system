@@ -5,7 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
-import siteRoles from "@/utilitys/SiteRoles";
+import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
 export default {
   components: {
@@ -54,7 +54,7 @@ export default {
         .then(({ data }) => {
           const siteId = data.id;
           delete data.id;
-          data.role = siteRoles.OWNER;
+          data.role = SiteUserRoles.OWNER;
           Object.assign(props.sites, { [siteId]: data });
           context.emit("done");
         })

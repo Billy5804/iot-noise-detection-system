@@ -5,7 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol, MDBIcon } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import { RouterLink } from "vue-router";
-import siteRoles from "@/utilitys/SiteRoles";
+import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
 export default {
   components: {
@@ -89,7 +89,7 @@ export default {
       newRole,
       newRoleSelect,
       submitUpdateForm,
-      siteRoles,
+      SiteUserRoles,
       selectedUser,
     };
   },
@@ -127,9 +127,9 @@ export default {
         required
       >
         <option value disabled>Choose New Role</option>
-        <template v-for="role in siteRoles">
+        <template v-for="role in SiteUserRoles">
           <option
-            v-if="![siteRoles.OWNER, selectedUser.role].includes(role)"
+            v-if="![SiteUserRoles.OWNER, selectedUser.role].includes(role)"
             :key="role"
             :value="role"
           >

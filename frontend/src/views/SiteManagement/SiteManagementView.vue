@@ -17,7 +17,6 @@ import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
 import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
-import siteRoles from "@/utilitys/SiteRoles";
 import SiteOptionsView from "./SiteOptionsView.vue";
 import VerticalRule from "@/components/VerticalRule.vue";
 
@@ -82,7 +81,7 @@ export default {
       loading.value = false;
     });
 
-    return { loading, loadingError, sites, siteRoles, showModal };
+    return { loading, loadingError, sites, showModal };
   },
 };
 </script>

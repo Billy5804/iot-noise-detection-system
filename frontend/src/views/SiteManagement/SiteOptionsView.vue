@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { RouterLink } from "vue-router";
 import { MDBRow, MDBCol, MDBIcon } from "mdb-vue-ui-kit";
-import siteRoles from "@/utilitys/SiteRoles";
+import SiteUserRoles from "@/utilitys/SiteUserRoles";
 import VerticalRule from "../../components/VerticalRule.vue";
 
 const props = defineProps({
@@ -32,7 +32,7 @@ const siteRole = computed(() => props.sites[props.siteId].role);
   <MDBRow class="text-center d-flex align-items-center">
     <MDBCol class="site-buttons">
       <RouterLink
-        v-if="[siteRoles.OWNER, siteRoles.EDITOR].includes(siteRole)"
+        v-if="[SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(siteRole)"
         :to="{ name: 'site-edit', params: { siteId } }"
         class="text-warning"
         type="button"
@@ -40,7 +40,7 @@ const siteRole = computed(() => props.sites[props.siteId].role);
       >
         <MDBIcon iconStyle="fas" icon="edit" :size="iconSize" />
       </RouterLink>
-      <template v-if="siteRole === siteRoles.OWNER">
+      <template v-if="siteRole === SiteUserRoles.OWNER">
         <RouterLink
           :to="{ name: 'site-users', params: { siteId } }"
           class="text-info"
