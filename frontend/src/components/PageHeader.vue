@@ -34,7 +34,9 @@ const accountCollapse = ref(false);
         <MDBNavbarNav collapse class="mb-2 mb-md-0 w-100">
           <template v-if="loggedIn">
             <template v-if="emailVerified"> </template>
-            <MDBNavbarItem linkClass="px-2" to="/sites">Site Management</MDBNavbarItem>
+            <MDBNavbarItem linkClass="px-2" to="/sites"
+              >Site Management</MDBNavbarItem
+            >
           </template>
           <MDBNavbarItem linkClass="px-2" v-else to="/">Home</MDBNavbarItem>
           <template v-if="loggedIn">

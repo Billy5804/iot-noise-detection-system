@@ -6,6 +6,7 @@ import NotFoundView from "../views/NotFoundView.vue";
 import AccountView from "../views/AccountView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import SiteManagementView from "../views/SiteManagement/SiteManagementView.vue";
+import SiteUserRoles from "../utilitys/SiteUserRoles";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,7 +51,8 @@ const router = createRouter({
         {
           path: ":siteId",
           name: "site-options",
-          component: () => import("../views/SiteManagement/SiteOptionsView.vue"),
+          component: () =>
+            import("../views/SiteManagement/SiteOptionsView.vue"),
           props: ({ params }) => ({
             siteId: params.siteId,
             iconSize: "2x",
@@ -62,29 +64,41 @@ const router = createRouter({
           name: "site-edit",
           component: () => import("../views/SiteManagement/SiteEditView.vue"),
           props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
         },
         {
           path: ":siteId/delete",
           name: "site-delete",
           component: () => import("../views/SiteManagement/SiteDeleteView.vue"),
           props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER] },
         },
         {
           path: ":siteId/leave",
           name: "site-leave",
           component: () => import("../views/SiteManagement/SiteLeaveView.vue"),
           props: true,
+          meta: {
+            allowedRoles: Object.values(SiteUserRoles).filter(
+              (value) => value !== SiteUserRoles.OWNER
+            ),
+          },
         },
         {
           path: ":siteId/users",
           name: "site-users",
-          component: () => import("../views/SiteManagement/SiteUsers/SiteUsersView.vue"),
+          component: () =>
+            import("../views/SiteManagement/SiteUsers/SiteUsersView.vue"),
           props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER] },
           children: [
             {
               path: ":userId",
               name: "site-user-edit",
-              component: () => import("../views/SiteManagement/SiteUsers/SiteUserEditView.vue"),
+              component: () =>
+                import(
+                  "../views/SiteManagement/SiteUsers/SiteUserEditView.vue"
+                ),
               props: true,
             },
           ],
