@@ -40,7 +40,7 @@ public class SiteInvitationController {
 	private SiteInvitationRepository siteInvitationRepository;
 
 	@GetMapping(params = "id")
-	public ResponseEntity<SiteInvitation> getInvitation(@RequestParam(name = "id") UUID invitationId) {
+	public ResponseEntity<SiteInvitation> getSiteInvitation(@RequestParam(name = "id") UUID invitationId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteInvitation siteInvitation = null;
 		try {
@@ -55,7 +55,7 @@ public class SiteInvitationController {
 	}
 
 	@GetMapping(params = "siteId")
-	public ResponseEntity<Iterable<SiteInvitationExcludeSiteProjection>> getSitesInvitations(
+	public ResponseEntity<Iterable<SiteInvitationExcludeSiteProjection>> getSiteInvitations(
 			@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
@@ -93,22 +93,6 @@ public class SiteInvitationController {
 		return ResponseEntity.ok(siteInvitationRepository.save(currentSiteInvitation));
 	}
 
-	@DeleteMapping
-	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
-		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
-		SiteUser currentSiteUser = null;
-		try {
-			currentSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, user.getName())).get();
-		} catch (NoSuchElementException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
-		if (currentSiteUser.getRole() == SiteUserRole.OWNER) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-		}
-		siteUserRepository.delete(currentSiteUser);
-		return ResponseEntity.ok(null);
-	}
-
 	@PostMapping
 	public ResponseEntity<SiteInvitation> createSiteInvitation(@RequestBody SiteInvitation newSiteInvitation) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
@@ -126,7 +110,7 @@ public class SiteInvitationController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<String> deleteSpecifiedUsersSiteUser(@RequestParam(name = "id") UUID invitationId) {
+	public ResponseEntity<String> deleteSiteInvitation(@RequestParam(name = "id") UUID invitationId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteInvitation siteInvitation = null;
 		try {
