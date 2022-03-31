@@ -36,7 +36,7 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	private Site site;
 	
 	@Column(columnDefinition = "INT", updatable = true, nullable = true)
-	private int availableUses;
+	private Integer availableUses;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(updatable = true, nullable = false)
@@ -70,11 +70,11 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 		this.site = site;
 	}
 
-	public int getAvailableUses() {
+	public Integer getAvailableUses() {
 		return availableUses;
 	}
 
-	public void setAvailableUses(int availableUses) {
+	public void setAvailableUses(Integer availableUses) {
 		this.availableUses = availableUses;
 	}
 
