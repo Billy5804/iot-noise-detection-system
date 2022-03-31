@@ -11,5 +11,9 @@ import com.billy5804.iotnoisedetectionbackend.projection.SiteInvitationExcludeSi
 // CRUD refers Create, Read, Update, Delete
 
 public interface SiteInvitationRepository extends CrudRepository<SiteInvitation, UUID> {
-	Iterable<SiteInvitationExcludeSiteProjection> findBySiteId(UUID siteId);
+	Iterable<SiteInvitationExcludeSiteProjection> findBySite_id(UUID siteId);
+	
+	default Iterable<SiteInvitationExcludeSiteProjection> findBySiteId(UUID siteId) {
+		return findBySite_id(siteId);
+	}
 }
