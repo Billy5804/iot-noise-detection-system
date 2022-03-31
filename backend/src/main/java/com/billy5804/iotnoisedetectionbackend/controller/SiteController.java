@@ -57,11 +57,10 @@ public class SiteController {
 
 	@PostMapping
 	public Site createSite(@RequestBody Site newSite) {
-		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		final Site site = siteRepository.save(newSite);
 		final SiteUser siteUser = new SiteUser();
-		siteUser.setSite(site);
-		siteUser.setUserId(user.getName());
+		siteUser.setSiteUserPK(new SiteUserPK(site, authUser.getName()));
 		siteUser.setRole(SiteUserRole.OWNER);
 		siteUserRepository.save(siteUser);
 		return site;
