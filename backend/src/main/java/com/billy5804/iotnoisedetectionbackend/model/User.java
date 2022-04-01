@@ -1,35 +1,38 @@
 package com.billy5804.iotnoisedetectionbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
 public class User {
 
-	private String id;
-	private String displayName;
+	@JsonIgnore
+	protected UserRecord userRecord;
+	@JsonIgnore
+	private final String passedId;
 
+	public User() {
+		this.passedId = null;
+	}
+	
 	public User(String id) {
-		UserRecord userRecord = null;
+		passedId = id;
 		try {
 			userRecord = FirebaseAuth.getInstance().getUser(id);
 		} catch (FirebaseAuthException e) {
 			e.printStackTrace();
 		}
-		if (userRecord != null) {
-			this.id = userRecord.getUid();
-			this.displayName = userRecord.getDisplayName();
-		} else {
-			this.id = id;
-			this.displayName = "Unknown User";
-		}
 	}
 
+	@JsonGetter
 	public String getId() {
-		return id;
+		return userRecord != null ? userRecord.getUid() : passedId;
 	}
 
+	@JsonGetter
 	public String getDisplayName() {
-		return displayName;
+		return userRecord != null ? userRecord.getDisplayName() : "Unknown User";
 	}
 }
