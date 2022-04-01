@@ -34,7 +34,9 @@ export default {
     const { getIdToken } = useUserStore();
 
     const selectedInvitation = computed(() => {
-      const invitationIndex = props.siteInvitations.findIndex(({ id }) => id === props.invitationId);
+      const invitationIndex = props.siteInvitations.findIndex(
+        ({ id }) => id === props.invitationId
+      );
       if (invitationIndex < 0) {
         return;
       }
@@ -91,7 +93,9 @@ export default {
           {
             id: props.invitationId,
             displayName: newDisplayName.value,
-            availableUses: newAvailableUses.value ? newAvailableUses.value : null,
+            availableUses: newAvailableUses.value
+              ? newAvailableUses.value
+              : null,
             expiresAt: +newExpiresAt.value,
           },
           {
@@ -128,7 +132,11 @@ export default {
 
 <template>
   <span class="d-flex justify-content-between flex-wrap">
-    <RouterLink :to="{ name: 'site-invitations' }" class="text-dark" title="Back">
+    <RouterLink
+      :to="{ name: 'site-invitations' }"
+      class="text-dark"
+      title="Back"
+    >
       <MDBIcon iconStyle="fas" icon="arrow-left" size="2xl" />
     </RouterLink>
     <h2 v-if="selectedInvitation" class="h3">
