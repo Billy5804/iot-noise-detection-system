@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class SiteInvitation extends CommonAttributes implements Serializable {
@@ -34,7 +35,7 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "site_id", columnDefinition = "BINARY(16)", referencedColumnName = "id", updatable = false, nullable = false)
 	private Site site;
-	
+
 	@Column(columnDefinition = "INT", updatable = true, nullable = true)
 	private Integer availableUses;
 
@@ -49,19 +50,20 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	public void setId(UUID id) {
 		this.id = id;
 	}
-	
+
 	@JsonIgnore
 	public UUID getSiteId() {
 		return site.getId();
 	}
 
-	public void setSiteId(UUID id) {
-		if (site == null) {
+	@JsonSetter
+	public void setSiteId(UUID siteId) {
+		if (this.site == null) {
 			this.site = new Site();
 		}
-		this.site.setId(id);
+		this.site.setId(siteId);
 	}
-	
+
 	public Site getSite() {
 		return site;
 	}
@@ -81,7 +83,7 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	public Date getExpiresAt() {
 		return expiresAt;
 	}
-	
+
 	public void setExpiresAt(Date expiresAt) {
 		this.expiresAt = expiresAt;
 	}
