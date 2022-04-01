@@ -90,6 +90,7 @@ public class SiteInvitationController {
 		}
 		updateSiteInvitation.setSite(currentSiteInvitation.getSite());
 		updateHelper.copyNonNullProperties(updateSiteInvitation, currentSiteInvitation);
+		currentSiteInvitation.setAvailableUses(updateSiteInvitation.getAvailableUses());
 		return ResponseEntity.ok(siteInvitationRepository.save(currentSiteInvitation));
 	}
 
