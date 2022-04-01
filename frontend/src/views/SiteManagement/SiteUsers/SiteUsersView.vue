@@ -111,7 +111,7 @@ export default {
     ];
 
     const tableOptions = {
-      uniqueId: "userId",
+      uniqueId: "id",
       pagination: true,
       search: true,
       toggle: "table",
