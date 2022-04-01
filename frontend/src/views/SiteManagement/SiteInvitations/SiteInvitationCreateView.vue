@@ -20,7 +20,10 @@ export default {
   emits: ["done"],
 
   props: {
-    siteId: String,
+    siteId: {
+      type: String,
+      required: true,
+    },
     siteInvitations: {
       type: Object,
       required: true,
@@ -107,8 +110,8 @@ export default {
       availableUses,
       availableUsesValidity,
       expiresAtInput,
-      expiresAtMin,
       expiresAtValidity,
+      expiresAtMin,
       submitCreateForm,
     };
   },
@@ -146,8 +149,8 @@ export default {
     <FormInput
       type="number"
       size="lg"
-      v-model.trim="availableUses"
-      label="Total uses"
+      v-model.number="availableUses"
+      label="Total Uses"
       invalidFeedback="Please provide a valid positive number"
       :min="1"
       @update:validity="availableUsesValidity = $event"
