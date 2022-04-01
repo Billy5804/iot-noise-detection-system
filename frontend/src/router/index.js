@@ -110,8 +110,27 @@ const router = createRouter({
             import(
               "../views/SiteManagement/SiteInvitations/SiteInvitationsView.vue"
             ),
-          props: true,
+          props: ({ params, name }) => ({
+            siteId: params.siteId,
+            invitationId:
+              name === "site-invitation-create"
+                ? "create"
+                : params.invitationId,
+          }),
           meta: { allowedRoles: [SiteUserRoles.OWNER] },
+          children: [
+            {
+              path: "create",
+              name: "site-invitation-create",
+              component: () =>
+                import(
+                  "../views/SiteManagement/SiteInvitations/SiteInvitationCreateView.vue"
+                ),
+              props: ({ params }) => ({
+                siteId: params.siteId,
+              }),
+            },
+          ],
         },
       ],
     },
