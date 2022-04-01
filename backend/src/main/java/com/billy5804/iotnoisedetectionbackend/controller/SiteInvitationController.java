@@ -73,19 +73,19 @@ public class SiteInvitationController {
 	@PutMapping
 	public ResponseEntity<SiteInvitation> updateSiteInvitation(@RequestBody SiteInvitation updateSiteInvitation) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
-		try {
-			final SiteUser authUserSiteUser = siteUserRepository
-					.findById(new SiteUserPK(updateSiteInvitation.getSite(), authUser.getName())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-			}
-		} catch (NoSuchElementException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
 		SiteInvitation currentSiteInvitation = null;
 		try {
 			currentSiteInvitation = siteInvitationRepository.findById(updateSiteInvitation.getId()).get();
 		} catch (IllegalArgumentException | NoSuchElementException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		try {
+			final SiteUser authUserSiteUser = siteUserRepository
+					.findById(new SiteUserPK(currentSiteInvitation.getSite(), authUser.getName())).get();
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+			}
+		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 		updateSiteInvitation.setSite(currentSiteInvitation.getSite());
