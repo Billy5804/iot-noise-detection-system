@@ -130,6 +130,15 @@ const router = createRouter({
                 siteId: params.siteId,
               }),
             },
+            {
+              path: ":invitationId",
+              name: "site-invitation-edit",
+              component: () =>
+                import(
+                  "../views/SiteManagement/SiteInvitations/SiteInvitationEditView.vue"
+                ),
+              props: true,
+            },
           ],
         },
       ],
