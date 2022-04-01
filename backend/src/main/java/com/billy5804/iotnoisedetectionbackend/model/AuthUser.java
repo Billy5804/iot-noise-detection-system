@@ -24,6 +24,10 @@ public class AuthUser implements Authentication {
 	public String getName() {
 		return userRecord.getUid();
 	}
+	
+	public String getDisplayName() {
+		return userRecord.getDisplayName();
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
