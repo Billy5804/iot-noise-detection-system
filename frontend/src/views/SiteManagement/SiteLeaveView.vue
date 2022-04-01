@@ -36,7 +36,7 @@ export default {
       leaveError.value = null;
       syncing.value = true;
       axios
-        .delete("https://noise.alexroyle.com/api/v1/site-users", {
+        .delete("http://localhost:443/api/v1/site-users", {
           timeout: 5000,
           headers: { authorization: `Bearer ${await getIdToken()}` },
           params: { siteId: props.siteId },

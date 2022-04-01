@@ -71,7 +71,7 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const sitesAPIPath = "https://noise.alexroyle.com/api/v1/site-users";
+    const sitesAPIPath = "http://localhost:443/api/v1/site-users";
     const sites = ref(null);
 
     onBeforeMount(async () => {
