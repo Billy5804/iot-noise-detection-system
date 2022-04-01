@@ -1,7 +1,8 @@
 server:
   port: 443
+  baseURL: "https://iot.alexroyle.com/"
   ssl:
-    key-store: C:/Certbot/live/noise.alexroyle.com/keystore.p12
+    key-store: C:/Certbot/live/iot.alexroyle.com/keystore.p12
     key-store-password: ""
     keyStoreType: PKCS12
     keyAlias: tomcat

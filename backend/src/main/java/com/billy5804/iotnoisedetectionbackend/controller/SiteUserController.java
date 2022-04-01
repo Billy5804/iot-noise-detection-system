@@ -1,5 +1,6 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +24,11 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUser;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
 import com.billy5804.iotnoisedetectionbackend.model.AuthUser;
+import com.billy5804.iotnoisedetectionbackend.model.SiteInvitation;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeSiteProjection;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserExcludeUserProjection;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteUserOnlyUserIdProjection;
+import com.billy5804.iotnoisedetectionbackend.repository.SiteInvitationRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
 @RestController
@@ -34,6 +38,9 @@ public class SiteUserController {
 
 	@Autowired
 	private SiteUserRepository siteUserRepository;
+
+	@Autowired
+	private SiteInvitationRepository siteInvitationRepository;
 
 	@GetMapping
 	public Iterable<SiteUserExcludeUserProjection> getCurrentUsersSiteUsers() {
@@ -85,6 +92,46 @@ public class SiteUserController {
 		return ResponseEntity.ok(siteUserRepository.save(currentSpecifiedUsersSiteUser));
 	}
 
+	@PostMapping
+	public ResponseEntity<SiteUser> createSiteUser(@RequestBody SiteInvitation siteInvitation) {
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
+		try {
+			siteInvitation = siteInvitationRepository.findById(siteInvitation.getId()).get();
+			if (siteUserRepository.existsById(new SiteUserPK(siteInvitation.getSite(), authUser.getName()))) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+			}
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		Integer invitationUses = siteInvitation.getAvailableUses();
+		if (siteInvitation.getExpiresAt().after(new Date())) {
+			siteInvitationRepository.delete(siteInvitation);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		if (invitationUses != null) {
+			if (invitationUses <= 1) {
+				siteInvitationRepository.delete(siteInvitation);
+				if (invitationUses <= 0) {
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+				}
+			}
+			invitationUses--;
+			siteInvitation.setAvailableUses(invitationUses);
+			if (invitationUses == 0) {
+				siteInvitationRepository.delete(siteInvitation);
+			}
+			else {
+				siteInvitationRepository.save(siteInvitation);
+			}
+		}
+		final SiteUser newSiteUser = new SiteUser();
+		newSiteUser.setSiteUserPK(new SiteUserPK(siteInvitation.getSite(), authUser.getName()));
+		newSiteUser.setRole(SiteUserRole.UNAUTHORISED);
+		return ResponseEntity.ok(siteUserRepository.save(newSiteUser));
+	}
+
 	@DeleteMapping(params = "siteId")
 	public ResponseEntity<String> deleteCurrentUsersSiteUser(@RequestParam UUID siteId) {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
@@ -124,7 +171,7 @@ public class SiteUserController {
 	}
 
 	@DeleteMapping(params = { "siteId", "unauthorised" })
-	public ResponseEntity<Iterable<SiteUserOnlyUserIdProjection>> deleteUnauthorisedSiteUser(
+	public ResponseEntity<Iterable<SiteUserOnlyUserIdProjection>> deleteUnauthorisedSiteUsers(
 			@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
