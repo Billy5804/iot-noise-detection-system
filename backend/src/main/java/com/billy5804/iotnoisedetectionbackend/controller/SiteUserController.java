@@ -105,11 +105,12 @@ public class SiteUserController {
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
-		Integer invitationUses = siteInvitation.getAvailableUses();
+
 		if (siteInvitation.getExpiresAt().after(new Date())) {
 			siteInvitationRepository.delete(siteInvitation);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
+		Integer invitationUses = siteInvitation.getAvailableUses();
 		if (invitationUses != null) {
 			if (invitationUses <= 1) {
 				siteInvitationRepository.delete(siteInvitation);
@@ -121,8 +122,7 @@ public class SiteUserController {
 			siteInvitation.setAvailableUses(invitationUses);
 			if (invitationUses == 0) {
 				siteInvitationRepository.delete(siteInvitation);
-			}
-			else {
+			} else {
 				siteInvitationRepository.save(siteInvitation);
 			}
 		}
