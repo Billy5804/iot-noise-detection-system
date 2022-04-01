@@ -50,6 +50,14 @@ const siteRole = computed(() => props.sites[props.siteId].role);
           <MDBIcon iconStyle="fas" icon="users" :size="iconSize" />
         </RouterLink>
         <RouterLink
+          :to="{ name: 'site-invitations', params: { siteId } }"
+          class="text-success"
+          type="button"
+          title="Manage site invites"
+        >
+          <MDBIcon iconStyle="fas" icon="envelope-open-text" :size="iconSize" />
+        </RouterLink>
+        <RouterLink
           :to="{ name: 'site-delete', params: { siteId } }"
           class="text-danger"
           type="button"

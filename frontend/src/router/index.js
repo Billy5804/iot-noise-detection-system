@@ -103,6 +103,16 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: ":siteId/invites",
+          name: "site-invitations",
+          component: () =>
+            import(
+              "../views/SiteManagement/SiteInvitations/SiteInvitationsView.vue"
+            ),
+          props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER] },
+        },
       ],
     },
     {
