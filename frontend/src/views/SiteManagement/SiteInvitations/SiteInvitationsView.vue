@@ -185,15 +185,24 @@ export default {
     </div>
     <RouterView
       v-else-if="invitationId"
-      :users="siteInvitations"
+      :siteInvitations="siteInvitations"
       @done="$router.push({ name: 'site-invitations' })"
     />
-    <BootstrapTable
-      v-else
-      :columns="tableColumns"
-      :data="siteInvitations"
-      :options="tableOptions"
-    />
+    <template v-else>
+      <BootstrapTable
+        :columns="tableColumns"
+        :data="siteInvitations"
+        :options="tableOptions"
+      />
+      <MDBBtn
+        color="success"
+        type="button"
+        size="lg"
+        class="w-100"
+        @click="$router.push({ name: 'site-invitation-create' })"
+        >Add New Invitation</MDBBtn
+      >
+    </template>
   </div>
 </template>
 
