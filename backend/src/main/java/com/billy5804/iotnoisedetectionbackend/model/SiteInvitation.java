@@ -36,6 +36,9 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	@JoinColumn(name = "site_id", columnDefinition = "BINARY(16)", referencedColumnName = "id", updatable = false, nullable = false)
 	private Site site;
 
+	@Column(columnDefinition = "VARCHAR(64)", nullable = false)
+	private String displayName;
+
 	@Column(columnDefinition = "INT", updatable = true, nullable = true)
 	private Integer availableUses;
 
@@ -70,6 +73,14 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 
 	public void setSite(Site site) {
 		this.site = site;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	public Integer getAvailableUses() {

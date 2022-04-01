@@ -15,6 +15,7 @@ CREATE TABLE `site` (
 CREATE TABLE `site_invitation` (
   `id` binary(16) NOT NULL,
   `site_id` binary(16) NOT NULL,
+  `display_name` varchar(64) NOT NULL,
   `available_uses` int NULL,
   `expires_at` timestamp NOT NULL,-- DEFAULT TIMESTAMPADD(WEEK, 1, CURRENT_TIMESTAMP),
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
