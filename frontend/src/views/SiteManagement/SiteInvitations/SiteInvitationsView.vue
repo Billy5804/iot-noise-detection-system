@@ -75,7 +75,7 @@ export default {
       },
       {
         field: "availableUses",
-        title: "Remaining Uses",
+        title: "Uses",
         sortable: true,
         formatter: (index, { availableUses }) =>
           availableUses || `<i class="fas fa-infinity"></i>`,
