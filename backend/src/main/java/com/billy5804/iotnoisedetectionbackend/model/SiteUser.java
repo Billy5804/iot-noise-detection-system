@@ -21,7 +21,7 @@ public class SiteUser extends CommonAttributes implements Serializable {
 	@Id
 	private SiteUserPK siteUserPK = new SiteUserPK();
 
-	@Column(length = 1, nullable = false)
+	@Column(columnDefinition = "TINYINT(1)", nullable = false)
 	private SiteUserRole role;
 
 	@JsonIgnore

@@ -16,7 +16,7 @@ public class User {
 	public User() {
 		this.passedId = null;
 	}
-	
+
 	public User(String id) {
 		passedId = id;
 		try {

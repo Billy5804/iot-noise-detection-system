@@ -24,7 +24,7 @@ public class Site extends CommonAttributes implements Serializable {
 	@Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)
 	private UUID id;
 
-	@Column(length = 255, nullable = false)
+	@Column(columnDefinition = "VARCHAR(255)", nullable = false)
 	private String displayName;
 
 	public UUID getId() {
