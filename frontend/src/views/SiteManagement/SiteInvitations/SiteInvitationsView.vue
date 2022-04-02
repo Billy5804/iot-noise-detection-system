@@ -16,11 +16,15 @@ export default {
       type: String,
       required: true,
     },
+    sites: {
+      type: Object,
+      required: true,
+    },
     invitationId: String,
   },
 
   setup: function (props) {
-    const { getIdToken } = useUserStore();
+    const { getIdToken, getDisplayName } = useUserStore();
     const router = useRouter();
 
     const loading = ref(true);
@@ -67,6 +71,31 @@ export default {
       {
         field: "id",
         visible: false,
+      },
+      {
+        align: "center",
+        visible: !!navigator.share,
+        formatter: (index, { removing }) =>
+          `<button type="button" id="table-share-invitation" title="Share invitation"
+            class="btn text-primary p-0 m-0 shadow-none"${
+              removing ? " disabled" : ""
+            }>
+            <i class="fas fa-share fa-xl"></i>
+          </button>`,
+        events: {
+          "click #table-share-invitation": (event, field, { id }) =>
+            navigator
+              .share({
+                title: "You have been invited to join a site",
+                text: `Hello,
+              ${getDisplayName} has invited you to join the site "${
+                  props.sites[props.siteId].displayName
+                }"
+              If you wish to join the site you can do so by following the link.`,
+                url: `${location.origin}/sites/invitation/${id}`,
+              })
+              .catch(console.error),
+        },
       },
       {
         field: "displayName",
