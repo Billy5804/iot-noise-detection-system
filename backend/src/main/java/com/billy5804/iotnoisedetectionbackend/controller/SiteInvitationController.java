@@ -54,7 +54,7 @@ public class SiteInvitationController {
 		}
 
 		Integer invitationUses = siteInvitation.getAvailableUses();
-		if (siteInvitation.getExpiresAt().after(new Date()) || (invitationUses != null && invitationUses <= 0)) {
+		if (siteInvitation.getExpiresAt().before(new Date()) || (invitationUses != null && invitationUses <= 0)) {
 			siteInvitationRepository.delete(siteInvitation);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

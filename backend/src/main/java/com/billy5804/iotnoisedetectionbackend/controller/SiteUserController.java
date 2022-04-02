@@ -106,7 +106,7 @@ public class SiteUserController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 
-		if (siteInvitation.getExpiresAt().after(new Date())) {
+		if (siteInvitation.getExpiresAt().before(new Date())) {
 			siteInvitationRepository.delete(siteInvitation);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
