@@ -40,7 +40,9 @@ const router = createRouter({
       name: "site-management",
       component: SiteManagementView,
       props: ({ params, name }) => ({
-        siteId: name === "site-create" ? "create" : params.siteId,
+        siteId: ["site-create", "site-invitation"].includes(name)
+          ? name.replace("site-", "")
+          : params.siteId,
       }),
       children: [
         {
@@ -140,6 +142,13 @@ const router = createRouter({
               props: true,
             },
           ],
+        },
+        {
+          path: "invitation/:invitationId?",
+          name: "site-invitation",
+          component: () =>
+            import("../views/SiteManagement/SiteInvitationView.vue"),
+          props: true,
         },
       ],
     },
