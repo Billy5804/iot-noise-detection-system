@@ -18,7 +18,7 @@ export default {
 
   props: {
     invitationId: {
-      type: Object,
+      type: String,
       required: true,
     },
     sites: {
