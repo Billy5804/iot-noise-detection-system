@@ -149,10 +149,17 @@ export default {
       v-model="showModal"
       staticBackdrop
     >
-      <template v-if="sites[siteId] || siteId === 'create'">
+      <template
+        v-if="sites[siteId] || ['create', 'invitation'].includes(siteId)"
+      >
         <MDBModalHeader>
           <MDBModalTitle id="siteModalTitle">
-            {{ siteId === "create" ? "New Site" : sites[siteId]?.displayName }}
+            {{
+              sites[siteId]
+                ? sites[siteId].displayName
+                : (siteId === "create" && "New Site") ||
+                  (siteId === "invitation" && "Join Site")
+            }}
           </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
