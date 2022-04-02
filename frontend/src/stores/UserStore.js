@@ -17,7 +17,7 @@ import {
   updatePassword,
   updateProfile,
 } from "firebase/auth";
-import { info } from "toastr";
+import { info as toastrInfo } from "toastr";
 
 export const useUserStore = defineStore("UserStore", {
   state: () => ({}),
@@ -58,7 +58,7 @@ export const useUserStore = defineStore("UserStore", {
         emailAddress,
         password
       );
-      info("Welcome back!");
+      toastrInfo("Welcome back!");
     },
     resetPassword: async function (emailAddress) {
       return await sendPasswordResetEmail(firebaseAuthentication, emailAddress);
@@ -71,7 +71,7 @@ export const useUserStore = defineStore("UserStore", {
       );
       await updateProfile(user, { displayName });
       await sendEmailVerification(user);
-      info(`Welcome ${displayName}!`);
+      toastrInfo(`Welcome ${displayName}!`);
     },
     sendEmailVerification: async () =>
       await sendEmailVerification(authUser.value),
