@@ -43,10 +43,17 @@ export default {
           headers: { authorization: `Bearer ${await getIdToken()}` },
           params: { id: props.invitationId },
         })
-        .catch((error) => (loadingError.value = error.message || error));
+        .catch((error) => {
+          loadingError.value =
+            (error?.response?.status === 403 &&
+              "You are already a part of this site.") ||
+            ((error?.response?.status === 404 || !props.invitationId) &&
+              "Sorry, that link is expired, it has already been used or it was invalid.") ||
+            error.message ||
+            error;
+        });
 
-      console.log(siteInvitationsResponse.data);
-      siteInvitation.value = siteInvitationsResponse.data;
+      siteInvitation.value = siteInvitationsResponse?.data;
 
       loading.value = false;
     });
