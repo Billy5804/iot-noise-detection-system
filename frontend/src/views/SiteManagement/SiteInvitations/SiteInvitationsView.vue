@@ -132,9 +132,12 @@ export default {
       paginationParts: ["pageSize", "pageList"],
       pageList: [10, 25, 50, 100, 200, "All"],
       pageSize: 5,
+      icons: {
+        detailOpen: "fa-share fa-lg",
+        detailClose: "fa-minus fa-lg",
+      },
       detailView: true,
-      detailViewByClick: true,
-      detailViewIcon: false,
+      detailViewIcon: !navigator.share,
       detailFormatter: (index, { id }) => {
         const link = `${location.origin}/sites/invitation/${id}`;
         return `<b>Sharable link: </b><a href="${link}">${link}</a>`;
