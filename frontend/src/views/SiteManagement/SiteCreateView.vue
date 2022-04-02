@@ -44,7 +44,7 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "https://noise.alexroyle.com/api/v1/sites",
+          "http://localhost:443/api/v1/sites",
           { displayName: displayName.value },
           {
             timeout: 5000,

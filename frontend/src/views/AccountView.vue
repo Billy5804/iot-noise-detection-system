@@ -1,7 +1,7 @@
 <script setup>
 import { computed, reactive } from "vue";
 import { useUserStore } from "@/stores/UserStore";
-import toastr from "toastr";
+import { success as toastrSuccess } from "toastr";
 import {
   MDBRow,
   MDBCol,
@@ -43,7 +43,7 @@ const currentModalKey = computed(() =>
 );
 
 function updated() {
-  toastr.success(
+  toastrSuccess(
     `Successfully updated your ${updateModals[currentModalKey.value].title}`
   );
   showModal.value = false;

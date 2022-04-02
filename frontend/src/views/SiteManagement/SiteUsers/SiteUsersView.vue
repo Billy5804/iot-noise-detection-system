@@ -33,7 +33,7 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteUsersAPIPath = "https://noise.alexroyle.com/api/v1/site-users";
+    const siteUsersAPIPath = "http://localhost:443/api/v1/site-users";
     const siteUsers = ref([]);
 
     const siteHasUnauthorisedUsers = computed(() =>
@@ -111,7 +111,7 @@ export default {
     ];
 
     const tableOptions = {
-      uniqueId: "userId",
+      uniqueId: "id",
       pagination: true,
       search: true,
       toggle: "table",

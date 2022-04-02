@@ -8,7 +8,7 @@ public interface SiteInvitationExcludeSiteProjection extends CommonAttributesPro
 	
 	public String getDisplayName();
 	
-	public int getAvailableUses();
+	public Integer getAvailableUses();
 
 	public Date getExpiresAt();
 }

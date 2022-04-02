@@ -62,7 +62,7 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "https://noise.alexroyle.com/api/v1/site-users",
+          "http://localhost:443/api/v1/site-users",
           {
             siteId: props.siteId,
             userId: props.userId,

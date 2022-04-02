@@ -1,5 +1,6 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -51,12 +52,18 @@ public class SiteInvitationController {
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
+
+		Integer invitationUses = siteInvitation.getAvailableUses();
+		if (siteInvitation.getExpiresAt().before(new Date()) || (invitationUses != null && invitationUses <= 0)) {
+			siteInvitationRepository.delete(siteInvitation);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+
 		return ResponseEntity.ok(siteInvitation);
 	}
 
 	@GetMapping(params = "siteId")
-	public ResponseEntity<Iterable<SiteInvitationExcludeSiteProjection>> getSiteInvitations(
-			@RequestParam UUID siteId) {
+	public ResponseEntity<Iterable<SiteInvitationExcludeSiteProjection>> getSiteInvitations(@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository.findById(new SiteUserPK(siteId, authUser.getName()))

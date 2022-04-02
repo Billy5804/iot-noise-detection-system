@@ -40,7 +40,9 @@ const router = createRouter({
       name: "site-management",
       component: SiteManagementView,
       props: ({ params, name }) => ({
-        siteId: name === "site-create" ? "create" : params.siteId,
+        siteId: ["site-create", "site-invitation"].includes(name)
+          ? name.replace("site-", "")
+          : params.siteId,
       }),
       children: [
         {
@@ -102,6 +104,51 @@ const router = createRouter({
               props: true,
             },
           ],
+        },
+        {
+          path: ":siteId/invites",
+          name: "site-invitations",
+          component: () =>
+            import(
+              "../views/SiteManagement/SiteInvitations/SiteInvitationsView.vue"
+            ),
+          props: ({ params, name }) => ({
+            siteId: params.siteId,
+            invitationId:
+              name === "site-invitation-create"
+                ? "create"
+                : params.invitationId,
+          }),
+          meta: { allowedRoles: [SiteUserRoles.OWNER] },
+          children: [
+            {
+              path: "create",
+              name: "site-invitation-create",
+              component: () =>
+                import(
+                  "../views/SiteManagement/SiteInvitations/SiteInvitationCreateView.vue"
+                ),
+              props: ({ params }) => ({
+                siteId: params.siteId,
+              }),
+            },
+            {
+              path: ":invitationId",
+              name: "site-invitation-edit",
+              component: () =>
+                import(
+                  "../views/SiteManagement/SiteInvitations/SiteInvitationEditView.vue"
+                ),
+              props: true,
+            },
+          ],
+        },
+        {
+          path: "invitation/:invitationId?",
+          name: "site-invitation",
+          component: () =>
+            import("../views/SiteManagement/SiteInvitationView.vue"),
+          props: true,
         },
       ],
     },
