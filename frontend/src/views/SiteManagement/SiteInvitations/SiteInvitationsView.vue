@@ -6,6 +6,7 @@ import axios from "axios";
 import { MDBBtn } from "mdb-vue-ui-kit";
 import BootstrapTable from "@/components/BootstrapTable.vue";
 import LoadingView from "@/views/LoadingView.vue";
+import { success as toastrSuccess, error as toastrError } from "toastr";
 
 export default {
   components: { MDBBtn, BootstrapTable, LoadingView, RouterView },
@@ -140,7 +141,16 @@ export default {
       detailViewIcon: !navigator.share,
       detailFormatter: (index, { id }) => {
         const link = `${location.origin}/sites/invitation/${id}`;
-        return `<b>Sharable link: </b><a href="${link}">${link}</a>`;
+        return `<div class="d-flex">
+        <a onclick="event.preventDefault()" class="float-start" href="${link}">${link}</a>
+        <button class="btn btn-outline-primary p-3 float-end" title="Copy link" onclick="
+          function getTableComponent(node) {
+            return node.classList.contains('bootstrap-table')
+              ? node.parentNode
+              : getTableComponent(node.parentNode);
+          }
+          getTableComponent(this).__vueParentComponent.ctx.$emit('copyLink', '${link}');
+        "><i class="fa-solid fa-copy fa-xl"></i></button></div>`;
       },
     };
 
@@ -163,12 +173,20 @@ export default {
         });
     }
 
+    function copyLink(link) {
+      navigator.clipboard
+        .writeText(link)
+        .then(() => toastrSuccess("Invitation link copied"))
+        .catch(() => toastrError("Unable to copy invitation link"));
+    }
+
     return {
       loading,
       loadingError,
       tableColumns,
       tableOptions,
       siteInvitations,
+      copyLink,
     };
   },
 };
@@ -196,6 +214,7 @@ export default {
         :columns="tableColumns"
         :data="siteInvitations"
         :options="tableOptions"
+        @copyLink="copyLink"
       />
       <MDBBtn
         color="success"
