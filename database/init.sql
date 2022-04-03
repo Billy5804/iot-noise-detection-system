@@ -38,7 +38,8 @@ CREATE TABLE `site_invitation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `device` (
-  `id` binary(16) NOT NULL,
+  `id` binary(4) NOT NULL,
+  `type` tinyint NOT NULL,
   `rssi` tinyint NOT NULL,
   `last_beat_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -48,44 +49,39 @@ CREATE TABLE `device` (
   CONSTRAINT `device_chk_2` CHECK (`rssi` BETWEEN -100 AND 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `sensor` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(16) NOT NULL UNIQUE,
-  `unit` varchar(4) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `device_sensor` (
-  `device_id` binary(16) NOT NULL,
-  `sensor_id` int NOT NULL,
-  `latest_value` int NULL,
+  `id` tinyint NOT NULL,
+  `device_id` binary(4) NOT NULL,
+  `unit` tinyint NOT NULL,
+  `latest_value` float(5,2) NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`device_id`,`sensor_id`),
-  CONSTRAINT `device_sensor_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `device` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `device_sensor_ibfk_2` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `device_sensor_history` (
-  `device_id` binary(16) NOT NULL,
-  `sensor_id` int NOT NULL,
-  `value` int NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`device_id`,`sensor_id`,`timestamp`),
-  CONSTRAINT `device_sensor_history_ibfk_1` FOREIGN KEY (`device_id`,`sensor_id`) REFERENCES `device_sensor` (`device_id`,`sensor_id`) ON DELETE CASCADE
+  PRIMARY KEY (`id`,`device_id`),
+  CONSTRAINT `device_sensor_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `device` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `site_device` (
   `site_id` binary(16) NOT NULL,
-  `device_id` binary(16) NOT NULL,
+  `device_id` binary(4) NOT NULL,
   `display_name` varchar(32) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`site_id`,`device_id`),
   CONSTRAINT `site_device_ibfk_1` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE CASCADE,
   CONSTRAINT `site_device_ibfk_2` FOREIGN KEY (`device_id`) REFERENCES `device` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `site_device_sensor_history` (
+  `device_id` binary(4) NOT NULL,
+  `sensor_id` int NOT NULL,
+  `site_id` binary(16) NOT NULL,
+  `value` float(5,2) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`device_id`,`sensor_id`,`timestamp`),
+  CONSTRAINT `device_sensor_history_ibfk_1` FOREIGN KEY (`device_id`,`sensor_id`) REFERENCES `device_sensor` (`device_id`,`sensor_id`) ON DELETE CASCADE,
+  CONSTRAINT `device_sensor_history_ibfk_2` FOREIGN KEY (`device_id`,`site_id`) REFERENCES `site_device` (`device_id`,`site_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `location` (
