@@ -27,7 +27,7 @@ import com.billy5804.iotnoisedetectionbackend.repository.SiteRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin({ "http://localhost:3000", "http://localhost:5050" })
 @RequestMapping(value = "/api/v1/sites", produces = { MediaType.APPLICATION_JSON_VALUE })
 public class SiteController {
 
@@ -65,7 +65,7 @@ public class SiteController {
 		siteUserRepository.save(siteUser);
 		return site;
 	}
-	
+
 	@DeleteMapping
 	public ResponseEntity<String> deleteSite(@RequestParam UUID siteId) {
 		final AuthUser user = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
