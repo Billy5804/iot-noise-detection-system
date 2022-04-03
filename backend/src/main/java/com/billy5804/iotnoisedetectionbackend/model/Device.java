@@ -3,19 +3,14 @@ package com.billy5804.iotnoisedetectionbackend.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Device extends CommonAttributes implements Serializable {
@@ -37,13 +32,16 @@ public class Device extends CommonAttributes implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = false)
 	private Date lastBeatTime;
-	
+
 	@OneToMany
 	@JoinColumn(referencedColumnName = "device_id")
 	private Iterable<DeviceSensor> sensors;
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public Device() {
+	}
+
+	public Device(byte[] id) {
+		this.id = id;
 	}
 
 	public byte[] getId() {
@@ -77,7 +75,7 @@ public class Device extends CommonAttributes implements Serializable {
 	public void setLastBeatTime(Date lastBeatTime) {
 		this.lastBeatTime = lastBeatTime;
 	}
-	
+
 	public Iterable<DeviceSensor> getSensors() {
 		return sensors;
 	}
