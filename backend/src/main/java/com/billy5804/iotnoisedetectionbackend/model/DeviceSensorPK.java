@@ -30,11 +30,7 @@ public class DeviceSensorPK implements Serializable {
 	}
 
 	public DeviceSensorPK(int id, byte[] deviceId) {
-		final Device device = new Device();
-		device.setId(deviceId);
-
-		this.id = id;
-		this.device = device;
+		this(id, new Device(deviceId));
 	}
 
 	public int getId() {
