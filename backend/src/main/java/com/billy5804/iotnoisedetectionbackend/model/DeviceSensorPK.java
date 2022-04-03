@@ -15,7 +15,7 @@ public class DeviceSensorPK implements Serializable {
 	private static final long serialVersionUID = 541183890999181474L;
 
 	private int id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "device_id", referencedColumnName = "id")
 	private Device device;
@@ -32,7 +32,7 @@ public class DeviceSensorPK implements Serializable {
 	public DeviceSensorPK(int id, byte[] deviceId) {
 		final Device device = new Device();
 		device.setId(deviceId);
-		
+
 		this.id = id;
 		this.device = device;
 	}
@@ -53,5 +53,4 @@ public class DeviceSensorPK implements Serializable {
 		this.device = device;
 	}
 
-	
 }

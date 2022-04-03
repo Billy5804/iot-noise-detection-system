@@ -14,11 +14,11 @@ public class SiteDevicePK implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 5752365789031631613L;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "site_id", referencedColumnName = "id")
 	private Site site;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "device_id", referencedColumnName = "id")
 	private Device device;
@@ -36,7 +36,7 @@ public class SiteDevicePK implements Serializable {
 	public SiteDevicePK(Site site, byte[] deviceId) {
 		final Device device = new Device();
 		device.setId(deviceId);
-		
+
 		this.site = site;
 		this.device = device;
 	}
@@ -48,11 +48,11 @@ public class SiteDevicePK implements Serializable {
 		this.site = site;
 		this.device = device;
 	}
-	
+
 	public SiteDevicePK(UUID siteId, byte[] deviceId) {
 		final Site site = new Site();
 		site.setId(siteId);
-		
+
 		final Device device = new Device();
 		device.setId(deviceId);
 
@@ -74,5 +74,5 @@ public class SiteDevicePK implements Serializable {
 
 	public void setDevice(Device device) {
 		this.device = device;
-	}	
+	}
 }
