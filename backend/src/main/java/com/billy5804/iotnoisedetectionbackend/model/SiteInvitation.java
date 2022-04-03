@@ -36,14 +36,14 @@ public class SiteInvitation extends CommonAttributes implements Serializable {
 	@JoinColumn(name = "site_id", columnDefinition = "BINARY(16)", referencedColumnName = "id", updatable = false, nullable = false)
 	private Site site;
 
-	@Column(columnDefinition = "VARCHAR(64)", nullable = false)
+	@Column(columnDefinition = "VARCHAR(32)", updatable = true, nullable = false)
 	private String displayName;
 
 	@Column(columnDefinition = "INT", updatable = true, nullable = true)
 	private Integer availableUses;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(updatable = true, nullable = false)
+	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = false)
 	private Date expiresAt;
 
 	public UUID getId() {

@@ -11,11 +11,21 @@ CREATE TABLE `site` (
   CONSTRAINT `site_chk_1` CHECK (IS_UUID(BIN_TO_UUID(`id`)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `site_user` (
+  `site_id` binary(16) NOT NULL,
+  `user_id` binary(21) NOT NULL,
+  `role` tinyint(1) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`site_id`,`user_id`),
+  CONSTRAINT `site_user_ibfk_1` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `site_user_chk_1` CHECK ((`role` BETWEEN 0 AND 3))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `site_invitation` (
   `id` binary(16) NOT NULL,
   `site_id` binary(16) NOT NULL,
-  `display_name` varchar(64) NOT NULL,
+  `display_name` varchar(32) NOT NULL,
   `available_uses` int NULL,
   `expires_at` timestamp NOT NULL,-- DEFAULT TIMESTAMPADD(WEEK, 1, CURRENT_TIMESTAMP),
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -65,17 +75,6 @@ CREATE TABLE `device_sensor_history` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`device_id`,`sensor_id`,`timestamp`),
   CONSTRAINT `device_sensor_history_ibfk_1` FOREIGN KEY (`device_id`,`sensor_id`) REFERENCES `device_sensor` (`device_id`,`sensor_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `site_user` (
-  `site_id` binary(16) NOT NULL,
-  `user_id` binary(21) NOT NULL,
-  `role` tinyint(1) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`site_id`,`user_id`),
-  CONSTRAINT `site_user_ibfk_1` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `site_user_chk_1` CHECK ((`role` BETWEEN 0 AND 3))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `site_device` (
