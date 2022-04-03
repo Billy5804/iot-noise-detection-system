@@ -31,6 +31,7 @@ export default {
     const $table = ref(null);
 
     function setTable(tableRef) {
+      tableRef.parentNode.vueEmit = context.emit;
       $table.value = $(tableRef);
     }
 
