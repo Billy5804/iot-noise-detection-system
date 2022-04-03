@@ -25,6 +25,12 @@ public class DeviceSensor extends CommonAttributes implements Serializable {
 
 	@Column(columnDefinition = "FLOAT(5,2)", updatable = true, nullable = true)
 	private float latestValue;
+	
+	public DeviceSensor() {}
+	
+	public DeviceSensor(int id, byte[] deviceId) {
+		this.deviceSensorPK = new DeviceSensorPK(id, deviceId);
+	}
 
 	@JsonIgnore
 	public DeviceSensorPK getDeviceSensorPK() {
