@@ -14,10 +14,11 @@ import javax.persistence.TemporalType;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Device extends CommonAttributes implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2674357561866711276L;
+	private static final long serialVersionUID = 6551880686809014813L;
 
 	@Id
 	@Column(columnDefinition = "BINARY(4)", updatable = false, nullable = false)

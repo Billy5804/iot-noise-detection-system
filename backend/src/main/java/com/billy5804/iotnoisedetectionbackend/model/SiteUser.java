@@ -13,10 +13,11 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class SiteUser extends CommonAttributes implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2308390079317933921L;
+	private static final long serialVersionUID = 2557120421160960213L;
 
 	@Id
 	private SiteUserPK siteUserPK = new SiteUserPK();
