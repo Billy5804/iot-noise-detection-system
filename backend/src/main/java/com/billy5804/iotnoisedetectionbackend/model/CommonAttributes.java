@@ -14,14 +14,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class CommonAttributes {
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(updatable = false, nullable = false)
+	@Column(columnDefinition = "TIMESTAMP", updatable = false, nullable = false)
 	private Date createdAt;
 
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = false)
 	private Date updatedAt;
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}

@@ -178,7 +178,7 @@ export default {
               ? node.parentNode
               : getTableComponent(node.parentNode);
           }
-          getTableComponent(this).__vueParentComponent.ctx.$emit('copyLink', '${link}');
+          getTableComponent(this).vueEmit('copyLink', '${link}');
         "><i class="fa-solid fa-copy fa-xl"></i></button></div>`;
       },
     };

@@ -31,16 +31,11 @@ public class SiteUserPK implements Serializable {
 	}
 
 	public SiteUserPK(Site site, String userId) {
-		this.site = site;
-		this.userId = Base64.getDecoder().decode(userId);
+		this(site, Base64.getDecoder().decode(userId));
 	}
 
 	public SiteUserPK(UUID siteId, String userId) {
-		final Site site = new Site();
-		site.setId(siteId);
-
-		this.site = site;
-		this.userId = Base64.getDecoder().decode(userId);
+		this(new Site(siteId), userId);
 	}
 
 	public Site getSite() {

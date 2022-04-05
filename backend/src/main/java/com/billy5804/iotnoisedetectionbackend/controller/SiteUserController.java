@@ -32,7 +32,7 @@ import com.billy5804.iotnoisedetectionbackend.repository.SiteInvitationRepositor
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin({ "http://localhost:3000", "http://localhost:5050" })
 @RequestMapping(value = "/api/v1/site-users", produces = { MediaType.APPLICATION_JSON_VALUE })
 public class SiteUserController {
 
