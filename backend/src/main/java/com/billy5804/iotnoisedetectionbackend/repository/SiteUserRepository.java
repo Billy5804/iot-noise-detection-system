@@ -40,4 +40,11 @@ public interface SiteUserRepository extends CrudRepository<SiteUser, SiteUserPK>
 		deleteBySiteUserPKSiteIdAndRole(siteId, SiteUserRole.UNAUTHORISED);
 		return usersToBeDeletedIds;
 	}
+	
+
+	boolean existsBySiteUserPKAndRoleNot(SiteUserPK siteUserPK, SiteUserRole role);
+
+	default boolean existsByIdAndAuthorised(SiteUserPK siteUserPK) {
+		return existsBySiteUserPKAndRoleNot(siteUserPK, SiteUserRole.UNAUTHORISED);
+	}
 }
