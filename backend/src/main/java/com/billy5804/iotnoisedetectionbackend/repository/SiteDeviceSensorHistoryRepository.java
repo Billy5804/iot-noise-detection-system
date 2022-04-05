@@ -14,4 +14,6 @@ public interface SiteDeviceSensorHistoryRepository
 		extends Repository<SiteDeviceSensorHistory, SiteDeviceSensorHistoryPK> {
 
 	Iterable<SiteDeviceSensorHistroyExculdeSiteDeviceAndSiteProjection> findAll(Example<SiteDeviceSensorHistory> siteDeviceSensorHistory);
+
+	void save(SiteDeviceSensorHistory siteDeviceSensorHistory);
 }
