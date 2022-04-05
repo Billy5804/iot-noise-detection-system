@@ -62,7 +62,7 @@ CREATE TABLE `device_sensor` (
 
 CREATE TABLE `site_device` (
   `site_id` binary(16) NOT NULL,
-  `device_id` binary(4) NOT NULL,
+  `device_id` binary(4) NOT NULL UNIQUE,
   `display_name` varchar(32) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
