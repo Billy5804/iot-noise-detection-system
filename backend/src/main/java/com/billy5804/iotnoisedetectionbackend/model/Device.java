@@ -78,7 +78,7 @@ public class Device extends CommonAttributes implements Serializable {
 		this.lastBeatTime = lastBeatTime;
 	}
 
-	public Iterable<DeviceSensor> getSensors() {
+	public Collection<DeviceSensor> getSensors() {
 		return sensors;
 	}
 
