@@ -1,6 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 
@@ -35,8 +36,8 @@ public class Device extends CommonAttributes implements Serializable {
 	private Date lastBeatTime;
 
 	@OneToMany
-	@JoinColumn(referencedColumnName = "device_id")
-	private Iterable<DeviceSensor> sensors;
+	@JoinColumn(referencedColumnName = "id")
+	private Collection<DeviceSensor> sensors;
 
 	public Device() {
 	}
