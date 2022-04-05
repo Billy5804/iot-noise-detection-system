@@ -8,13 +8,14 @@ import com.billy5804.iotnoisedetectionbackend.model.Device;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDevice;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDevicePK;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceExpandDeviceExcludeSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlySiteProjection;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called siteRepository
 // CRUD refers Create, Read, Update, Delete
 
 public interface SiteDeviceRepository extends CrudRepository<SiteDevice, SiteDevicePK> {
 
-	SiteDevice findBySiteDevicePKDevice(Device device);
+	SiteDeviceOnlySiteProjection findBySiteDevicePKDevice(Device device);
 
 	Iterable<SiteDeviceExpandDeviceExcludeSiteProjection> findBySiteDevicePKSiteId(UUID siteId);
 
