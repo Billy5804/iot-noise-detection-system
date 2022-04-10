@@ -28,6 +28,8 @@ unsigned int sample;
 
 #define SENSOR_PIN A0
 
+const String apName = "NodeMCU: " + String(ESP.getChipId(), HEX);
+
 const String macAddress = WiFi.macAddress();
 uint64_t deviceId;
 
@@ -52,7 +54,7 @@ void initDeviceId() {
     }
   }
 
-  deviceId = strtoull(deviceIdHex, &end, 16);
+  deviceId = strtoull(deviceIdHex, &end, HEX);
 }
 
 void initLCD() {
@@ -76,7 +78,7 @@ void setup() {
   initLCD();
   initDeviceId();
   GUI.begin();
-  WiFiManager.begin("NodeMCU");
+  WiFiManager.begin(apName.c_str());
   timeSync.begin();
   timeClient.begin();
 }
