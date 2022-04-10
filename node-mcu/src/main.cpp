@@ -55,6 +55,14 @@ void initDeviceId() {
   deviceId = strtoull(deviceIdHex, &end, 16);
 }
 
+void initLCD() {
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Starting...");
+}
+
 // Function that gets current epoch time
 unsigned long getTime() {
   timeClient.update();
@@ -65,11 +73,7 @@ void setup() {
   pinMode(SENSOR_PIN, INPUT);  // Set the signal pin as input
   Serial.begin(115200);
   Serial.println("");
-  lcd.init();
-  lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("Starting...");
-
+  initLCD();
   initDeviceId();
   Serial.println(deviceId);
   GUI.begin();
