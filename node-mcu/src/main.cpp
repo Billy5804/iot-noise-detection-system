@@ -13,7 +13,8 @@ struct task {
   unsigned long previous;
 };
 
-task taskA = {.rate = 5000, .previous = 0};
+// Define main task timeout to not delay loop
+task mainTask = {.rate = 500, .previous = 0};
 
 // Define lcd
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
@@ -105,63 +106,65 @@ void loop() {
   // WiFiManager.loop();
   // configManager.loop();
 
-  // task A
-  if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
-    taskA.previous = millis();
-
-    // do task
-    Serial.println(ESP.getFreeHeap());
-    Serial.println(timeSync.waitForSyncResult());
-
-    unsigned long startMillis = millis();  // Start of sample window
-    float peakToPeak = 0;                  // peak-to-peak level
-
-    unsigned int signalMax = 0;     // minimum value
-    unsigned int signalMin = 1024;  // maximum value
-
-    // collect data for 50 mS
-    while (millis() - startMillis < sampleWindow) {
-      sample = analogRead(SENSOR_PIN);  // get reading from microphone
-      if (sample >= 1024) {
-        continue;  // toss out spurious readings
-      }
-      if (sample > signalMax) {
-        signalMax = sample;  // save just the max levels
-      } else if (sample < signalMin) {
-        signalMin = sample;  // save just the min levels
-      }
-    }
-
-    peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
-    int db = map(peakToPeak, 20, 900, 49.5, 90);  // calibrate for deciBels
-
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Loudness: ");
-    lcd.print(db);
-    lcd.print("dB");
-
-    if (db <= 60) {
-      lcd.setCursor(0, 1);
-      lcd.print("Level: Quite");
-    } else if (db > 60 && db < 85) {
-      lcd.setCursor(0, 1);
-      lcd.print("Level: Moderate");
-    } else if (db >= 85) {
-      lcd.setCursor(0, 1);
-      lcd.print("Level: High");
-    }
-
-    fetch.POST("http://192.168.0.35:8083", "" + db);
-
-    while (fetch.busy()) {
-      if (fetch.available()) {
-        Serial.write(fetch.read());
-      }
-    }
-    Serial.write(fetch.readString().c_str());
-
-    fetch.clean();
+  if (!(mainTask.previous == 0 ||
+        (millis() - mainTask.previous > mainTask.rate))) {
+    return;
   }
-  // lcd.clear();
+
+  mainTask.previous = millis();
+
+  // do task
+  Serial.println(ESP.getFreeHeap());
+  Serial.println(getTime());
+
+  unsigned long startMillis = millis();  // Start of sample window
+  float peakToPeak = 0;                  // peak-to-peak level
+
+  unsigned int signalMax = 0;     // minimum value
+  unsigned int signalMin = 1024;  // maximum value
+
+  // collect data for 50 mS
+  while (millis() - startMillis < sampleWindow) {
+    sample = analogRead(SENSOR_PIN);  // get reading from microphone
+    if (sample >= 1024) {
+      continue;  // toss out spurious readings
+    }
+    if (sample > signalMax) {
+      signalMax = sample;  // save just the max levels
+    } else if (sample < signalMin) {
+      signalMin = sample;  // save just the min levels
+    }
+  }
+
+  peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
+  int db = map(peakToPeak, 20, 900, 49.5, 90);  // calibrate for deciBels
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Loudness: ");
+  lcd.print(db);
+  lcd.print("dB");
+
+  if (db <= 60) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: Quite");
+  } else if (db > 60 && db < 85) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: Moderate");
+  } else if (db >= 85) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: High");
+  }
+
+  fetch.POST("http://192.168.0.35:8083", String(db));
+
+  Serial.write(fetch.readString().c_str());
+
+  while (fetch.busy()) {
+    if (fetch.available()) {
+      Serial.write(fetch.read());
+    }
+  }
+
+  fetch.clean();
 }
