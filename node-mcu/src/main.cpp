@@ -75,14 +75,9 @@ void setup() {
   Serial.println("");
   initLCD();
   initDeviceId();
-  Serial.println(deviceId);
   GUI.begin();
   WiFiManager.begin("NodeMCU");
   timeSync.begin();
-  Serial.println(timeSync.waitForSyncResult());
-  // fetch.begin("http://192.168.0.35:8083");
-  // delay(1000);
-  lcd.clear();
   timeClient.begin();
 }
 
@@ -90,25 +85,21 @@ void loop() {
   WiFiManager.loop();
 
   if (WiFiManager.isCaptivePortal()) {
+    if (wasCaptivePortal) {
+      return;
+    }
     lcd.clear();
     wasCaptivePortal = true;
-    lcd.setCursor(0, 0);
-    lcd.print("ConfigureNetwork");
+    logger("Access Point:");
+    logger(apName.c_str(), 1);
     return;
   } else if (wasCaptivePortal) {
     lcd.clear();
     wasCaptivePortal = false;
-    lcd.setCursor(0, 0);
-    lcd.print("WiFi Connected!");
-    delay(1000);
+    logger("WiFi Connected!");
+    mainTask.previous = millis() - mainTask.rate;
     return;
   }
-
-  // Serial.println(deviceId);
-
-  // // software interrupts
-  // WiFiManager.loop();
-  // configManager.loop();
 
   if (!(mainTask.previous == 0 ||
         (millis() - mainTask.previous > mainTask.rate))) {
