@@ -1,5 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <LiquidCrystal_I2C.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #include "WiFiManager.h"
 #include "fetch.h"
@@ -15,6 +17,10 @@ task taskA = {.rate = 5000, .previous = 0};
 
 // Define lcd
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
+
+// Define NTP Client to get time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 const int sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
@@ -33,6 +39,7 @@ void logger(const char *logMsg, const int lcdLine = 0) {
   Serial.print(logMsg);
 }
 
+// Get deviceId from the MAC address
 void initDeviceId() {
   char deviceIdHex[12], *end;
   uint8_t index = 0;
@@ -48,7 +55,10 @@ void initDeviceId() {
 }
 
 // Function that gets current epoch time
-// unsigned long getTime() {}
+unsigned long getTime() {
+  timeClient.update();
+  return timeClient.getEpochTime();
+}
 
 void setup() {
   pinMode(SENSOR_PIN, INPUT);  // Set the signal pin as input
@@ -68,6 +78,7 @@ void setup() {
   // fetch.begin("http://192.168.0.35:8083");
   // delay(1000);
   lcd.clear();
+  timeClient.begin();
 }
 
 void loop() {
