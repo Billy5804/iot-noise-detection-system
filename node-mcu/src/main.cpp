@@ -1,116 +1,156 @@
 #include <ESP8266WiFi.h>
+#include <LiquidCrystal_I2C.h>
 
-#include <LiquidCrystal_I2C.h> // Library for LCD
+#include "WiFiManager.h"
+#include "fetch.h"
+#include "timeSync.h"
+#include "webServer.h"
+
+struct task {
+  unsigned long rate;
+  unsigned long previous;
+};
+
+task taskA = {.rate = 5000, .previous = 0};
+
+// Define lcd
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
-const int sampleWindow = 50; // Sample window width in mS (50 mS = 20Hz)
+const int sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
 
 #define SENSOR_PIN A0
 
-const char *ssid = "";
-const char *pass = "";
+const String macAddress = WiFi.macAddress();
+uint64_t deviceId;
 
-WiFiClient client;
+bool wasCaptivePortal = false;
 
+// Function to log to both lcd and serial
 void logger(const char *logMsg, const int lcdLine = 0) {
   lcd.setCursor(0, lcdLine);
   lcd.print(logMsg);
   Serial.print(logMsg);
 }
 
-void initWiFi()
-{
-  WiFi.begin(ssid, pass);
-  logger("Connecting to: ");
-  logger(ssid, 1);
+void initDeviceId() {
+  char deviceIdHex[12], *end;
+  uint8_t index = 0;
 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.print('.');
-    delay(1000);
-  }
-  lcd.clear();
-  Serial.println("");
-  logger("Connected, IP: ");
-  logger(WiFi.localIP().toString().c_str(), 1);
-
-  // The ESP8266 tries to reconnect automatically when the connection is lost
-  WiFi.setAutoReconnect(true);
-  WiFi.persistent(true);
-}
-
-void setup()
-{
-  pinMode(SENSOR_PIN, INPUT); // Set the signal pin as input
-  Serial.begin(115200);
-  lcd.init();
-  lcd.backlight();
-  initWiFi();
-  Serial.print("\nRSSI: ");
-  Serial.println(WiFi.RSSI());
-  delay(1000);
-  lcd.clear();
-}
-
-void loop()
-{
-  unsigned long startMillis = millis(); // Start of sample window
-  float peakToPeak = 0;                 // peak-to-peak level
-
-  unsigned int signalMax = 0;    // minimum value
-  unsigned int signalMin = 1024; // maximum value
-
-  // collect data for 50 mS
-  while (millis() - startMillis < sampleWindow)
-  {
-    sample = analogRead(SENSOR_PIN); // get reading from microphone
-    if (sample < 1024)               // toss out spurious readings
-    {
-      if (sample > signalMax)
-      {
-        signalMax = sample; // save just the max levels
-      }
-      else if (sample < signalMin)
-      {
-        signalMin = sample; // save just the min levels
-      }
+  for (const char &c : macAddress) {
+    if (c != ':') {
+      deviceIdHex[index] = c;
+      index++;
     }
   }
 
-  peakToPeak = signalMax - signalMin;          // max - min = peak-peak amplitude
-  int db = map(peakToPeak, 20, 900, 49.5, 90); // calibrate for deciBels
+  deviceId = strtoull(deviceIdHex, &end, 16);
+}
 
+// Function that gets current epoch time
+// unsigned long getTime() {}
+
+void setup() {
+  pinMode(SENSOR_PIN, INPUT);  // Set the signal pin as input
+  Serial.begin(115200);
+  Serial.println("");
+  lcd.init();
+  lcd.backlight();
   lcd.setCursor(0, 0);
-  lcd.print("Loudness: ");
-  lcd.print(db);
-  lcd.print("dB");
+  lcd.print("Starting...");
 
-  if (db <= 60)
-  {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: Quite");
-  }
-  else if (db > 60 && db < 85)
-  {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: Moderate");
-  }
-  else if (db >= 85)
-  {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: High");
-  }
-
-  if (client.connect("192.168.0.35", 8083)) // Test echo server
-  {
-    client.print("POST / HTTP/1.1\r\n");
-    client.print("Host: 192.168.0.35\r\n");
-    client.print("Connection: close\r\n");
-    client.print("\r\n");
-  }
-  client.stop();
-
-  delay(1000);
+  initDeviceId();
+  Serial.println(deviceId);
+  GUI.begin();
+  WiFiManager.begin("NodeMCU");
+  timeSync.begin();
+  Serial.println(timeSync.waitForSyncResult());
+  // fetch.begin("http://192.168.0.35:8083");
+  // delay(1000);
   lcd.clear();
+}
+
+void loop() {
+  WiFiManager.loop();
+
+  if (WiFiManager.isCaptivePortal()) {
+    lcd.clear();
+    wasCaptivePortal = true;
+    lcd.setCursor(0, 0);
+    lcd.print("ConfigureNetwork");
+    return;
+  } else if (wasCaptivePortal) {
+    lcd.clear();
+    wasCaptivePortal = false;
+    lcd.setCursor(0, 0);
+    lcd.print("WiFi Connected!");
+    delay(1000);
+    return;
+  }
+
+  // Serial.println(deviceId);
+
+  // // software interrupts
+  // WiFiManager.loop();
+  // configManager.loop();
+
+  // task A
+  if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
+    taskA.previous = millis();
+
+    // do task
+    Serial.println(ESP.getFreeHeap());
+    Serial.println(timeSync.waitForSyncResult());
+
+    unsigned long startMillis = millis();  // Start of sample window
+    float peakToPeak = 0;                  // peak-to-peak level
+
+    unsigned int signalMax = 0;     // minimum value
+    unsigned int signalMin = 1024;  // maximum value
+
+    // collect data for 50 mS
+    while (millis() - startMillis < sampleWindow) {
+      sample = analogRead(SENSOR_PIN);  // get reading from microphone
+      if (sample >= 1024) {
+        continue;  // toss out spurious readings
+      }
+      if (sample > signalMax) {
+        signalMax = sample;  // save just the max levels
+      } else if (sample < signalMin) {
+        signalMin = sample;  // save just the min levels
+      }
+    }
+
+    peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
+    int db = map(peakToPeak, 20, 900, 49.5, 90);  // calibrate for deciBels
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Loudness: ");
+    lcd.print(db);
+    lcd.print("dB");
+
+    if (db <= 60) {
+      lcd.setCursor(0, 1);
+      lcd.print("Level: Quite");
+    } else if (db > 60 && db < 85) {
+      lcd.setCursor(0, 1);
+      lcd.print("Level: Moderate");
+    } else if (db >= 85) {
+      lcd.setCursor(0, 1);
+      lcd.print("Level: High");
+    }
+
+    fetch.POST("http://192.168.0.35:8083", "" + db);
+
+    while (fetch.busy()) {
+      if (fetch.available()) {
+        Serial.write(fetch.read());
+      }
+    }
+    Serial.write(fetch.readString().c_str());
+
+    fetch.clean();
+  }
+  // lcd.clear();
 }
