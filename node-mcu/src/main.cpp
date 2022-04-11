@@ -8,6 +8,8 @@
 #include "timeSync.h"
 #include "webServer.h"
 
+#define SENSOR_PIN A0
+
 struct task {
   unsigned long rate;
   unsigned long previous;
@@ -26,9 +28,7 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org");
 const int sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
 
-#define SENSOR_PIN A0
-
-const String apName = "NodeMCU: " + String(ESP.getChipId(), HEX);
+const String apName = "NodeMCU-" + String(ESP.getChipId(), HEX);
 
 const String macAddress = WiFi.macAddress();
 uint64_t deviceId;
@@ -39,7 +39,7 @@ bool wasCaptivePortal = false;
 void logger(const char *logMsg, const int lcdLine = 0) {
   lcd.setCursor(0, lcdLine);
   lcd.print(logMsg);
-  Serial.print(logMsg);
+  Serial.println(logMsg);
 }
 
 // Get deviceId from the MAC address
