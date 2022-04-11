@@ -1,3 +1,4 @@
+#include <Crypto.h>
 #include <ESP8266WiFi.h>
 #include <LiquidCrystal_I2C.h>
 #include <NTPClient.h>
@@ -153,7 +154,26 @@ void loop() {
     lcd.print("Level: High");
   }
 
-  fetch.POST("http://192.168.0.35:8083", String(db));
+  String exampleData =
+      "{\"id\":123456789101112, \"lastBeatTime\": 1333330000, \"rssi\", -40, "
+      "\"sensors\": [{\"id\": 0, \"unit\": 0, \"latestValue\": 49.3}]}";
+  String hash = experimental::crypto::SHA256::hash(exampleData);
+  // uint8_t resultArray[experimental::crypto::SHA256::NATURAL_LENGTH]{ 0 };
+
+  // // Hash
+  // // experimental::crypto::SHA256::hash(exampleData.c_str(),
+  // exampleData.length(), resultArray);
+  // // Serial.println(String(F("\nThis is the SHA256 hash of our example data,
+  // in HEX format:\n")) + TypeCast::uint8ArrayToHexString(resultArray, sizeof
+  // resultArray));
+  Serial.println(
+      "This is the SHA256 hash of our example data, in HEX format, using "
+      "String output:\r\n" +
+      hash);
+
+  fetch.begin("http://192.168.0.35:8083");
+  fetch.addHeader("Authorization", hash);
+  fetch.POST(String(db));
 
   Serial.write(fetch.readString().c_str());
 
