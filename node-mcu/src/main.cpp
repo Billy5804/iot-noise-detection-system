@@ -51,7 +51,6 @@ LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
-unsigned int sample;
 DynamicJsonDocument deviceDoc(128 + (64 * totalSensors));
 JsonArray deviceSensors;
 
@@ -100,6 +99,14 @@ void setChangedDeviceSensors(bool setAll = false) {
   }
 }
 
+bool sensorsLoop() {
+  bool anyChanges = false;
+  for (uint8_t i = 0; i < totalSensors; i++) {
+    sensors[i].loop();
+    anyChanges = sensors[i].hasChanged ? true : anyChanges;
+  }
+  return anyChanges;
+}
 
 float getCurrentNoiseLevel() {
   unsigned long startMillis = millis();  // Start of sample window
