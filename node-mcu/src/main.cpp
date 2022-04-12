@@ -267,76 +267,18 @@ void loop() {
   mainTask.previous = millis();
 
   // do task
-  Serial.println(ESP.getFreeHeap());
-  Serial.println(getTime());
+  device.rssi = WiFi.RSSI();
+  const unsigned long lastBeatTime = getTime();
+  bool anyChanges = sensorsLoop();
 
-  unsigned long startMillis = millis();  // Start of sample window
-  float peakToPeak = 0;                  // peak-to-peak level
-
-  unsigned int signalMax = 0;     // minimum value
-  unsigned int signalMin = 1024;  // maximum value
-
-  // collect data for 50 mS
-  while (millis() - startMillis < sampleWindow) {
-    sample = analogRead(SENSOR_PIN);  // get reading from microphone
-    if (sample >= 1024) {
-      continue;  // toss out spurious readings
-    }
-    if (sample > signalMax) {
-      signalMax = sample;  // save just the max levels
-    } else if (sample < signalMin) {
-      signalMin = sample;  // save just the min levels
-    }
+  if (!anyChanges && (device.lastBeatTime + 900) > lastBeatTime) {
+    return;
   }
 
-  peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
-  int db = map(peakToPeak, 20, 900, 49.5, 90);  // calibrate for deciBels
+  device.lastBeatTime = lastBeatTime;
 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Loudness: ");
-  lcd.print(db);
-  lcd.print("dB");
+  initDeviceObject();
+  setChangedDeviceSensors();
 
-  if (db <= 60) {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: Quite");
-  } else if (db > 60 && db < 85) {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: Moderate");
-  } else if (db >= 85) {
-    lcd.setCursor(0, 1);
-    lcd.print("Level: High");
-  }
-
-  String exampleData =
-      "{\"id\":123456789101112, \"lastBeatTime\": 1333330000, \"rssi\", -40, "
-      "\"sensors\": [{\"id\": 0, \"unit\": 0, \"latestValue\": 49.3}]}";
-  String hash = experimental::crypto::SHA256::hash(exampleData);
-  // uint8_t resultArray[experimental::crypto::SHA256::NATURAL_LENGTH]{ 0 };
-
-  // // Hash
-  // // experimental::crypto::SHA256::hash(exampleData.c_str(),
-  // exampleData.length(), resultArray);
-  // // Serial.println(String(F("\nThis is the SHA256 hash of our example data,
-  // in HEX format:\n")) + TypeCast::uint8ArrayToHexString(resultArray, sizeof
-  // resultArray));
-  Serial.println(
-      "This is the SHA256 hash of our example data, in HEX format, using "
-      "String output:\r\n" +
-      hash);
-
-  fetch.begin("http://192.168.0.35:8083");
-  fetch.addHeader("Authorization", hash);
-  fetch.POST(String(db));
-
-  Serial.write(fetch.readString().c_str());
-
-  while (fetch.busy()) {
-    if (fetch.available()) {
-      Serial.write(fetch.read());
-    }
-  }
-
-  fetch.clean();
+  sendChangesToAPI();
 }
