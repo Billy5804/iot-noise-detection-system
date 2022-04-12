@@ -207,6 +207,38 @@ void setup() {
   timeClient.begin();
 }
 
+void sendChangesToAPI(bool create = false) {
+  String serializedDevice;
+  serializeJson(deviceDoc, serializedDevice);
+  String hash =
+      experimental::crypto::SHA256::hash(serializedDevice + "SuperSecretKey");
+
+  Serial.println(serializedDevice);
+
+  fetch.begin("http://192.168.0.35:8083");
+  fetch.addHeader("Authorization", hash);
+  fetch.addHeader("Content-Type", "application/json");
+  if (create) {
+    fetch.POST(serializedDevice);
+  } else {
+    fetch.PUT(serializedDevice);
+  }
+
+  while (fetch.busy()) {
+    if (fetch.available()) {
+      Serial.write(fetch.read());
+    }
+  }
+
+  fetch.clean();
+
+  if (false) {
+    initDeviceObject();
+    setChangedDeviceSensors(true);
+    sendChangesToAPI(true);
+  }
+}
+
 void loop() {
   WiFiManager.loop();
 
