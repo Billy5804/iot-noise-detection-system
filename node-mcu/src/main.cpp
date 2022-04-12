@@ -100,6 +100,51 @@ void setChangedDeviceSensors(bool setAll = false) {
   }
 }
 
+
+float getCurrentNoiseLevel() {
+  unsigned long startMillis = millis();  // Start of sample window
+  float peakToPeak = 0;                  // peak-to-peak level
+
+  uint16_t signalMax = 0;     // minimum value
+  uint16_t signalMin = 1024;  // maximum value
+  uint16_t sample;            // Sensor sample
+
+  // collect data for 50 mS
+  while (millis() - startMillis < sampleWindow) {
+    sample = analogRead(SENSOR_PIN);  // get reading from microphone
+    if (sample >= 1024) {
+      continue;  // toss out spurious readings
+    }
+    if (sample > signalMax) {
+      signalMax = sample;  // save just the max levels
+    } else if (sample < signalMin) {
+      signalMin = sample;  // save just the min levels
+    }
+  }
+
+  peakToPeak = signalMax - signalMin;         // max - min = peak-peak amplitude
+  return map(peakToPeak, 20, 900, 49.5, 90);  // calibrate for decibels
+}
+
+void displayNoiseLevel(float decibels) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Loudness: ");
+  lcd.print(decibels);
+  lcd.print("dB");
+
+  if (decibels <= 60) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: Quite");
+  } else if (decibels > 60 && decibels < 85) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: Moderate");
+  } else if (decibels >= 85) {
+    lcd.setCursor(0, 1);
+    lcd.print("Level: High");
+  }
+}
+
 void noiseSensorLoop() {
   float decibels = getCurrentNoiseLevel();
   (*noiseSensor).hasChanged = decibels != (*noiseSensor).latestValue;
