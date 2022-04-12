@@ -86,6 +86,20 @@ uint64_t getDeviceId() {
   return strtoull(deviceIdHex, &end, HEX);
 }
 
+void setChangedDeviceSensors(bool setAll = false) {
+  for (uint8_t i = 0; i < totalSensors; i++) {
+    if (!sensors[i].hasChanged && !setAll) {
+      continue;
+    }
+    DynamicJsonDocument sensorDoc(64);
+    sensorDoc["id"] = sensors[i].id;
+    sensorDoc["unit"] = sensors[i].unit;
+    sensorDoc["latestValue"] = sensors[i].latestValue;
+    deviceSensors[i] = sensorDoc;
+    sensors[i].hasChanged = false;
+  }
+}
+
 void initDevice() { device = {.id = getDeviceId(), .type = DeviceType::NOISE}; }
 
 // Get deviceId from the MAC address and store in deviceObject
