@@ -1,3 +1,4 @@
+#include <ArduinoJson.h>
 #include <Crypto.h>
 #include <ESP8266WiFi.h>
 #include <LiquidCrystal_I2C.h>
