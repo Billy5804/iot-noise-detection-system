@@ -71,8 +71,8 @@ void logger(const char *logMsg, const int lcdLine = 0) {
   Serial.println(logMsg);
 }
 
-// Get deviceId from the MAC address
-void initDeviceId() {
+// Get deviceId from the MAC address and store in deviceObject
+uint64_t getDeviceId() {
   char deviceIdHex[12], *end;
   uint8_t index = 0;
 
@@ -83,7 +83,19 @@ void initDeviceId() {
     }
   }
 
-  deviceId = strtoull(deviceIdHex, &end, HEX);
+  return strtoull(deviceIdHex, &end, HEX);
+}
+
+void initDevice() { device = {.id = getDeviceId(), .type = DeviceType::NOISE}; }
+
+// Get deviceId from the MAC address and store in deviceObject
+void initDeviceObject() {
+  deviceDoc.clear();
+  deviceDoc["id"] = device.id;
+  deviceDoc["type"] = device.type;
+  deviceDoc["rssi"] = device.rssi;
+  deviceDoc["lastBeatTime"] = device.lastBeatTime;
+  deviceSensors = deviceDoc.createNestedArray("sensors");
 }
 
 void initLCD() {
@@ -105,7 +117,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("");
   initLCD();
-  initDeviceId();
+  initDevice();
   GUI.begin();
   WiFiManager.begin(apName.c_str());
   timeSync.begin();
