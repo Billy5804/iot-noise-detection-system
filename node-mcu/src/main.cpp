@@ -11,13 +11,37 @@
 
 #define SENSOR_PIN A0
 
-struct task {
+struct Task {
   unsigned long rate;
   unsigned long previous;
 };
 
+enum DeviceType : uint8_t { NOISE };
+enum SensorUnit : uint8_t { DECIBEL, BEL };
+
+struct Device {
+  uint64_t id;
+  DeviceType type;
+  int8_t rssi;
+  unsigned long lastBeatTime;
+};
+
+struct Sensor {
+  uint8_t id;
+  SensorUnit unit;
+  float latestValue;
+  bool hasChanged = false;
+  void (*loop)(void);
+};
+
 // Define main task timeout to not delay loop
-task mainTask = {.rate = 500, .previous = 0};
+Task mainTask = {.rate = 1000, .previous = 0};
+
+Device device;
+
+const uint8_t totalSensors = 1;
+Sensor sensors[totalSensors];
+Sensor *noiseSensor = &sensors[0];
 
 // Define lcd
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
