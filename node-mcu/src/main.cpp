@@ -100,7 +100,23 @@ void setChangedDeviceSensors(bool setAll = false) {
   }
 }
 
+void noiseSensorLoop() {
+  float decibels = getCurrentNoiseLevel();
+  (*noiseSensor).hasChanged = decibels != (*noiseSensor).latestValue;
+  if ((*noiseSensor).hasChanged) {
+    displayNoiseLevel(decibels);
+    (*noiseSensor).latestValue = decibels;
+  }
+}
+
 void initDevice() { device = {.id = getDeviceId(), .type = DeviceType::NOISE}; }
+
+void initSensors() {
+  *noiseSensor = {.id = 0,
+                  .unit = SensorUnit::DECIBEL,
+                  .latestValue = 49,
+                  .loop = noiseSensorLoop};
+}
 
 // Get deviceId from the MAC address and store in deviceObject
 void initDeviceObject() {
@@ -132,6 +148,7 @@ void setup() {
   Serial.println("");
   initLCD();
   initDevice();
+  initSensors();
   GUI.begin();
   WiFiManager.begin(apName.c_str());
   timeSync.begin();
