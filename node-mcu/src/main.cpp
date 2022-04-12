@@ -50,8 +50,11 @@ LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
-const int sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
+DynamicJsonDocument deviceDoc(128 + (64 * totalSensors));
+JsonArray deviceSensors;
+
+const uint8_t sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 
 const String apName = "NodeMCU-" + String(ESP.getChipId(), HEX);
 
