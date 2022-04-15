@@ -1,6 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,20 +17,21 @@ import com.billy5804.iotnoisedetectionbackend.provider.FirebaseIdTokenAuthentica
 @EnableWebSecurity
 @Component
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Order(1)
+public class FirebaseSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final FirebaseIdTokenAuthenticationProvider authenticationProvider;
 
 	@Autowired
-	public SecurityConfig(FirebaseIdTokenAuthenticationProvider authenticationProvider) {
+	public FirebaseSecurityConfig(FirebaseIdTokenAuthenticationProvider authenticationProvider) {
 		this.authenticationProvider = authenticationProvider;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.addFilterBefore(new FirebaseIdTokenFilter(), BasicAuthenticationFilter.class).csrf().disable()
-				.authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/api/v1/**/*").authenticated()
+		http.regexMatcher("^/api/v1/(?!devices).*$")
+				.addFilterBefore(new FirebaseIdTokenFilter(), BasicAuthenticationFilter.class).csrf().disable()
+				.authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/**/*").authenticated()
 				.antMatchers(HttpMethod.PUT, "/api/v1/**/*").authenticated()
 				.antMatchers(HttpMethod.POST, "/api/v1/**/*").authenticated()
 				.antMatchers(HttpMethod.DELETE, "/api/v1/**/*").authenticated();
@@ -39,5 +41,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authenticationProvider);
 	}
-
 }
