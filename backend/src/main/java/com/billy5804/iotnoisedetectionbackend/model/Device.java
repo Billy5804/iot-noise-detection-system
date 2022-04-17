@@ -25,7 +25,7 @@ public class Device extends CommonAttributes implements Serializable {
 	private static final long serialVersionUID = 6551880686809014813L;
 
 	@Id
-	@Column(columnDefinition = "BINARY(4)", updatable = false, nullable = false)
+	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
 	private byte[] id;
 
 	@Column(columnDefinition = "TINYINT", updatable = false, nullable = false)
