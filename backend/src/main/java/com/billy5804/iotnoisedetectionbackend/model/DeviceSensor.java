@@ -25,9 +25,10 @@ public class DeviceSensor extends CommonAttributes implements Serializable {
 
 	@Column(columnDefinition = "FLOAT(5,2)", updatable = true, nullable = true)
 	private float latestValue;
-	
-	public DeviceSensor() {}
-	
+
+	public DeviceSensor() {
+	}
+
 	public DeviceSensor(int id, byte[] deviceId) {
 		this.deviceSensorPK = new DeviceSensorPK(id, deviceId);
 	}
@@ -40,28 +41,36 @@ public class DeviceSensor extends CommonAttributes implements Serializable {
 	public void setDeviceSensorPK(DeviceSensorPK deviceSensorPK) {
 		this.deviceSensorPK = deviceSensorPK;
 	}
-	
-	public Device getDevice() {
-		return deviceSensorPK.getDevice();
-	}
 
-	public void setDevice(Device device) {
-		deviceSensorPK.setDevice(device);
-	}
-	
-	@JsonIgnore
+//	public Device getDevice() {
+//		return deviceSensorPK.getDevice();
+//	}
+//
+//	public void setDevice(Device device) {
+//		deviceSensorPK.setDevice(device);
+//	}
+
 	public byte[] getDeviceId() {
-		return deviceSensorPK.getDevice().getId();
+		return deviceSensorPK.getDeviceId();
 	}
 
 	public void setDeviceId(byte[] deviceId) {
-		deviceSensorPK.getDevice().setId(deviceId);
+		deviceSensorPK.setDeviceId(deviceId);
 	}
+
+//	@JsonIgnore
+//	public byte[] getDeviceId() {
+//		return deviceSensorPK.getDevice().getId();
+//	}
+//
+//	public void setDeviceId(byte[] deviceId) {
+//		deviceSensorPK.getDevice().setId(deviceId);
+//	}
 
 	public int getId() {
 		return deviceSensorPK.getId();
 	}
-	
+
 	public void setId(int id) {
 		deviceSensorPK.setId(id);
 	}
