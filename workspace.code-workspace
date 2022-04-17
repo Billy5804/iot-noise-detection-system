@@ -33,7 +33,16 @@
 			"xtree": "cpp",
 			"xutility": "cpp",
 			"unordered_map": "cpp",
-			"string_view": "cpp"
+			"string_view": "cpp",
+			"random": "cpp",
+			"typeinfo": "cpp",
+			"locale": "cpp",
+			"xlocale": "cpp",
+			"xlocmes": "cpp",
+			"xlocmon": "cpp",
+			"xlocnum": "cpp",
+			"xloctime": "cpp",
+			"cstring": "cpp"
 		}
 	}
 }
