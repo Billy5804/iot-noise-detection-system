@@ -21,7 +21,7 @@ enum DeviceType : uint8_t { NOISE };
 enum SensorUnit : uint8_t { DECIBEL, BEL };
 
 struct Device {
-  uint64_t id;
+  char id[12];
   DeviceType type;
   int8_t rssi;
   unsigned long lastBeatTime;
@@ -59,7 +59,6 @@ const uint8_t sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 const String apName = "NodeMCU-" + String(ESP.getChipId(), HEX);
 
 const String macAddress = WiFi.macAddress();
-uint64_t deviceId;
 
 bool wasCaptivePortal = false;
 
@@ -70,19 +69,16 @@ void logger(const char *logMsg, const int lcdLine = 0) {
   Serial.println(logMsg);
 }
 
-// Get deviceId from the MAC address and store in deviceObject
-uint64_t getDeviceId() {
-  char deviceIdHex[12], *end;
+// Set deviceId from the MAC address and store in deviceObject
+void populateDeviceId(char deviceId[12]) {
   uint8_t index = 0;
 
   for (const char &c : macAddress) {
     if (c != ':') {
-      deviceIdHex[index] = c;
+      deviceId[index] = c;
       index++;
     }
   }
-
-  return strtoull(deviceIdHex, &end, HEX);
 }
 
 void setChangedDeviceSensors(bool setAll = false) {
@@ -161,7 +157,10 @@ void noiseSensorLoop() {
   }
 }
 
-void initDevice() { device = {.id = getDeviceId(), .type = DeviceType::NOISE}; }
+void initDevice() {
+  device = {.type = DeviceType::NOISE};
+  populateDeviceId(device.id);
+}
 
 void initSensors() {
   *noiseSensor = {.id = 0,
