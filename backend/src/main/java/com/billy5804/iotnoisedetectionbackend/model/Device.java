@@ -1,8 +1,9 @@
 package com.billy5804.iotnoisedetectionbackend.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HexFormat;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Device extends CommonAttributes implements Serializable {
@@ -37,7 +40,7 @@ public class Device extends CommonAttributes implements Serializable {
 
 	@OneToMany
 	@JoinColumn(referencedColumnName = "id")
-	private Collection<DeviceSensor> sensors;
+	private List<DeviceSensor> sensors;
 
 	public Device() {
 	}
@@ -52,6 +55,10 @@ public class Device extends CommonAttributes implements Serializable {
 
 	public void setId(byte[] id) {
 		this.id = id;
+	}
+
+	public void setId(String id) {
+		this.id = HexFormat.of().parseHex(id);
 	}
 
 	public DeviceType getType() {
@@ -78,8 +85,17 @@ public class Device extends CommonAttributes implements Serializable {
 		this.lastBeatTime = lastBeatTime;
 	}
 
-	public Collection<DeviceSensor> getSensors() {
+	@JsonSetter
+	public void setLastBeatTime(long lastBeatTimeSeconds) {
+		this.lastBeatTime = new Date(lastBeatTimeSeconds * 1000);
+	}
+
+	public List<DeviceSensor> getSensors() {
 		return sensors;
+	}
+
+	public void setSensors(List<DeviceSensor> sensors) {
+		this.sensors = sensors;
 	}
 
 	@Override
