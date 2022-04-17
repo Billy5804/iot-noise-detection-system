@@ -1,55 +1,83 @@
 package com.billy5804.iotnoisedetectionbackend.filter;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.InputStream;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.billy5804.iotnoisedetectionbackend.model.DeviceAuthenticationToken;
 
 public class DeviceAPIKeyFilter extends OncePerRequestFilter {
-
-	private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		System.out.println("Device API");
-		final String authorization = request.getHeader("Authorization");
-		final byte[] body = request.getInputStream().readAllBytes();
-		final byte[] apiKey = "SuperSecretKey".getBytes();
-		final byte[] expectedAuthorizationBytes = new byte[body.length + apiKey.length];
-		System.arraycopy(body, 0, expectedAuthorizationBytes, 0, body.length);
-		System.arraycopy(apiKey, 0, expectedAuthorizationBytes, body.length, apiKey.length);
-		MessageDigest digest = null;
+		final BodyCachingRequestWrapper wrapedRequest = new BodyCachingRequestWrapper(request);
+		final String credentials = request.getHeader("Authorization");
+		final byte[] principal = wrapedRequest.getInputStream().readAllBytes();
 		try {
-			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			SecurityContextHolder.getContext().setAuthentication(new DeviceAuthenticationToken(principal, credentials));
+			filterChain.doFilter(wrapedRequest, response);
+		} catch (SecurityException e) {
+			response.reset();
+			response.addHeader("WWW-authenticate", e.getMessage());
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}
-		final String expectedAuthorization = bytesToHex(digest.digest(expectedAuthorizationBytes));
-		
-		if (expectedAuthorization.equals(authorization)) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-		
-		response.reset();
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 
-	public static String bytesToHex(byte[] bytes) {
-		char[] hexChars = new char[bytes.length * 2];
-		for (int j = 0; j < bytes.length; j++) {
-			int v = bytes[j] & 0xFF;
-			hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-			hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-		}
-		return new String(hexChars);
-	}
+	private class BodyCachingRequestWrapper extends HttpServletRequestWrapper {
 
+		private byte[] body;
+
+		public BodyCachingRequestWrapper(HttpServletRequest request) throws IOException {
+			super(request);
+			this.body = request.getInputStream().readAllBytes();
+		}
+
+		@Override
+		public ServletInputStream getInputStream() throws IOException {
+			return new CachedBodyInputStreamWrapper(this.body);
+		}
+
+		private class CachedBodyInputStreamWrapper extends ServletInputStream {
+
+			private final InputStream inputStream;
+
+			public CachedBodyInputStreamWrapper(byte[] body) {
+				this.inputStream = new ByteArrayInputStream(body);
+			}
+
+			@Override
+			public boolean isFinished() {
+				try {
+					return inputStream.available() == 0;
+				} catch (Exception e) {
+					return false;
+				}
+			}
+
+			@Override
+			public boolean isReady() {
+				return true;
+			}
+
+			@Override
+			public void setReadListener(ReadListener listener) {
+			}
+
+			@Override
+			public int read() throws IOException {
+				return this.inputStream.read();
+			}
+		}
+	}
 }
