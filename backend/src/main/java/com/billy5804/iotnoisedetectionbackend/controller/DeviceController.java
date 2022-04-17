@@ -1,6 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,12 @@ public class DeviceController {
 
 	@PostMapping
 	public void createDevice(@RequestBody Device newDevice) {
+		List<DeviceSensor> sensors = newDevice.getSensors();
+		newDevice.setSensors(null);
 		deviceRepository.save(newDevice);
-		newDevice.getSensors().forEach(deviceSensor -> deviceSensorRepository.save(deviceSensor));
+		sensors.forEach(deviceSensor -> {
+			deviceSensor.setDeviceId(newDevice.getId());
+			deviceSensorRepository.save(deviceSensor);
+		});
 	}
 }
