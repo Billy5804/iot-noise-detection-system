@@ -19,8 +19,14 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		final String authorization = request.getHeader("Authorization");
 		final String idToken = authorization != null ? authorization.replace("Bearer ", "") : "";
-		SecurityContextHolder.getContext().setAuthentication(new FirebaseAuthenticationToken(idToken));
-		filterChain.doFilter(request, response);
+		try {
+			SecurityContextHolder.getContext().setAuthentication(new FirebaseAuthenticationToken(idToken));
+			filterChain.doFilter(request, response);
+		} catch (SecurityException e) {
+			response.reset();
+			response.addHeader("WWW-authenticate", e.getMessage());
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 	}
 
 }
