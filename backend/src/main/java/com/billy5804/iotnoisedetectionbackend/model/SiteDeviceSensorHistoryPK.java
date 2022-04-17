@@ -23,7 +23,7 @@ public class SiteDeviceSensorHistoryPK implements Serializable {
 
 	@ManyToOne
 	@JoinColumns({ @JoinColumn(name = "sensor_id", referencedColumnName = "id"),
-			@JoinColumn(name = "device_id", referencedColumnName = "device_id") })
+			@JoinColumn(name = "device_id", referencedColumnName = "deviceId") })
 	private DeviceSensor deviceSensor;
 
 	@CreationTimestamp
@@ -56,12 +56,20 @@ public class SiteDeviceSensorHistoryPK implements Serializable {
 		this.deviceSensor = deviceSensor;
 	}
 
-	public Device getDevice() {
-		return deviceSensor.getDevice();
+//	public Device getDevice() {
+//		return deviceSensor.getDevice();
+//	}
+//
+//	public void setDevice(Device device) {
+//		this.deviceSensor.setDevice(device);
+//	}
+
+	public byte[] getDeviceId() {
+		return deviceSensor.getDeviceId();
 	}
 
-	public void setDevice(Device device) {
-		this.deviceSensor.setDevice(device);
+	public void setDeviceId(byte[] deviceId) {
+		this.deviceSensor.setDeviceId(deviceId);
 	}
 
 	public Date getTimestamp() {

@@ -67,14 +67,24 @@ public class SiteDeviceSensorHistory extends CommonAttributes implements Seriali
 		siteDeviceSensorHistoryPK.setDeviceSensor(deviceSensor);
 	}
 
+//	@JsonIgnore
+//	public byte[] getDeviceId() {
+//		return siteDeviceSensorHistoryPK.getDevice().getId();
+//	}
+//
+//	@JsonSetter
+//	public void setDeviceId(byte[] deviceId) {
+//		siteDeviceSensorHistoryPK.getDevice().setId(deviceId);
+//	}
+
 	@JsonIgnore
 	public byte[] getDeviceId() {
-		return siteDeviceSensorHistoryPK.getDevice().getId();
+		return siteDeviceSensorHistoryPK.getDeviceId();
 	}
 
 	@JsonSetter
 	public void setDeviceId(byte[] deviceId) {
-		siteDeviceSensorHistoryPK.getDevice().setId(deviceId);
+		siteDeviceSensorHistoryPK.setDeviceId(deviceId);
 	}
 
 	@JsonIgnore
