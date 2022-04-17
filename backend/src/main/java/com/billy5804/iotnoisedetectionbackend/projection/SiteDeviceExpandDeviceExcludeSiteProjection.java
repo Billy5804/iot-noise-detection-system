@@ -1,7 +1,9 @@
 package com.billy5804.iotnoisedetectionbackend.projection;
 
 import java.util.Date;
+import java.util.List;
 
+import com.billy5804.iotnoisedetectionbackend.model.DeviceSensor;
 import com.billy5804.iotnoisedetectionbackend.model.DeviceType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,13 +15,13 @@ public interface SiteDeviceExpandDeviceExcludeSiteProjection extends CommonAttri
 	public DeviceType getSiteDevicePKDeviceType();
 
 	@JsonProperty("rssi")
-	public DeviceType getSiteDevicePKDeviceRssi();
+	public int getSiteDevicePKDeviceRssi();
 
 	@JsonProperty("lastBeatTime")
 	public Date getSiteDevicePKDeviceLastBeatTime();
 
 	@JsonProperty("sensors")
-	public Date getSiteDevicePKDeviceSensors();
+	public List<DeviceSensor> getSiteDevicePKDeviceSensors();
 
 	public String getDisplayName();
 }
