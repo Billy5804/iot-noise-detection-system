@@ -214,18 +214,22 @@ void sendChangesToAPI(bool create = false) {
 
   Serial.println(serializedDevice);
 
-  fetch.begin("http://192.168.0.35:8083");
+  fetch.begin("http://192.168.0.35:443/api/v1/devices");
   fetch.addHeader("Authorization", hash);
   fetch.addHeader("Content-Type", "application/json");
   if (create) {
+    Serial.println("Creating");
     fetch.POST(serializedDevice);
   } else {
+    Serial.println("Updating");
     fetch.PUT(serializedDevice);
   }
 
+  String response;
+
   while (fetch.busy()) {
     if (fetch.available()) {
-      Serial.write(fetch.read());
+      response += char(fetch.read());
     }
   }
 
