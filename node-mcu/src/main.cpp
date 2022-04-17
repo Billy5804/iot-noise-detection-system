@@ -235,11 +235,13 @@ void sendChangesToAPI(bool create = false) {
 
   fetch.clean();
 
-  if (false) {
-    initDeviceObject();
-    setChangedDeviceSensors(true);
-    sendChangesToAPI(true);
+  if (!response.equals("UNKNOWN_DEVICE") || create) {
+    return;
   }
+
+  initDeviceObject();
+  setChangedDeviceSensors(true);
+  sendChangesToAPI(true);
 }
 
 void loop() {
