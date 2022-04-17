@@ -1,6 +1,5 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -45,15 +44,16 @@ public class DeviceController {
 	private SiteDeviceSensorHistoryRepository siteDeviceSensorHistoryRepository;
 
 	@PutMapping
-	public ResponseEntity<Object> updateSite(@RequestBody Device updateDevice) {
+	public ResponseEntity<String> updateSite(@RequestBody Device updateDevice) {
 		Device currentDevice = null;
 		try {
 			currentDevice = deviceRepository.findById(updateDevice.getId()).get();
 		} catch (NoSuchElementException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UNKNOWN_DEVICE");
 		}
 
-		final Collection<DeviceSensor> updateSensors = updateDevice.getSensors();
+		final List<DeviceSensor> updateSensors = updateDevice.getSensors();
+		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
 
 		if (updateSensors != null && updateSensors.size() > 0) {
 			try {
