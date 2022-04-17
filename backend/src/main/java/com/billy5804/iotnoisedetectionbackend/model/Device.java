@@ -8,9 +8,10 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -38,8 +39,8 @@ public class Device extends CommonAttributes implements Serializable {
 	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = false)
 	private Date lastBeatTime;
 
-	@OneToMany
-	@JoinColumn(referencedColumnName = "id")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "deviceSensorPK.deviceId")
+	@OrderBy("id")
 	private List<DeviceSensor> sensors;
 
 	public Device() {
