@@ -56,29 +56,39 @@ public class DeviceController {
 		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
 
 		if (updateSensors != null && updateSensors.size() > 0) {
-			try {
-				final SiteDeviceOnlySiteProjection siteDeviceSite = siteDeviceRepository
-						.findBySiteDevicePKDevice(currentDevice);
+			final SiteDeviceOnlySiteProjection siteDeviceSite = siteDeviceRepository
+					.findBySiteDevicePKDevice(currentDevice);
 
-				updateSensors.forEach(deviceSensor -> {
-					if (siteDeviceSite != null) {
-						final SiteDeviceSensorHistory siteDeviceSensorHistory = new SiteDeviceSensorHistory();
-						final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(
-								updateDevice.getId(), deviceSensor.getId(), updateDevice.getLastBeatTime());
-						siteDeviceSensorHistory.setSiteDeviceSensorHistoryPK(siteDeviceSensorHistoryPK);
-						siteDeviceSensorHistory.setSite(siteDeviceSite.getSiteDevicePKSite());
-						siteDeviceSensorHistory.setValue(deviceSensor.getLatestValue());
-						siteDeviceSensorHistoryRepository.save(siteDeviceSensorHistory);
-					}
-					deviceSensorRepository.save(deviceSensor);
-				});
+			for (DeviceSensor updateSensor : updateSensors) {
+				if (updateSensor == null || updateSensor.getId() < 0 || updateSensor.getId() >= currentSensors.size()) {
+					continue;
+				}
+				final DeviceSensor currentSensor = currentSensors.get(updateSensor.getId());
 
-			} catch (NoSuchElementException e) {
-				updateSensors.forEach(deviceSensor -> deviceSensorRepository.save(deviceSensor));
+				if (currentSensor.getId() != updateSensor.getId()) {
+					continue;
+				}
+
+				updateSensor.setDeviceId(currentDevice.getId());
+				updateHelper.copyNonNullProperties(updateSensor, currentSensor);
+				deviceSensorRepository.save(currentSensor);
+
+				if (siteDeviceSite == null) {
+					continue;
+				}
+				final SiteDeviceSensorHistory siteDeviceSensorHistory = new SiteDeviceSensorHistory();
+				final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(currentSensor,
+						updateDevice.getLastBeatTime());
+				siteDeviceSensorHistory.setSiteDeviceSensorHistoryPK(siteDeviceSensorHistoryPK);
+				siteDeviceSensorHistory.setSite(siteDeviceSite.getSiteDevicePKSite());
+				siteDeviceSensorHistory.setValue(currentSensor.getLatestValue());
+				siteDeviceSensorHistoryRepository.save(siteDeviceSensorHistory);
 			}
 		}
 
 		updateHelper.copyNonNullProperties(updateDevice, currentDevice);
+		currentDevice.setSensors(null);
+
 		deviceRepository.save(currentDevice);
 		return ResponseEntity.ok(null);
 	}
