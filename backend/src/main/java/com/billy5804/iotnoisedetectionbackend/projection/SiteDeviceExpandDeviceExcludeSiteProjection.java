@@ -1,27 +1,37 @@
 package com.billy5804.iotnoisedetectionbackend.projection;
 
 import java.util.Date;
+import java.util.HexFormat;
 import java.util.List;
 
+import com.billy5804.iotnoisedetectionbackend.model.Device;
 import com.billy5804.iotnoisedetectionbackend.model.DeviceSensor;
 import com.billy5804.iotnoisedetectionbackend.model.DeviceType;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface SiteDeviceExpandDeviceExcludeSiteProjection extends CommonAttributesProjection {
-	@JsonProperty("deviceId")
-	public byte[] getSiteDevicePKDeviceId();
+	@JsonIgnore
+	public Device getSiteDevicePKDevice();
 
-	@JsonProperty("type")
-	public DeviceType getSiteDevicePKDeviceType();
+	default String getId() {
+		return HexFormat.of().formatHex(getSiteDevicePKDevice().getId());
+	}
 
-	@JsonProperty("rssi")
-	public int getSiteDevicePKDeviceRssi();
+	default DeviceType getType() {
+		return getSiteDevicePKDevice().getType();
+	}
 
-	@JsonProperty("lastBeatTime")
-	public Date getSiteDevicePKDeviceLastBeatTime();
+	default int getRSSI() {
+		return getSiteDevicePKDevice().getRssi();
+	}
 
-	@JsonProperty("sensors")
-	public List<DeviceSensor> getSiteDevicePKDeviceSensors();
+	default Date getLastBeatTime() {
+		return getSiteDevicePKDevice().getLastBeatTime();
+	}
+
+	default List<DeviceSensor> getSensors() {
+		return getSiteDevicePKDevice().getSensors();
+	}
 
 	public String getDisplayName();
 }
