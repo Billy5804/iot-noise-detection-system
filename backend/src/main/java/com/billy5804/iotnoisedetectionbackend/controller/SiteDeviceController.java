@@ -57,7 +57,7 @@ public class SiteDeviceController {
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(updateSiteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {
@@ -79,7 +79,7 @@ public class SiteDeviceController {
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(newSiteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {
@@ -103,7 +103,7 @@ public class SiteDeviceController {
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(siteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {
