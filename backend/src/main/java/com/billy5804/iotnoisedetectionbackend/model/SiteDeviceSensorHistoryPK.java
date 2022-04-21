@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Embeddable
@@ -21,40 +22,52 @@ public class SiteDeviceSensorHistoryPK implements Serializable {
 	 */
 	private static final long serialVersionUID = -3152352929776506950L;
 
-	@ManyToOne
-	@JoinColumns({ @JoinColumn(name = "sensor_id", referencedColumnName = "id"),
-			@JoinColumn(name = "device_id", referencedColumnName = "deviceId") })
-	private DeviceSensor deviceSensor;
+//	@JoinColumns({ @JoinColumn(name = "sensorId", referencedColumnName = "id", table = "deviceSensor" ),
+//			@JoinColumn(name = "deviceId", referencedColumnName = "deviceId", table = "deviceSensor") })
+//	private DeviceSensorPK deviceSensorPK;
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP", updatable = false, nullable = false)
 	private Date timestamp;
 
+	@JoinColumn(name = "sensorId", referencedColumnName = "id", table = "deviceSensor")
+	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
+	private int sensorId;
+
+	@JoinColumn(name = "deviceId", referencedColumnName = "deviceId", table = "deviceSensor")
+	@JoinColumn(name = "deviceId", referencedColumnName = "deviceId", table = "siteDevice")
+	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
+	private byte[] deviceId;
+
 	public SiteDeviceSensorHistoryPK() {
-		this.deviceSensor = new DeviceSensor();
+//		this.deviceSensorPK = new DeviceSensorPK();
 	}
 
-	public SiteDeviceSensorHistoryPK(DeviceSensor deviceSensor, Date timestamp) {
-		this.deviceSensor = deviceSensor;
-		this.timestamp = timestamp;
-	}
+//	public SiteDeviceSensorHistoryPK(DeviceSensorPK deviceSensorPK, Date timestamp) {
+////		this.deviceSensorPK = deviceSensorPK;
+//		this.timestamp = timestamp;
+//	}
 
 	public SiteDeviceSensorHistoryPK(byte[] deviceId, int sensorId) {
-		this(new DeviceSensor(sensorId, deviceId), null);
+		this(deviceId, sensorId, null);
 	}
 
 	public SiteDeviceSensorHistoryPK(byte[] deviceId, int sensorId, Date timestamp) {
-		this(new DeviceSensor(sensorId, deviceId), timestamp);
+		this.deviceId = deviceId;
+		this.sensorId = sensorId;
+		this.timestamp = timestamp;
+//		this(new DeviceSensorPK(sensorId, deviceId), timestamp);
 	}
 
-	public DeviceSensor getDeviceSensor() {
-		return deviceSensor;
-	}
-
-	public void setDeviceSensor(DeviceSensor deviceSensor) {
-		this.deviceSensor = deviceSensor;
-	}
+//	public DeviceSensorPK getDeviceSensorPK() {
+//		return deviceSensorPK;
+//	}
+//
+//	public void setDeviceSensorPK(DeviceSensorPK deviceSensorPK) {
+//		this.deviceSensorPK = deviceSensorPK;
+//	}
+	
 
 //	public Device getDevice() {
 //		return deviceSensor.getDevice();
@@ -65,11 +78,19 @@ public class SiteDeviceSensorHistoryPK implements Serializable {
 //	}
 
 	public byte[] getDeviceId() {
-		return deviceSensor.getDeviceId();
+		return deviceId;
 	}
 
 	public void setDeviceId(byte[] deviceId) {
-		this.deviceSensor.setDeviceId(deviceId);
+		this.deviceId = deviceId;
+	}
+
+	public int getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(int sensorId) {
+		this.sensorId = sensorId;
 	}
 
 	public Date getTimestamp() {

@@ -25,9 +25,9 @@ public class SiteDeviceSensorHistory extends CommonAttributes implements Seriali
 	@Id
 	private SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK();
 
-	@ManyToOne
-	@JoinColumn(name = "site_id", referencedColumnName = "id")
-	private Site site;
+	@JoinColumn(name = "siteId", referencedColumnName = "id", table = "siteDevice")
+	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
+	private UUID siteId;
 
 	@Column(columnDefinition = "FLOAT(5,2)", updatable = false, nullable = true)
 	private float value;
@@ -41,31 +41,31 @@ public class SiteDeviceSensorHistory extends CommonAttributes implements Seriali
 		this.siteDeviceSensorHistoryPK = siteDeviceSensorHistoryPK;
 	}
 
-	public Site getSite() {
-		return site;
-	}
-
-	public void setSite(Site site) {
-		this.site = site;
-	}
+//	public Site getSite() {
+//		return site;
+//	}
+//
+//	public void setSite(Site site) {
+//		this.site = site;
+//	}
 
 	@JsonSetter
 	public void setSiteId(UUID siteId) {
-		site.setId(siteId);
+		this.siteId = siteId;
 	}
 
 	@JsonIgnore
 	public UUID getSiteId() {
-		return site.getId();
+		return this.siteId;
 	}
 
-	public DeviceSensor getDeviceSensor() {
-		return siteDeviceSensorHistoryPK.getDeviceSensor();
-	}
-
-	public void setDeviceSensor(DeviceSensor deviceSensor) {
-		siteDeviceSensorHistoryPK.setDeviceSensor(deviceSensor);
-	}
+//	public DeviceSensorPK getDeviceSensorPK() {
+//		return siteDeviceSensorHistoryPK.getDeviceSensorPK();
+//	}
+//
+//	public void setDeviceSensorPK(DeviceSensorPK deviceSensorPK) {
+//		siteDeviceSensorHistoryPK.setDeviceSensorPK(deviceSensorPK);
+//	}
 
 //	@JsonIgnore
 //	public byte[] getDeviceId() {
@@ -89,12 +89,12 @@ public class SiteDeviceSensorHistory extends CommonAttributes implements Seriali
 
 	@JsonIgnore
 	public int getSensorId() {
-		return siteDeviceSensorHistoryPK.getDeviceSensor().getId();
+		return siteDeviceSensorHistoryPK.getSensorId();
 	}
 
 	@JsonSetter
 	public void setSensorId(int sensorId) {
-		siteDeviceSensorHistoryPK.getDeviceSensor().setId(sensorId);
+		siteDeviceSensorHistoryPK.setSensorId(sensorId);
 	}
 
 	public Date getTimestamp() {
