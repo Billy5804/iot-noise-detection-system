@@ -178,6 +178,13 @@ const router = createRouter({
           component: () => import("../views/Dashboard/DeviceOptionsView.vue"),
           props: ({ params }) => ({ ...params, iconSize: "2x" }),
         },
+        {
+          path: ":deviceId/delete",
+          name: "dashboard-device-delete",
+          component: () => import("../views/Dashboard/DeviceDeleteView.vue"),
+          props: ({ params }) => ({ deviceId: params.deviceId }),
+          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
+        },
       ],
     },
     {
