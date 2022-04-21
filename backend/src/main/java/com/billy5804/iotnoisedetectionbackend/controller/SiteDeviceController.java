@@ -52,7 +52,7 @@ public class SiteDeviceController {
 	}
 
 	@PutMapping
-	public ResponseEntity<SiteDevice> updateSiteDevice(@RequestBody SiteDevice updateSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> updateSiteDevice(@RequestBody SiteDevice updateSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
@@ -70,11 +70,13 @@ public class SiteDeviceController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 		updateHelper.copyNonNullProperties(updateSiteDevice, currentSiteDevice);
-		return ResponseEntity.ok(siteDeviceRepository.save(currentSiteDevice));
+		siteDeviceRepository.save(currentSiteDevice);
+		
+		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(currentSiteDevice.getSiteDevicePK()));
 	}
 
 	@PostMapping
-	public ResponseEntity<SiteDevice> createSiteUser(@RequestBody SiteDevice newSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> createSiteUser(@RequestBody SiteDevice newSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
@@ -85,7 +87,9 @@ public class SiteDeviceController {
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
-		return ResponseEntity.ok(siteDeviceRepository.save(newSiteDevice));
+		
+		siteDeviceRepository.save(newSiteDevice);
+		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(newSiteDevice.getSiteDevicePK()));
 	}
 
 	@DeleteMapping
