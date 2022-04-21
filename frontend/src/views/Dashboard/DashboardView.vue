@@ -20,6 +20,7 @@ import { onBeforeMount, ref, computed, onUnmounted } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceOptionsView from "./DeviceOptionsView.vue";
 import ForbiddenView from "../ForbiddenView.vue";
+import SensorUnits from "@/utilitys/SensorUnits";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
 export default {
@@ -212,6 +213,7 @@ export default {
       allowedModal,
       getSignalDetails,
       currentTime,
+      SensorUnits,
     };
   },
 };
@@ -284,8 +286,13 @@ export default {
               <MDBCardText
                 v-for="(sensor, sensorId) in device.sensors"
                 :key="sensorId"
-                v-text="sensor.latestValue"
-              />
+                class="text-end"
+              >
+                {{ sensor.latestValue + SensorUnits[sensor.unit].getSymbol() }}
+                <MDBIcon
+                  :icon="SensorUnits[sensor.unit].getSensorType().getIcon()"
+                />
+              </MDBCardText>
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
