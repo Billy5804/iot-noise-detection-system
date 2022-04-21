@@ -164,6 +164,21 @@ const router = createRouter({
         siteId: params.siteId,
         ...(name === "dashboard-device-history" && { modalSize: "xl" }),
       }),
+      children: [
+        {
+          path: "add",
+          name: "dashboard-device-add",
+          component: () => import("../views/Dashboard/DeviceAddView.vue"),
+          props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
+        },
+        {
+          path: ":deviceId",
+          name: "dashboard-device-options",
+          component: () => import("../views/Dashboard/DeviceOptionsView.vue"),
+          props: ({ params }) => ({ ...params, iconSize: "2x" }),
+        },
+      ],
     },
     {
       path: "/logout",
