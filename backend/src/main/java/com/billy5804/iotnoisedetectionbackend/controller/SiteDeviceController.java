@@ -40,7 +40,7 @@ public class SiteDeviceController {
 	private SiteUserRepository siteUserRepository;
 
 	@GetMapping
-	public ResponseEntity<Iterable<SiteDeviceExpandDeviceExcludeSiteProjection>> getSitesSiteUsers(
+	public ResponseEntity<Iterable<SiteDeviceExpandDeviceExcludeSiteProjection>> getSiteDevices(
 			@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		final boolean isAuthorised = siteUserRepository
