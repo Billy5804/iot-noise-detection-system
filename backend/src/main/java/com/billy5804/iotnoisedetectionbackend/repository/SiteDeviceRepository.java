@@ -8,6 +8,7 @@ import com.billy5804.iotnoisedetectionbackend.model.Device;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDevice;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDevicePK;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceExpandDeviceExcludeSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlyDeviceDeviceSensorsProjection;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlySiteProjection;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called siteRepository
@@ -22,7 +23,13 @@ public interface SiteDeviceRepository extends CrudRepository<SiteDevice, SiteDev
 	default Iterable<SiteDeviceExpandDeviceExcludeSiteProjection> getExpandedDeviceBySiteId(UUID siteId) {
 		return findBySiteDevicePKSiteId(siteId);
 	}
+	
+	SiteDeviceExpandDeviceExcludeSiteProjection findBySiteDevicePK(SiteDevicePK siteDevicePK);
 
 	SiteDevice findBySiteDevicePKDeviceId(byte[] deviceId);
+	
+	boolean existsBySiteDevicePKDeviceId(byte[] deviceId);
+	
+	SiteDeviceOnlyDeviceDeviceSensorsProjection findBySiteDevicePKSiteIdAndSiteDevicePKDeviceId(UUID siteId, byte[] deviceId);
 
 }
