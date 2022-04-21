@@ -192,6 +192,12 @@ const router = createRouter({
           props: ({ params }) => ({ deviceId: params.deviceId }),
           meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
         },
+        {
+          path: ":deviceId/history",
+          name: "dashboard-device-history",
+          component: () => import("../views/Dashboard/DeviceHistoryView.vue"),
+          props: true,
+        },
       ],
     },
     {
