@@ -6,6 +6,7 @@ import NotFoundView from "../views/NotFoundView.vue";
 import AccountView from "../views/AccountView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import SiteManagementView from "../views/SiteManagement/SiteManagementView.vue";
+import DashboardView from "../views/Dashboard/DashboardView.vue";
 import SiteUserRoles from "../utilitys/SiteUserRoles";
 
 const router = createRouter({
@@ -151,6 +152,18 @@ const router = createRouter({
           props: true,
         },
       ],
+    },
+    {
+      path: "/dashboard/:siteId?",
+      name: "dashboard",
+      component: DashboardView,
+      props: ({ params, name }) => ({
+        deviceId: ["dashboard-device-add"].includes(name)
+          ? name.replace("dashboard-device-", "")
+          : params.deviceId,
+        siteId: params.siteId,
+        ...(name === "dashboard-device-history" && { modalSize: "xl" }),
+      }),
     },
     {
       path: "/logout",
