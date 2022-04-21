@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.billy5804.iotnoisedetectionbackend.helper.updateHelper;
 import com.billy5804.iotnoisedetectionbackend.model.Device;
 import com.billy5804.iotnoisedetectionbackend.model.DeviceSensor;
+import com.billy5804.iotnoisedetectionbackend.model.DeviceSensorPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistory;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistoryPK;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlySiteProjection;
@@ -76,11 +77,12 @@ public class DeviceController {
 				if (siteDeviceSite == null) {
 					continue;
 				}
+				final DeviceSensorPK currentSensorPK = currentSensor.getDeviceSensorPK();
 				final SiteDeviceSensorHistory siteDeviceSensorHistory = new SiteDeviceSensorHistory();
-				final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(currentSensor,
-						updateDevice.getLastBeatTime());
+				final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(
+						currentSensorPK.getDeviceId(), currentSensorPK.getId(), updateDevice.getLastBeatTime());
 				siteDeviceSensorHistory.setSiteDeviceSensorHistoryPK(siteDeviceSensorHistoryPK);
-				siteDeviceSensorHistory.setSite(siteDeviceSite.getSiteDevicePKSite());
+				siteDeviceSensorHistory.setSiteId(siteDeviceSite.getSiteDevicePKSite().getId());
 				siteDeviceSensorHistory.setValue(currentSensor.getLatestValue());
 				siteDeviceSensorHistoryRepository.save(siteDeviceSensorHistory);
 			}
