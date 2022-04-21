@@ -106,11 +106,12 @@ public class SiteDeviceController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Object> deleteCurrentUsersSiteUser(@RequestParam byte[] deviceId) {
+	public ResponseEntity<Object> deleteSiteDevice(@RequestParam String deviceId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteDevice siteDevice = null;
 		try {
-			siteDevice = siteDeviceRepository.findBySiteDevicePKDeviceId(deviceId);
+			final byte[] deviceIdBytes = HexFormat.of().parseHex(deviceId); 
+			siteDevice = siteDeviceRepository.findBySiteDevicePKDeviceId(deviceIdBytes);
 		} catch (NoSuchElementException e) {
 			// Should be fine if this is thrown as record doesn't exist which is the outcome
 			// we wanted anyway.
