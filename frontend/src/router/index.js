@@ -179,6 +179,13 @@ const router = createRouter({
           props: ({ params }) => ({ ...params, iconSize: "2x" }),
         },
         {
+          path: ":deviceId/edit",
+          name: "dashboard-device-edit",
+          component: () => import("../views/Dashboard/DeviceEditView.vue"),
+          props: true,
+          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
+        },
+        {
           path: ":deviceId/delete",
           name: "dashboard-device-delete",
           component: () => import("../views/Dashboard/DeviceDeleteView.vue"),
