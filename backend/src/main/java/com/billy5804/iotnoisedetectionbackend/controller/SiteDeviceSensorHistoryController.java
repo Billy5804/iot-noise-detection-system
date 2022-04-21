@@ -46,4 +46,18 @@ public class SiteDeviceSensorHistoryController {
 				.findBySiteDeviceSensorHistoryPKDeviceIdAndSiteDeviceSensorHistoryPKSensorIdAndSiteId(deviceId,
 						sensorId, siteId));
 	}
+
+	@GetMapping(params = { "deviceId", "siteId" })
+	public ResponseEntity<Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection>> getSiteDeviceHistory(
+			@RequestParam(name = "deviceId") String deviceIdHex, @RequestParam UUID siteId) {
+		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
+		final boolean isAuthorised = siteUserRepository
+				.existsByIdAndAuthorised(new SiteUserPK(siteId, authUser.getId()));
+		if (!isAuthorised) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		final byte[] deviceId = HexFormat.of().parseHex(deviceIdHex);
+		return ResponseEntity.ok(
+				siteDeviceSensorHistoryRepository.findBySiteDeviceSensorHistoryPKDeviceIdAndSiteId(deviceId, siteId));
+	}
 }
