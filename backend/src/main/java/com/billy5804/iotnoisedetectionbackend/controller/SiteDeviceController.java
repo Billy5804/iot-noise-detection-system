@@ -1,5 +1,6 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
+import java.util.HexFormat;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUser;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceExpandDeviceExcludeSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.repository.DeviceRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteDeviceRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
@@ -38,6 +40,9 @@ public class SiteDeviceController {
 
 	@Autowired
 	private SiteUserRepository siteUserRepository;
+	
+	@Autowired
+	private DeviceRepository deviceRepository;
 
 	@GetMapping
 	public ResponseEntity<Iterable<SiteDeviceExpandDeviceExcludeSiteProjection>> getSiteDevices(
@@ -86,6 +91,14 @@ public class SiteDeviceController {
 			}
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		final boolean deviceExists = deviceRepository.existsById(newSiteDevice.getDeviceId());
+		if (!deviceExists) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		final boolean alreadyAdded = siteDeviceRepository.existsBySiteDevicePKDeviceId(newSiteDevice.getDeviceId());
+		if (alreadyAdded) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
 		}
 		
 		siteDeviceRepository.save(newSiteDevice);
