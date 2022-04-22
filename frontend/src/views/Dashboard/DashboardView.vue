@@ -274,7 +274,8 @@ export default {
         <MDBCol v-for="[deviceId, device] in sortedSiteDevices" :key="deviceId">
           <MDBCard>
             <MDBCardHeader class="d-flex">
-              {{ device.displayName }}
+              <h5 class="text-truncate m-0" v-text="device.displayName" />
+              &nbsp
               <span
                 class="position-relative ms-auto me-1"
                 :title="`Signal: ${
@@ -299,6 +300,7 @@ export default {
                 :siteId="siteId"
                 :deviceId="deviceId"
                 :role="currentSite.role"
+                class="d-flex"
               />
             </MDBCardHeader>
             <MDBCardBody>
