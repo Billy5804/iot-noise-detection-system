@@ -23,6 +23,9 @@ import ForbiddenView from "../ForbiddenView.vue";
 import SensorUnits from "@/utilitys/SensorUnits";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
+import Stomp from "stompjs";
+import SockJS from "sockjs-client/dist/sockjs";
+
 export default {
   components: {
     MDBRow,
@@ -137,6 +140,28 @@ export default {
         ) || {};
     }
 
+    let sockJS;
+    let stompClient;
+
+    function onMessageReceived(message) {
+      console.log(message);
+    }
+
+    function socketOnConnected() {
+      if (sites.value[props.siteId]) {
+        stompClient.subscribe(
+          "/message/site-device/" + props.siteId,
+          onMessageReceived
+        );
+      }
+    }
+
+    function socketConnect() {
+      sockJS = new SockJS("http://localhost:443/ws");
+      stompClient = Stomp.over(sockJS);
+      stompClient.connect({}, socketOnConnected, console.error);
+    }
+
     onBeforeMount(async () => {
       await setupSites();
 
@@ -154,6 +179,8 @@ export default {
       }
 
       await setupDevices();
+
+      socketConnect();
 
       loading.value = false;
     });
@@ -275,7 +302,6 @@ export default {
           <MDBCard>
             <MDBCardHeader class="d-flex">
               <h5 class="text-truncate m-0" v-text="device.displayName" />
-              &nbsp
               <span
                 class="position-relative ms-auto me-1"
                 :title="`Signal: ${
