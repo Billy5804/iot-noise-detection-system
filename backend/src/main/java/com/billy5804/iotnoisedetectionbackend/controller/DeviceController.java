@@ -2,11 +2,13 @@ package com.billy5804.iotnoisedetectionbackend.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,6 +45,9 @@ public class DeviceController {
 
 	@Autowired
 	private SiteDeviceSensorHistoryRepository siteDeviceSensorHistoryRepository;
+	
+	@Autowired 
+	SimpMessagingTemplate simpMessagingTemplate;
 
 	@PutMapping
 	public ResponseEntity<String> updateSite(@RequestBody Device updateDevice) {
@@ -97,6 +102,13 @@ public class DeviceController {
 		currentDevice.setSensors(null);
 
 		deviceRepository.save(currentDevice);
+		
+		if (siteId != null) {
+			System.out.println(simpMessagingTemplate.getDefaultDestination());
+			System.out.println(simpMessagingTemplate.getDefaultDestination() + "/site-device/" + siteId.toString());
+			simpMessagingTemplate.convertAndSend("/message/site-device/" + siteId.toString(), updateDevice);
+		}
+		
 		return ResponseEntity.ok(null);
 	}
 
