@@ -80,6 +80,15 @@ export default {
     const siteDevicesAPIPath = "http://localhost:443/api/v1/site-devices";
     const siteDevices = ref(null);
 
+    const sortedSiteDevices = computed(() =>
+      Object.entries(siteDevices.value || {}).sort(
+        ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
+          console.log(sensorsA);
+          return sensorsB[0].latestValue - sensorsA[0].latestValue;
+        }
+      )
+    );
+
     const currentSite = computed(() =>
       sites.value ? sites.value[props.siteId] : {}
     );
@@ -216,6 +225,7 @@ export default {
       sites,
       currentSite,
       siteDevices,
+      sortedSiteDevices,
       showModal,
       allowedModal,
       getSignalDetails,
@@ -251,14 +261,14 @@ export default {
       <template v-else>
         <MDBCol sm="12" md="12" lg="12" xl="12" col="12" class="d-flex">
           <RouterLink
-            v-if="!Object.keys(siteDevices).length"
+            v-if="!sortedSiteDevices.length"
             :to="{ name: 'dashboard-device-add', params: { siteId } }"
             class="btn btn-success btn-lg mx-auto"
           >
             Add first device
           </RouterLink>
         </MDBCol>
-        <MDBCol v-for="(device, deviceId) in siteDevices" :key="deviceId">
+        <MDBCol v-for="[deviceId, device] in sortedSiteDevices" :key="deviceId">
           <MDBCard>
             <MDBCardHeader class="d-flex">
               {{ device.displayName }}
