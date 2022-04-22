@@ -237,7 +237,10 @@ export default {
 
 <template>
   <main id="dashboard-view">
-    <h1 class="text-center">{{ currentSite?.displayName }}</h1>
+    <h1
+      class="text-center text-truncate"
+      v-text="currentSite?.displayName || 'Dashboard'"
+    ></h1>
     <hr />
     <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
       <MDBCol v-if="loading">
