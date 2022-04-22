@@ -346,6 +346,7 @@ export default {
           <RouterView
             v-if="allowedModal"
             :siteDevices="siteDevices"
+            :role="currentSite.role"
             @done="showModal = false"
           />
           <ForbiddenView v-else redirectRoute="/dashboard" />
