@@ -5,6 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
+import SensorUnits from "@/utilitys/SensorUnits";
 
 export default {
   components: {
@@ -62,7 +63,11 @@ export default {
           }
         )
         .then(({ data }) => {
-          const { id: deviceId, ...device } = data;
+          const { id: deviceId, sensors, ...device } = data;
+          device.sensors = sensors.map(({ unit, ...sensor }) => ({
+            ...sensor,
+            unit: SensorUnits[unit],
+          }));
           Object.assign(props.siteDevices, { [deviceId]: device });
           context.emit("done");
         })
@@ -115,7 +120,6 @@ export default {
       @update:validity="displayNameValidity = $event"
       required
       :formChecked="formChecked"
-      :pattern="'.{1,32}'"
       counter
       :maxlength="32"
       class="mb-3"

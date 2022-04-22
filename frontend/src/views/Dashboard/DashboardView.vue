@@ -115,10 +115,17 @@ export default {
         .catch((error) => (loadingError.value = error.message || error));
 
       siteDevices.value =
-        siteDevicesResponse?.data?.reduce((result, { id, ...device }) => {
-          result[id] = device;
-          return result;
-        }, {}) || {};
+        siteDevicesResponse?.data?.reduce(
+          (result, { id, sensors, ...device }) => {
+            device.sensors = sensors.map(({ unit, ...sensor }) => ({
+              ...sensor,
+              unit: SensorUnits[unit],
+            }));
+            result[id] = device;
+            return result;
+          },
+          {}
+        ) || {};
     }
 
     onBeforeMount(async () => {
@@ -213,7 +220,6 @@ export default {
       allowedModal,
       getSignalDetails,
       currentTime,
-      SensorUnits,
     };
   },
 };
@@ -272,7 +278,7 @@ export default {
                   :class="`${
                     index > 0
                       ? 'position-absolute top-50 start-50 translate-middle '
-                      : '  '
+                      : ''
                   }text-${color}`"
                 />
               </span>
@@ -288,10 +294,8 @@ export default {
                 :key="sensorId"
                 class="text-end"
               >
-                {{ sensor.latestValue + SensorUnits[sensor.unit].getSymbol() }}
-                <MDBIcon
-                  :icon="SensorUnits[sensor.unit].getSensorType().getIcon()"
-                />
+                {{ sensor.latestValue + sensor.unit.getSymbol() }}
+                <MDBIcon :icon="sensor.unit.getSensorType().getIcon()" />
               </MDBCardText>
             </MDBCardBody>
           </MDBCard>
