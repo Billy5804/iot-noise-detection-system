@@ -20,7 +20,7 @@ import com.billy5804.iotnoisedetectionbackend.model.DeviceSensor;
 import com.billy5804.iotnoisedetectionbackend.model.DeviceSensorPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistory;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistoryPK;
-import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlySiteProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceOnlySiteIdProjection;
 import com.billy5804.iotnoisedetectionbackend.repository.DeviceRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.DeviceSensorRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteDeviceRepository;
@@ -55,11 +55,13 @@ public class DeviceController {
 
 		final List<DeviceSensor> updateSensors = updateDevice.getSensors();
 		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
+		
+		UUID siteId = null;
 
 		if (updateSensors != null && updateSensors.size() > 0) {
-			final SiteDeviceOnlySiteProjection siteDeviceSite = siteDeviceRepository
+			final SiteDeviceOnlySiteIdProjection siteDeviceOnlySiteId = siteDeviceRepository
 					.findBySiteDevicePKDevice(currentDevice);
-
+			
 			for (DeviceSensor updateSensor : updateSensors) {
 				if (updateSensor == null || updateSensor.getId() < 0 || updateSensor.getId() >= currentSensors.size()) {
 					continue;
@@ -74,15 +76,18 @@ public class DeviceController {
 				updateHelper.copyNonNullProperties(updateSensor, currentSensor);
 				deviceSensorRepository.save(currentSensor);
 
-				if (siteDeviceSite == null) {
+				if (siteDeviceOnlySiteId == null) {
 					continue;
 				}
+				
+				siteId = siteDeviceOnlySiteId.getSiteDevicePKSiteId();
+				
 				final DeviceSensorPK currentSensorPK = currentSensor.getDeviceSensorPK();
 				final SiteDeviceSensorHistory siteDeviceSensorHistory = new SiteDeviceSensorHistory();
 				final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(
 						currentSensorPK.getDeviceId(), currentSensorPK.getId(), updateDevice.getLastBeatTime());
 				siteDeviceSensorHistory.setSiteDeviceSensorHistoryPK(siteDeviceSensorHistoryPK);
-				siteDeviceSensorHistory.setSiteId(siteDeviceSite.getSiteDevicePKSite().getId());
+				siteDeviceSensorHistory.setSiteId(siteId);
 				siteDeviceSensorHistory.setValue(currentSensor.getLatestValue());
 				siteDeviceSensorHistoryRepository.save(siteDeviceSensorHistory);
 			}
