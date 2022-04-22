@@ -106,7 +106,7 @@ export default {
       <MDBCol v-if="loading">
         <MDBCard aria-hidden="true">
           <MDBCardHeader class="placeholder-glow">
-            <span class="placeholder col-8"></span>
+            <h5 class="placeholder col-8" />
           </MDBCardHeader>
           <MDBCardBody class="placeholder-glow">
             <span class="placeholder col-5"></span>
@@ -127,7 +127,10 @@ export default {
       <template v-else>
         <MDBCol v-for="(site, siteId) in sites" :key="siteId">
           <MDBCard>
-            <MDBCardHeader>{{ site.displayName }}</MDBCardHeader>
+            <MDBCardHeader
+              class="h5 m-0 text-truncate"
+              v-text="site.displayName"
+            />
             <MDBCardBody>
               <SiteOptionsView :siteId="siteId" :sites="sites" />
             </MDBCardBody>
@@ -153,7 +156,7 @@ export default {
         v-if="sites[siteId] || ['create', 'invitation'].includes(siteId)"
       >
         <MDBModalHeader>
-          <MDBModalTitle id="siteModalTitle">
+          <MDBModalTitle id="siteModalTitle" class="text-truncate">
             {{
               sites[siteId]
                 ? sites[siteId].displayName
