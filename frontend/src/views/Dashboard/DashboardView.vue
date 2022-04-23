@@ -84,7 +84,6 @@ export default {
     const sortedSiteDevices = computed(() =>
       Object.entries(siteDevices.value || {}).sort(
         ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
-          console.log(sensorsA);
           return sensorsB[0].latestValue - sensorsA[0].latestValue;
         }
       )
@@ -262,6 +261,7 @@ export default {
       allowedModal,
       getSignalDetails,
       currentTime,
+      SiteUserRoles,
     };
   },
 };
@@ -347,6 +347,11 @@ export default {
           </MDBCard>
         </MDBCol>
         <RouterLink
+          v-if="
+            [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(
+              currentSite.role
+            )
+          "
           :to="{ name: 'dashboard-device-add', params: { siteId } }"
           title="Add Device"
           class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"

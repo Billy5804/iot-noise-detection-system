@@ -46,7 +46,6 @@ export default {
             .map(({ unit }) => ({ name: unit, data: [] }))
         ) || [];
 
-      console.log(sensorsHistory.value[0]);
       loading.value = false;
     });
 
