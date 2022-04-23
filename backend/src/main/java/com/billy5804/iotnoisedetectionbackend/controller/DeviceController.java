@@ -45,8 +45,8 @@ public class DeviceController {
 
 	@Autowired
 	private SiteDeviceSensorHistoryRepository siteDeviceSensorHistoryRepository;
-	
-	@Autowired 
+
+	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
 	@PutMapping
@@ -60,13 +60,13 @@ public class DeviceController {
 
 		final List<DeviceSensor> updateSensors = updateDevice.getSensors();
 		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
-		
+
 		UUID siteId = null;
 
 		if (updateSensors != null && updateSensors.size() > 0) {
 			final SiteDeviceOnlySiteIdProjection siteDeviceOnlySiteId = siteDeviceRepository
 					.findBySiteDevicePKDevice(currentDevice);
-			
+
 			for (DeviceSensor updateSensor : updateSensors) {
 				if (updateSensor == null || updateSensor.getId() < 0 || updateSensor.getId() >= currentSensors.size()) {
 					continue;
@@ -84,9 +84,9 @@ public class DeviceController {
 				if (siteDeviceOnlySiteId == null) {
 					continue;
 				}
-				
+
 				siteId = siteDeviceOnlySiteId.getSiteDevicePKSiteId();
-				
+
 				final DeviceSensorPK currentSensorPK = currentSensor.getDeviceSensorPK();
 				final SiteDeviceSensorHistory siteDeviceSensorHistory = new SiteDeviceSensorHistory();
 				final SiteDeviceSensorHistoryPK siteDeviceSensorHistoryPK = new SiteDeviceSensorHistoryPK(
@@ -102,13 +102,11 @@ public class DeviceController {
 		currentDevice.setSensors(null);
 
 		deviceRepository.save(currentDevice);
-		
+
 		if (siteId != null) {
-			System.out.println(simpMessagingTemplate.getDefaultDestination());
-			System.out.println(simpMessagingTemplate.getDefaultDestination() + "/site-device/" + siteId.toString());
 			simpMessagingTemplate.convertAndSend("/message/site-device/" + siteId.toString(), updateDevice);
 		}
-		
+
 		return ResponseEntity.ok(null);
 	}
 
