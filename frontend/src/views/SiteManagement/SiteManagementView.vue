@@ -13,8 +13,8 @@ import {
   MDBModalBody,
   MDBModalFooter,
 } from "mdb-vue-ui-kit";
-import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
+import { useUserSitesStore } from "@/stores/UserSitesStore";
 import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import SiteOptionsView from "./SiteOptionsView.vue";
@@ -48,6 +48,7 @@ export default {
 
   setup: function (props) {
     const user = useUserStore();
+    const sitesStore = useUserSitesStore();
     const router = useRouter();
 
     const showModal = computed({
@@ -71,24 +72,15 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const sitesAPIPath = "http://localhost:443/api/v1/site-users";
-    const sites = ref(null);
+
+    const sites = computed(() => sitesStore.sites);
 
     onBeforeMount(async () => {
-      const sitesResponse = await axios
-        .get(sitesAPIPath, {
-          timeout: 5000,
-          headers: { authorization: await user.getIdToken() },
-        })
-        .catch((error) => (loadingError.value = error.message || error));
-
-      sites.value = sitesResponse?.data?.reduce((result, { site, role }) => {
-        const siteId = site.id;
-        delete site.id;
-        site.role = role;
-        result[siteId] = site;
-        return result;
-      }, {});
+      if (+new Date() > sitesStore.lastRefreshTime + 1000) {
+        await sitesStore
+          .refreshSites(await user.getIdToken())
+          .catch((error) => (loadingError.value = error.message || error));
+      }
 
       loading.value = false;
     });
