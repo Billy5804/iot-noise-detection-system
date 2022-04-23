@@ -60,13 +60,15 @@ public class DeviceController {
 
 		final List<DeviceSensor> updateSensors = updateDevice.getSensors();
 		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
+		
+		final SiteDeviceOnlySiteIdProjection siteDeviceOnlySiteId = siteDeviceRepository
+				.findBySiteDevicePKDevice(currentDevice);
+		
+		final boolean inSite = siteDeviceOnlySiteId != null;
 
-		UUID siteId = null;
+		UUID siteId = inSite ? siteDeviceOnlySiteId.getSiteDevicePKSiteId() : null;
 
 		if (updateSensors != null && updateSensors.size() > 0) {
-			final SiteDeviceOnlySiteIdProjection siteDeviceOnlySiteId = siteDeviceRepository
-					.findBySiteDevicePKDevice(currentDevice);
-
 			for (DeviceSensor updateSensor : updateSensors) {
 				if (updateSensor == null || updateSensor.getId() < 0 || updateSensor.getId() >= currentSensors.size()) {
 					continue;
@@ -81,7 +83,7 @@ public class DeviceController {
 				updateHelper.copyNonNullProperties(updateSensor, currentSensor);
 				deviceSensorRepository.save(currentSensor);
 
-				if (siteDeviceOnlySiteId == null) {
+				if (!inSite) {
 					continue;
 				}
 
@@ -103,7 +105,7 @@ public class DeviceController {
 
 		deviceRepository.save(currentDevice);
 
-		if (siteId != null) {
+		if (inSite) {
 			simpMessagingTemplate.convertAndSend("/message/site-device/" + siteId.toString(), updateDevice);
 		}
 
