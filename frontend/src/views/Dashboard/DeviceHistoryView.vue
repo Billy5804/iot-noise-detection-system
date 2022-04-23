@@ -30,7 +30,7 @@ export default {
       const historyResponse = await axios
         .get("http://localhost:443/api/v1/site-device-sensor-history", {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { deviceId: props.deviceId, siteId: props.siteId },
         })
         .catch((error) => (loadingError.value = error.message || error));

@@ -47,7 +47,7 @@ export default {
       axios
         .delete("http://localhost:443/api/v1/site-devices", {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { deviceId: props.deviceId },
         })
         .then(() => {

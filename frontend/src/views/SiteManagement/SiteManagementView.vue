@@ -78,7 +78,7 @@ export default {
       const sitesResponse = await axios
         .get(sitesAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await user.getIdToken()}` },
+          headers: { authorization: await user.getIdToken() },
         })
         .catch((error) => (loadingError.value = error.message || error));
 
