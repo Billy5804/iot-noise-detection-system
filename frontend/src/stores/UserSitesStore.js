@@ -8,20 +8,21 @@ const siteUsersAPIPath = "http://localhost:443/api/v1/site-users";
 const sites = ref(null);
 
 export const useUserSitesStore = defineStore("UserSitesStore", {
-  state: () => ({}),
+  state: () => ({
+    lastRefreshTime: NaN,
+  }),
   getters: {
-    getSites: () => sites.value,
-    getAuthorisedSites: () =>
+    sites: () => sites.value,
+    authorisedSites: () =>
       sites.value &&
       Object.fromEntries(
         Object.entries(sites.value).filter(
           ([, { role }]) => role !== SiteUserRoles.UNAUTHORISED
         )
       ),
-    finishedFirstLoad: () => !!sites.value,
   },
   actions: {
-    refreshSites: async (authorization) => {
+    refreshSites: async function (authorization) {
       const sitesResponse = await axios.get(siteUsersAPIPath, {
         timeout: 5000,
         headers: { authorization },
@@ -36,6 +37,8 @@ export const useUserSitesStore = defineStore("UserSitesStore", {
           result[siteId] = site;
           return result;
         }, {}) || {};
+
+      this.lastRefreshTime = +new Date();
     },
     clearSites: () => (sites.value = null),
   },
