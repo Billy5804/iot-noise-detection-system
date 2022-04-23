@@ -35,6 +35,7 @@ const router = createRouter({
       path: "/account",
       name: "account",
       component: AccountView,
+      meta: { bypassEmailVerification: true },
     },
     {
       path: "/sites",

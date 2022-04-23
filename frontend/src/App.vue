@@ -45,10 +45,8 @@ export default {
     );
     const authorised = computed(() => user.loggedIn);
 
-    const viewRequiresEmailVerification = computed(
-      () => router.currentRoute.value.meta.requireEmailVerification
-    );
-
+    const bypassEmailVerification = computed(
+      () => router.currentRoute.value.meta.bypassEmailVerification
     );
 
     function routerRedirect(to) {
@@ -72,7 +70,7 @@ export default {
       onHomeView,
       userLoading,
       userEmailVerified,
-      viewRequiresEmailVerification,
+      bypassEmailVerification,
     };
   },
 };
@@ -89,7 +87,7 @@ export default {
         class="mt-3 mb-n4"
       />
       <ForbiddenView
-        v-if="!userEmailVerified && viewRequiresEmailVerification"
+        v-if="!userEmailVerified && !bypassEmailVerification"
         class="container m-auto mt-5"
       />
       <RouterView v-else class="container m-auto mt-5" />
