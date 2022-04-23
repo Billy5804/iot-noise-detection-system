@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
 import { firebaseAuthentication } from "@/firebase/database";
+import { useUserSitesStore } from "./UserSitesStore";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -82,6 +83,12 @@ const finishedLoading = ref(false);
 const authUser = ref(null);
 
 onAuthStateChanged(firebaseAuthentication, async (user) => {
+  const { refreshSites, clearSites } = useUserSitesStore();
+  if (user) {
+    await refreshSites(await getIdToken(user));
+  } else {
+    clearSites();
+  }
   authUser.value = user;
   finishedLoading.value = true;
 });
