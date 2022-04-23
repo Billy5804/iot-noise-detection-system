@@ -144,22 +144,40 @@ export default {
     let stompClient;
 
     function onMessageReceived(message) {
-      console.log(message);
+      const {
+        id: deviceId,
+        lastBeatTime,
+        sensors,
+        rssi,
+      } = Object.fromEntries(
+        Object.entries(JSON.parse(message.body)).filter(
+          ([, value]) => value != null
+        )
+      );
+      siteDevices.value[deviceId].lastBeatTime = +new Date(lastBeatTime);
+      siteDevices.value[deviceId].rssi = rssi;
+      siteDevices.value[deviceId].sensors.forEach(
+        (sensor, index) => (sensor.latestValue = sensors[index].latestValue)
+      );
     }
 
     function socketOnConnected() {
       if (sites.value[props.siteId]) {
         stompClient.subscribe(
-          "/message/site-device/" + props.siteId,
+          `/message/site-device/${props.siteId}`,
           onMessageReceived
         );
       }
     }
 
-    function socketConnect() {
+    async function socketConnect() {
       sockJS = new SockJS("http://localhost:443/ws");
       stompClient = Stomp.over(sockJS);
-      stompClient.connect({}, socketOnConnected, console.error);
+      stompClient.connect(
+        { authorization: await user.getIdToken() },
+        socketOnConnected,
+        console.error
+      );
     }
 
     onBeforeMount(async () => {
