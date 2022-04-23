@@ -165,7 +165,6 @@ void initDevice() {
 void initSensors() {
   *noiseSensor = {.id = 0,
                   .unit = SensorUnit::DECIBEL,
-                  .latestValue = 49,
                   .loop = noiseSensorLoop};
 }
 
