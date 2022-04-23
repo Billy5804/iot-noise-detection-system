@@ -22,9 +22,7 @@ import DeviceOptionsView from "./DeviceOptionsView.vue";
 import ForbiddenView from "../ForbiddenView.vue";
 import SensorUnits from "@/utilitys/SensorUnits";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
-
-import Stomp from "stompjs";
-import SockJS from "sockjs-client/dist/sockjs";
+import WebSocket from "@/utilitys/WebSocket";
 
 export default {
   components: {
@@ -140,19 +138,14 @@ export default {
         ) || {};
     }
 
-    let sockJS;
-    let stompClient;
-
-    function onMessageReceived(message) {
+    function onDeviceUpdateReceived({ body }) {
       const {
         id: deviceId,
         lastBeatTime,
         sensors,
         rssi,
       } = Object.fromEntries(
-        Object.entries(JSON.parse(message.body)).filter(
-          ([, value]) => value != null
-        )
+        Object.entries(JSON.parse(body)).filter(([, value]) => value != null)
       );
       siteDevices.value[deviceId].lastBeatTime = +new Date(lastBeatTime);
       siteDevices.value[deviceId].rssi = rssi;
@@ -161,23 +154,13 @@ export default {
       );
     }
 
-    function socketOnConnected() {
+    function subscribeToSiteTopic() {
       if (sites.value[props.siteId]) {
-        stompClient.subscribe(
+        WebSocket.subscribe(
           `/message/site-device/${props.siteId}`,
-          onMessageReceived
+          onDeviceUpdateReceived
         );
       }
-    }
-
-    async function socketConnect() {
-      sockJS = new SockJS("http://localhost:443/ws");
-      stompClient = Stomp.over(sockJS);
-      stompClient.connect(
-        { authorization: await user.getIdToken() },
-        socketOnConnected,
-        console.error
-      );
     }
 
     onBeforeMount(async () => {
@@ -198,7 +181,11 @@ export default {
 
       await setupDevices();
 
-      socketConnect();
+      WebSocket.connect(
+        await user.getIdToken(),
+        subscribeToSiteTopic,
+        console.error
+      );
 
       loading.value = false;
     });
