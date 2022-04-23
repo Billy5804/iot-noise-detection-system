@@ -40,7 +40,7 @@ export default {
       const siteInvitationsResponse = await axios
         .get(siteInvitationsAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { id: props.invitationId },
         })
         .catch((error) => {
@@ -71,7 +71,7 @@ export default {
           { id: props.invitationId },
           {
             timeout: 5000,
-            headers: { authorization: `Bearer ${await getIdToken()}` },
+            headers: { authorization: await getIdToken() },
           }
         )
         .then(({ data }) => {
