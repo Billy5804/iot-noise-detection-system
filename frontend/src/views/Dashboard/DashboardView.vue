@@ -16,8 +16,8 @@ import {
 } from "mdb-vue-ui-kit";
 import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
-import { onBeforeMount, ref, computed, onUnmounted } from "vue";
 import { useUserSitesStore } from "@/stores/UserSitesStore";
+import { onBeforeMount, ref, computed, onUnmounted, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceOptionsView from "./DeviceOptionsView.vue";
 import ForbiddenView from "../ForbiddenView.vue";
@@ -133,8 +133,24 @@ export default {
       );
     }
 
+    const canSubscribe = ref(false);
+
+    watch(
+      [currentSite, canSubscribe],
+      async ([currentSite, canSubscribe], [previousSite]) => {
+        if (currentSite !== previousSite) {
+          loading.value = true;
+          await setupDevices();
+          loading.value = false;
+        }
+        if (canSubscribe && currentSite) {
+          WebSocket.subscribe(
+            `/message/site-device/${props.siteId}`,
+            onDeviceUpdateReceived
+          );
+        }
       }
-    }
+    );
 
     onBeforeMount(async () => {
       if (+new Date() > sitesStore.lastRefreshTime + 1000) {
@@ -160,7 +176,7 @@ export default {
 
       WebSocket.connect(
         await user.getIdToken(),
-        subscribeToSiteTopic,
+        () => (canSubscribe.value = true),
         console.error
       );
 
@@ -174,7 +190,10 @@ export default {
       5000
     );
 
-    onUnmounted(() => clearInterval(currentTimeUpdate));
+    onUnmounted(() => {
+      clearInterval(currentTimeUpdate);
+      WebSocket.disconnect();
+    });
 
     function getSignalDetails(rssi, lastBeatTime) {
       if (lastBeatTime + 900000 < currentTime.value) {
