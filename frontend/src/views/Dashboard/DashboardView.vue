@@ -147,7 +147,7 @@ export default {
     <RouterView
       v-else
       :loading="loading"
-      :currentSite="currentSite"
+      :currentSiteRole="currentSite.role"
       :siteDevices="siteDevices"
     />
   </main>

@@ -42,11 +42,11 @@ export default {
   },
 
   props: {
-    currentSite: { type: Object },
-    siteDevices: { type: Object },
+    loading: { type: Boolean, required: true},
     siteId: { type: String, required: true },
+    currentSiteRole: { type: String, required: true },
+    siteDevices: Object,
     deviceId: String,
-    loading: Boolean,
     modalSize: String,
   },
 
@@ -77,7 +77,7 @@ export default {
       const allowedRoles = router.currentRoute.value.meta.allowedRoles;
       return (
         showModal.value &&
-        (allowedRoles ? allowedRoles.includes(props.currentSite?.role) : true)
+        (allowedRoles ? allowedRoles.includes(props.currentSiteRole) : true)
       );
     });
 
@@ -210,7 +210,7 @@ export default {
             <DeviceOptionsView
               :siteId="siteId"
               :deviceId="deviceId"
-              :role="currentSite.role"
+              :role="currentSiteRole"
               class="d-flex"
             />
           </MDBCardHeader>
@@ -228,7 +228,7 @@ export default {
       </MDBCol>
       <RouterLink
         v-if="
-          [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSite.role)
+          [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
         "
         :to="{ name: 'dashboard-device-add', params: { siteId } }"
         title="Add Device"
@@ -260,7 +260,7 @@ export default {
         <RouterView
           v-if="allowedModal"
           :siteDevices="siteDevices"
-          :role="currentSite.role"
+          :role="currentSiteRole"
           @done="showModal = false"
         />
         <ForbiddenView v-else redirectRoute="/dashboard" />
