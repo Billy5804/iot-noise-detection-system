@@ -1,5 +1,6 @@
 <script setup>
 import { useUserStore } from "@/stores/UserStore";
+import { useUserSitesStore } from "@/stores/UserSitesStore";
 import { ref, computed } from "vue";
 import {
   MDBNavbar,
@@ -11,15 +12,29 @@ import {
   MDBDropdownToggle,
   MDBIcon,
   MDBDropdownMenu,
+  MDBBtn,
+  MDBModal,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
 } from "mdb-vue-ui-kit";
 
 const user = useUserStore();
+
+const userSites = useUserSitesStore();
+
+const sites = computed(() => userSites.authorisedSites);
 
 const loggedIn = computed(() => user.loggedIn);
 const emailVerified = computed(() => user.emailVerified);
 
 const collapse = ref(false);
+
 const accountDropdown = ref(false);
+
+const dashboardDropdown = ref(false);
+const dashboardModal = ref(false);
 </script>
 
 <template>
@@ -35,6 +50,99 @@ const accountDropdown = ref(false);
             <MDBNavbarItem linkClass="px-2" to="/sites"
               >Site Management</MDBNavbarItem
             >
+            <template v-if="sites && Object.keys(sites).length">
+              <template v-if="Object.keys(sites).length > 1">
+                <MDBNavbarItem class="d-inline d-md-none"
+                  ><a
+                    tabindex="0"
+                    type="button"
+                    aria-controls="dashboardSitesNavigationModal"
+                    class="nav-link px-2"
+                    @keydown.enter="dashboardModal = true"
+                    @click="dashboardModal = true"
+                  >Dashboard</a
+                ></MDBNavbarItem>
+                <MDBModal
+                  id="dashboardSitesNavigationModal"
+                  tabindex="-1"
+                  labelledby="dashboardSitesNavigationLabel"
+                  v-model="dashboardModal"
+                >
+                  <MDBModalHeader>
+                    <MDBModalTitle id="dashboardSitesNavigationLabel"
+                      >Dashboard Sites</MDBModalTitle
+                    >
+                  </MDBModalHeader>
+                  <MDBModalBody class="dashboard-sites-navigation">
+                    <template v-for="(site, siteId) in sites" :key="siteId">
+                      <MDBNavbarItem
+                        :to="{ name: 'dashboard', params: { siteId } }"
+                        class="dropdown-item"
+                      >
+                        <span class="text-truncate">{{ site.displayName }}</span
+                        ><br />
+                        <small class="text-truncate"
+                          >Role:
+                          {{
+                            `${site.role[0]}${site.role.slice(1).toLowerCase()}`
+                          }}</small
+                        >
+                      </MDBNavbarItem>
+                      <hr class="m-0" />
+                    </template>
+                  </MDBModalBody>
+                  <MDBModalFooter>
+                    <MDBBtn color="secondary" @click="dashboardModal = false"
+                      >Close</MDBBtn
+                    >
+                  </MDBModalFooter>
+                </MDBModal>
+                <MDBNavbarItem class="dropdown d-none d-md-inline">
+                  <MDBDropdown v-model="dashboardDropdown" align="end">
+                    <MDBDropdownToggle
+                      tag="a"
+                      tabindex="0"
+                      class="nav-link"
+                      @keydown.enter="dashboardDropdown = !dashboardDropdown"
+                      @click="dashboardDropdown = !dashboardDropdown"
+                    >
+                      Dashboard
+                    </MDBDropdownToggle>
+                    <MDBDropdownMenu class="dashboard-sites-navigation">
+                      <template v-for="(site, siteId) in sites" :key="siteId">
+                        <MDBNavbarItem
+                          :to="{ name: 'dashboard', params: { siteId } }"
+                          class="dropdown-item"
+                        >
+                          <span class="text-truncate">{{
+                            site.displayName
+                          }}</span
+                          ><br />
+                          <small class="text-truncate"
+                            >Role:
+                            {{
+                              `${site.role[0]}${site.role
+                                .slice(1)
+                                .toLowerCase()}`
+                            }}</small
+                          >
+                        </MDBNavbarItem>
+                        <hr class="m-0" />
+                      </template>
+                    </MDBDropdownMenu>
+                  </MDBDropdown>
+                </MDBNavbarItem>
+              </template>
+              <MDBNavbarItem
+                v-else
+                linkClass="px-2"
+                :to="{
+                  name: 'dashboard',
+                  params: { siteId: Object.keys(sites)[0] },
+                }"
+                >Dashboard</MDBNavbarItem
+              >
+            </template>
           </template>
           <MDBNavbarItem linkClass="px-2" v-else-if="!loggedIn" to="/"
             >Home</MDBNavbarItem
@@ -92,5 +200,9 @@ const accountDropdown = ref(false);
 <style>
 .nav-item.dropdown-item a {
   padding: 0 !important;
+}
+
+.dashboard-sites-navigation hr:last-of-type {
+  display: none;
 }
 </style>
