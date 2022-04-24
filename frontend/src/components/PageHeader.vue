@@ -20,7 +20,6 @@ const emailVerified = computed(() => user.emailVerified);
 
 const collapse = ref(false);
 const accountDropdown = ref(false);
-const accountCollapse = ref(false);
 </script>
 
 <template>
@@ -32,13 +31,14 @@ const accountCollapse = ref(false);
       ></MDBNavbarToggler>
       <MDBCollapse v-model="collapse" id="navigation">
         <MDBNavbarNav collapse class="mb-2 mb-md-0 w-100">
-          <template v-if="loggedIn">
-            <template v-if="emailVerified"> </template>
+          <template v-if="loggedIn && emailVerified">
             <MDBNavbarItem linkClass="px-2" to="/sites"
               >Site Management</MDBNavbarItem
             >
           </template>
-          <MDBNavbarItem linkClass="px-2" v-else to="/">Home</MDBNavbarItem>
+          <MDBNavbarItem linkClass="px-2" v-else-if="!loggedIn" to="/"
+            >Home</MDBNavbarItem
+          >
           <template v-if="loggedIn">
             <MDBNavbarItem class="ms-md-auto dropdown d-none d-md-inline">
               <MDBDropdown v-model="accountDropdown" align="end">
@@ -62,24 +62,18 @@ const accountCollapse = ref(false);
                 </MDBDropdownMenu>
               </MDBDropdown>
             </MDBNavbarItem>
-            <MDBNavbarItem class="dropdown d-inline d-md-none">
-              <MDBDropdownToggle
-                tag="a"
-                tabindex="0"
-                class="nav-link px-2"
-                @keydown.enter="accountCollapse = !accountCollapse"
-                @click="accountCollapse = !accountCollapse"
-                >Account</MDBDropdownToggle
-              >
-              <MDBCollapse v-model="accountCollapse" class="ps-3">
-                <MDBNavbarItem linkClass="py-1 mt-n1" to="/account">
-                  <MDBIcon icon="user-cog" class="text-primary" /> My Account
-                </MDBNavbarItem>
-                <MDBNavbarItem linkClass="py-1" to="/logout">
-                  <MDBIcon icon="sign-out-alt" class="text-warning" /> Sign Out
-                </MDBNavbarItem>
-              </MDBCollapse>
-            </MDBNavbarItem>
+            <MDBNavbarItem
+              class="d-inline d-md-none"
+              linkClass="px-2"
+              to="/account"
+              >My Account</MDBNavbarItem
+            >
+            <MDBNavbarItem
+              class="d-inline d-md-none"
+              linkClass="px-2"
+              to="/logout"
+              >Sign out</MDBNavbarItem
+            >
           </template>
           <template v-else>
             <MDBNavbarItem class="ms-md-auto" linkClass="px-2" to="/login"
