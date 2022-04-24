@@ -40,7 +40,7 @@ public class SiteDeviceController {
 
 	@Autowired
 	private SiteUserRepository siteUserRepository;
-	
+
 	@Autowired
 	private DeviceRepository deviceRepository;
 
@@ -57,7 +57,8 @@ public class SiteDeviceController {
 	}
 
 	@PutMapping
-	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> updateSiteDevice(@RequestBody SiteDevice updateSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> updateSiteDevice(
+			@RequestBody SiteDevice updateSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
@@ -76,12 +77,13 @@ public class SiteDeviceController {
 		}
 		updateHelper.copyNonNullProperties(updateSiteDevice, currentSiteDevice);
 		siteDeviceRepository.save(currentSiteDevice);
-		
+
 		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(currentSiteDevice.getSiteDevicePK()));
 	}
 
 	@PostMapping
-	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> createSiteUser(@RequestBody SiteDevice newSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> createSiteUser(
+			@RequestBody SiteDevice newSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
@@ -100,7 +102,7 @@ public class SiteDeviceController {
 		if (alreadyAdded) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
 		}
-		
+
 		siteDeviceRepository.save(newSiteDevice);
 		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(newSiteDevice.getSiteDevicePK()));
 	}
@@ -110,7 +112,7 @@ public class SiteDeviceController {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteDevice siteDevice = null;
 		try {
-			final byte[] deviceIdBytes = HexFormat.of().parseHex(deviceId); 
+			final byte[] deviceIdBytes = HexFormat.of().parseHex(deviceId);
 			siteDevice = siteDeviceRepository.findBySiteDevicePKDeviceId(deviceIdBytes);
 		} catch (NoSuchElementException e) {
 			// Should be fine if this is thrown as record doesn't exist which is the outcome

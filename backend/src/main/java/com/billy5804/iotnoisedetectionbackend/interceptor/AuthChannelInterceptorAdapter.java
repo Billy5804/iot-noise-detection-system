@@ -2,7 +2,6 @@ package com.billy5804.iotnoisedetectionbackend.interceptor;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -22,7 +21,7 @@ import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
 	SiteUserRepository siteUserRepository;
-	
+
 	public AuthChannelInterceptorAdapter(SiteUserRepository siteUserRepository) {
 		this.siteUserRepository = siteUserRepository;
 	}

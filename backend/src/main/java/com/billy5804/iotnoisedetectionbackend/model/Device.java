@@ -56,7 +56,7 @@ public class Device extends CommonAttributes implements Serializable {
 	public byte[] getId() {
 		return id;
 	}
-	
+
 	@JsonGetter(value = "id")
 	public String getIdHex() {
 		return HexFormat.of().formatHex(id);

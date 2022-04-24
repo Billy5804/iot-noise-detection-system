@@ -96,8 +96,8 @@ CREATE TABLE `location` (
 
 CREATE TABLE `location_device` (
   `location_id` binary(16) NOT NULL,
-  `site_id` binary(16) NOT NULL,
   `device_id` binary(6) NOT NULL,
+  `site_id` binary(16) NOT NULL,
   `position_x` INT NULL,
   `position_y` INT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

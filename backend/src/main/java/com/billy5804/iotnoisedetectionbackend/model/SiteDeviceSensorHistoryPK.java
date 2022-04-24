@@ -6,12 +6,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Embeddable
@@ -67,7 +64,6 @@ public class SiteDeviceSensorHistoryPK implements Serializable {
 //	public void setDeviceSensorPK(DeviceSensorPK deviceSensorPK) {
 //		this.deviceSensorPK = deviceSensorPK;
 //	}
-	
 
 //	public Device getDevice() {
 //		return deviceSensor.getDevice();
