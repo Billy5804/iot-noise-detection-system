@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,6 +23,11 @@ public class LocationDevice extends CommonAttributes implements Serializable {
 
 	@Id
 	private LocationDevicePK locationDevicePK = new LocationDevicePK();
+
+	@JoinColumn(name = "siteId", referencedColumnName = "siteId", table = "location")
+	@JoinColumn(name = "siteId", referencedColumnName = "siteId", table = "siteDevice")
+	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
+	private UUID siteId;
 
 	@Column(columnDefinition = "int", updatable = true, nullable = true)
 	private Integer positionX;
