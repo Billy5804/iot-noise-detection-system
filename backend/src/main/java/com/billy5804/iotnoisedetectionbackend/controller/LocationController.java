@@ -89,7 +89,7 @@ public class LocationController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Object> deleteSiteDevice(@RequestParam UUID locationId) {
+	public ResponseEntity<Object> deleteLocation(@RequestParam UUID locationId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		Location location = null;
 		try {
