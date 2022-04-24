@@ -71,6 +71,14 @@ public class LocationDevice extends CommonAttributes implements Serializable {
 		setDeviceId(HexFormat.of().parseHex(deviceId));
 	}
 
+	public UUID getSiteId() {
+		return siteId;
+	}
+
+	public void setSiteId(UUID siteId) {
+		this.siteId = siteId;
+	}
+
 	public Integer getPositionX() {
 		return positionX;
 	}
