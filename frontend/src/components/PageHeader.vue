@@ -60,8 +60,9 @@ const dashboardModal = ref(false);
                     class="nav-link px-2"
                     @keydown.enter="dashboardModal = true"
                     @click="dashboardModal = true"
-                  >Dashboard</a
-                ></MDBNavbarItem>
+                    >Dashboard</a
+                  ></MDBNavbarItem
+                >
                 <MDBModal
                   id="dashboardSitesNavigationModal"
                   tabindex="-1"
