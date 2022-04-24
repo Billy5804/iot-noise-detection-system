@@ -51,7 +51,7 @@ public class SiteDevice extends CommonAttributes implements Serializable {
 	public UUID getSiteId() {
 		return siteDevicePK.getSite().getId();
 	}
-	
+
 	public Device getDevice() {
 		return siteDevicePK.getDevice();
 	}
@@ -59,16 +59,16 @@ public class SiteDevice extends CommonAttributes implements Serializable {
 	public void setDevice(Device device) {
 		siteDevicePK.setDevice(device);
 	}
-	
+
 	@JsonIgnore
 	public byte[] getDeviceId() {
 		return siteDevicePK.getDevice().getId();
 	}
-	
+
 	public void setDeviceId(byte[] deviceId) {
 		siteDevicePK.getDevice().setId(deviceId);
 	}
-	
+
 	@JsonSetter
 	public void setDeviceId(String deviceId) {
 		setDeviceId(HexFormat.of().parseHex(deviceId));

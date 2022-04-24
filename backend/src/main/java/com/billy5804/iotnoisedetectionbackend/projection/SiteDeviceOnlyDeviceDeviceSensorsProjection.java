@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public interface SiteDeviceOnlyDeviceDeviceSensorsProjection {
 	@JsonIgnore
 	public DeviceOnlyDeviceSensorsProjection getSiteDevicePKDevice();
-		
+
 	default List<DeviceSensor> getSensors() {
 		return getSiteDevicePKDevice().getSensors();
 	}
-	
+
 	interface DeviceOnlyDeviceSensorsProjection {
 		public List<DeviceSensor> getSensors();
 	}

@@ -21,6 +21,7 @@ public class CommonAttributes {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = false)
 	private Date updatedAt;
+
 	public Date getCreatedAt() {
 		return createdAt;
 	}

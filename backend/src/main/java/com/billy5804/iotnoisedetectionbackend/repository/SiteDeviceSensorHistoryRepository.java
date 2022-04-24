@@ -14,9 +14,11 @@ import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceSensorHistory
 public interface SiteDeviceSensorHistoryRepository
 		extends Repository<SiteDeviceSensorHistory, SiteDeviceSensorHistoryPK> {
 
-	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteDeviceSensorHistoryPKSensorIdAndSiteId(byte[] deviceId, int sensorId, UUID siteId);
-	
-	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteId(byte[] deviceId, UUID siteId);
+	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteDeviceSensorHistoryPKSensorIdAndSiteId(
+			byte[] deviceId, int sensorId, UUID siteId);
+
+	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteId(
+			byte[] deviceId, UUID siteId);
 
 	void save(SiteDeviceSensorHistory siteDeviceSensorHistory);
 }

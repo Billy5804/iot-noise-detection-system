@@ -13,7 +13,7 @@ import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketAuthenticationSecurityConfig implements WebSocketMessageBrokerConfigurer {
-	
+
 	@Autowired
 	SiteUserRepository siteUserRepository;
 

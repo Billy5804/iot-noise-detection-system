@@ -95,14 +95,14 @@ CREATE TABLE `location` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `location_device` (
-  `locationId` binary(16) NOT NULL,
-  `site_id` binary(16) NOT NULL,
+  `location_id` binary(16) NOT NULL,
   `device_id` binary(6) NOT NULL,
-  `position_x` INT NOT NULL,
-  `position_y` INT NOT NULL,
+  `site_id` binary(16) NOT NULL,
+  `position_x` INT NULL,
+  `position_y` INT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`locationId`,`device_id`),
-  CONSTRAINT `location_device_ibfk_1` FOREIGN KEY (`locationId`, `site_id`) REFERENCES `location` (`id`, `site_id`) ON DELETE CASCADE,
+  PRIMARY KEY (`location_id`,`device_id`),
+  CONSTRAINT `location_device_ibfk_1` FOREIGN KEY (`location_id`, `site_id`) REFERENCES `location` (`id`, `site_id`) ON DELETE CASCADE,
   CONSTRAINT `location_device_ibfk_2` FOREIGN KEY (`site_id`, `device_id`) REFERENCES `site_device` (`site_id`, `device_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

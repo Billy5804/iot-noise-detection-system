@@ -60,10 +60,10 @@ public class DeviceController {
 
 		final List<DeviceSensor> updateSensors = updateDevice.getSensors();
 		final List<DeviceSensor> currentSensors = currentDevice.getSensors();
-		
+
 		final SiteDeviceOnlySiteIdProjection siteDeviceOnlySiteId = siteDeviceRepository
 				.findBySiteDevicePKDevice(currentDevice);
-		
+
 		final boolean inSite = siteDeviceOnlySiteId != null;
 
 		UUID siteId = inSite ? siteDeviceOnlySiteId.getSiteDevicePKSiteId() : null;

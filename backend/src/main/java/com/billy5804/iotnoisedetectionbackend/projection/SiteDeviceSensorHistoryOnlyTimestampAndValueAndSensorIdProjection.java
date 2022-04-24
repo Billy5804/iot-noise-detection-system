@@ -9,7 +9,7 @@ public interface SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjecti
 	public Date getSiteDeviceSensorHistoryPKTimestamp();
 
 	public float getValue();
-	
+
 	@JsonProperty("sensorId")
 	public int getSiteDeviceSensorHistoryPKSensorId();
 }

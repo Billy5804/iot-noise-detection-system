@@ -23,13 +23,14 @@ public interface SiteDeviceRepository extends CrudRepository<SiteDevice, SiteDev
 	default Iterable<SiteDeviceExpandDeviceExcludeSiteProjection> getExpandedDeviceBySiteId(UUID siteId) {
 		return findBySiteDevicePKSiteId(siteId);
 	}
-	
+
 	SiteDeviceExpandDeviceExcludeSiteProjection findBySiteDevicePK(SiteDevicePK siteDevicePK);
 
 	SiteDevice findBySiteDevicePKDeviceId(byte[] deviceId);
-	
+
 	boolean existsBySiteDevicePKDeviceId(byte[] deviceId);
-	
-	SiteDeviceOnlyDeviceDeviceSensorsProjection findBySiteDevicePKSiteIdAndSiteDevicePKDeviceId(UUID siteId, byte[] deviceId);
+
+	SiteDeviceOnlyDeviceDeviceSensorsProjection findBySiteDevicePKSiteIdAndSiteDevicePKDeviceId(UUID siteId,
+			byte[] deviceId);
 
 }
