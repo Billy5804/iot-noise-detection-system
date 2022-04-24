@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
 import { onBeforeMount, ref, computed, onUnmounted } from "vue";
+import { useUserSitesStore } from "@/stores/UserSitesStore";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceOptionsView from "./DeviceOptionsView.vue";
 import ForbiddenView from "../ForbiddenView.vue";
@@ -53,7 +54,28 @@ export default {
 
   setup: function (props) {
     const user = useUserStore();
+    const sitesStore = useUserSitesStore();
     const router = useRouter();
+
+    const loading = ref(true);
+    const loadingError = ref(null);
+
+    const sites = computed(() => sitesStore.authorisedSites);
+
+    const siteDevicesAPIPath = "http://localhost:443/api/v1/site-devices";
+    const siteDevices = ref(null);
+
+    const sortedSiteDevices = computed(() =>
+      Object.entries(siteDevices.value || {}).sort(
+        ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
+          return sensorsB[0].latestValue - sensorsA[0].latestValue;
+        }
+      )
+    );
+
+    const currentSite = computed(
+      () => sites.value && sites.value[props.siteId]
+    );
 
     const showModal = computed({
       get: () => !!props.deviceId && !loading.value && !loadingError.value,
@@ -68,51 +90,9 @@ export default {
       const allowedRoles = router.currentRoute.value.meta.allowedRoles;
       return (
         showModal.value &&
-        (allowedRoles ? allowedRoles.includes(currentSite.value.role) : true)
+        (allowedRoles ? allowedRoles.includes(currentSite.value?.role) : true)
       );
     });
-
-    const loading = ref(true);
-    const loadingError = ref(null);
-
-    const sitesAPIPath = "http://localhost:443/api/v1/site-users";
-    const sites = ref(null);
-
-    const siteDevicesAPIPath = "http://localhost:443/api/v1/site-devices";
-    const siteDevices = ref(null);
-
-    const sortedSiteDevices = computed(() =>
-      Object.entries(siteDevices.value || {}).sort(
-        ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
-          return sensorsB[0].latestValue - sensorsA[0].latestValue;
-        }
-      )
-    );
-
-    const currentSite = computed(() =>
-      sites.value ? sites.value[props.siteId] : {}
-    );
-
-    async function setupSites() {
-      const sitesResponse = await axios
-        .get(sitesAPIPath, {
-          timeout: 5000,
-          headers: { authorization: await user.getIdToken() },
-        })
-        .catch((error) => (loadingError.value = error.message || error));
-
-      sites.value =
-        sitesResponse?.data?.reduce((result, { site, role }) => {
-          if (role === SiteUserRoles.UNAUTHORISED) {
-            return result;
-          }
-          const siteId = site.id;
-          delete site.id;
-          site.role = role;
-          result[siteId] = site;
-          return result;
-        }, {}) || {};
-    }
 
     async function setupDevices() {
       const siteDevicesResponse = await axios
@@ -153,21 +133,19 @@ export default {
       );
     }
 
-    function subscribeToSiteTopic() {
-      if (sites.value[props.siteId]) {
-        WebSocket.subscribe(
-          `/message/site-device/${props.siteId}`,
-          onDeviceUpdateReceived
-        );
       }
     }
 
     onBeforeMount(async () => {
-      await setupSites();
+      if (+new Date() > sitesStore.lastRefreshTime + 1000) {
+        await sitesStore
+          .refreshSites(await user.getIdToken())
+          .catch((error) => (loadingError.value = error.message || error));
+      }
 
       const siteKeys = Object.keys(sites.value);
       if (!siteKeys.length) {
-        loading.value = false;
+        router.replace("/sites");
         return;
       }
 
