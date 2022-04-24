@@ -117,6 +117,22 @@ export default {
         {{ loadingError }}
       </div>
       <template v-else>
+        <MDBCol
+          v-if="!Object.keys(sites).length"
+          sm="12"
+          md="12"
+          lg="12"
+          xl="12"
+          col="12"
+          class="d-flex"
+        >
+          <RouterLink
+            :to="{ name: 'site-create' }"
+            class="btn btn-success btn-lg mx-auto"
+          >
+            Add first site
+          </RouterLink>
+        </MDBCol>
         <MDBCol v-for="(site, siteId) in sites" :key="siteId">
           <MDBCard>
             <MDBCardHeader

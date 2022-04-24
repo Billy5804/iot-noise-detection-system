@@ -294,9 +294,16 @@ export default {
         {{ loadingError }}
       </div>
       <template v-else>
-        <MDBCol sm="12" md="12" lg="12" xl="12" col="12" class="d-flex">
+        <MDBCol
+          v-if="!sortedSiteDevices.length"
+          sm="12"
+          md="12"
+          lg="12"
+          xl="12"
+          col="12"
+          class="d-flex"
+        >
           <RouterLink
-            v-if="!sortedSiteDevices.length"
             :to="{ name: 'dashboard-device-add', params: { siteId } }"
             class="btn btn-success btn-lg mx-auto"
           >
