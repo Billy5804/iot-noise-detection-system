@@ -77,7 +77,10 @@ const dashboardModal = ref(false);
                   <MDBModalBody class="dashboard-sites-navigation">
                     <template v-for="(site, siteId) in sites" :key="siteId">
                       <MDBNavbarItem
-                        :to="{ name: 'dashboard', params: { siteId } }"
+                        :to="{
+                          name: 'dashboard-device-overview',
+                          params: { siteId },
+                        }"
                         class="dropdown-item"
                       >
                         <span class="text-truncate">{{ site.displayName }}</span
@@ -112,7 +115,10 @@ const dashboardModal = ref(false);
                     <MDBDropdownMenu class="dashboard-sites-navigation">
                       <template v-for="(site, siteId) in sites" :key="siteId">
                         <MDBNavbarItem
-                          :to="{ name: 'dashboard', params: { siteId } }"
+                          :to="{
+                            name: 'dashboard-device-overview',
+                            params: { siteId },
+                          }"
                           class="dropdown-item"
                         >
                           <span class="text-truncate">{{
@@ -138,7 +144,7 @@ const dashboardModal = ref(false);
                 v-else
                 linkClass="px-2"
                 :to="{
-                  name: 'dashboard',
+                  name: 'dashboard-device-overview',
                   params: { siteId: Object.keys(sites)[0] },
                 }"
                 >Dashboard</MDBNavbarItem
