@@ -3,6 +3,7 @@ import SockJS from "sockjs-client/dist/sockjs";
 
 let sockJS;
 let stompClient;
+let unsubscribe;
 
 export default {
   connect: (authorization, onConnected, onError) => {
@@ -11,6 +12,11 @@ export default {
     stompClient.debug = null;
     stompClient.connect({ authorization }, onConnected, onError);
   },
-  subscribe: (destination, onMessageReceived) =>
-    stompClient.subscribe(destination, onMessageReceived),
+  subscribe: (destination, onMessageReceived) => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+    ({ unsubscribe } = stompClient.subscribe(destination, onMessageReceived));
+  },
+  disconnect: (onDisconnect) => stompClient.disconnect(onDisconnect),
 };
