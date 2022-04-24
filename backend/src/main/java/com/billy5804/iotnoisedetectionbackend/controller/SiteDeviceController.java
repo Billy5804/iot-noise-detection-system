@@ -1,5 +1,6 @@
 package com.billy5804.iotnoisedetectionbackend.controller;
 
+import java.util.HexFormat;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ import com.billy5804.iotnoisedetectionbackend.model.SiteUser;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserPK;
 import com.billy5804.iotnoisedetectionbackend.model.SiteUserRole;
 import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceExpandDeviceExcludeSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.repository.DeviceRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteDeviceRepository;
 import com.billy5804.iotnoisedetectionbackend.repository.SiteUserRepository;
 
@@ -38,9 +40,12 @@ public class SiteDeviceController {
 
 	@Autowired
 	private SiteUserRepository siteUserRepository;
+	
+	@Autowired
+	private DeviceRepository deviceRepository;
 
 	@GetMapping
-	public ResponseEntity<Iterable<SiteDeviceExpandDeviceExcludeSiteProjection>> getSitesSiteUsers(
+	public ResponseEntity<Iterable<SiteDeviceExpandDeviceExcludeSiteProjection>> getSiteDevices(
 			@RequestParam UUID siteId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		final boolean isAuthorised = siteUserRepository
@@ -52,12 +57,12 @@ public class SiteDeviceController {
 	}
 
 	@PutMapping
-	public ResponseEntity<SiteDevice> updateSiteDevice(@RequestBody SiteDevice updateSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> updateSiteDevice(@RequestBody SiteDevice updateSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(updateSiteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {
@@ -70,30 +75,43 @@ public class SiteDeviceController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 		updateHelper.copyNonNullProperties(updateSiteDevice, currentSiteDevice);
-		return ResponseEntity.ok(siteDeviceRepository.save(currentSiteDevice));
+		siteDeviceRepository.save(currentSiteDevice);
+		
+		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(currentSiteDevice.getSiteDevicePK()));
 	}
 
 	@PostMapping
-	public ResponseEntity<SiteDevice> createSiteUser(@RequestBody SiteDevice newSiteDevice) {
+	public ResponseEntity<SiteDeviceExpandDeviceExcludeSiteProjection> createSiteUser(@RequestBody SiteDevice newSiteDevice) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(newSiteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
-		return ResponseEntity.ok(siteDeviceRepository.save(newSiteDevice));
+		final boolean deviceExists = deviceRepository.existsById(newSiteDevice.getDeviceId());
+		if (!deviceExists) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		final boolean alreadyAdded = siteDeviceRepository.existsBySiteDevicePKDeviceId(newSiteDevice.getDeviceId());
+		if (alreadyAdded) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+		}
+		
+		siteDeviceRepository.save(newSiteDevice);
+		return ResponseEntity.ok(siteDeviceRepository.findBySiteDevicePK(newSiteDevice.getSiteDevicePK()));
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Object> deleteCurrentUsersSiteUser(@RequestParam byte[] deviceId) {
+	public ResponseEntity<Object> deleteSiteDevice(@RequestParam String deviceId) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
 		SiteDevice siteDevice = null;
 		try {
-			siteDevice = siteDeviceRepository.findBySiteDevicePKDeviceId(deviceId);
+			final byte[] deviceIdBytes = HexFormat.of().parseHex(deviceId); 
+			siteDevice = siteDeviceRepository.findBySiteDevicePKDeviceId(deviceIdBytes);
 		} catch (NoSuchElementException e) {
 			// Should be fine if this is thrown as record doesn't exist which is the outcome
 			// we wanted anyway.
@@ -103,7 +121,7 @@ public class SiteDeviceController {
 		try {
 			final SiteUser authUserSiteUser = siteUserRepository
 					.findById(new SiteUserPK(siteDevice.getSite(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER || authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 			}
 		} catch (NoSuchElementException e) {

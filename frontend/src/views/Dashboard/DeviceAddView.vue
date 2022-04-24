@@ -5,7 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
-import SiteUserRoles from "@/utilitys/SiteUserRoles";
+import SensorUnits from "@/utilitys/SensorUnits";
 
 export default {
   components: {
@@ -18,7 +18,11 @@ export default {
   emits: ["done"],
 
   props: {
-    sites: {
+    siteId: {
+      type: String,
+      required: true,
+    },
+    siteDevices: {
       type: Object,
       required: true,
     },
@@ -30,45 +34,56 @@ export default {
     const formChecked = ref(false);
     const syncing = ref(false);
 
-    const createError = shallowRef(null);
+    const addError = shallowRef(null);
+
+    const deviceId = ref("");
+    const deviceIdValidity = shallowRef({});
 
     const displayName = ref("");
     const displayNameValidity = shallowRef({});
 
-    async function submitCreateForm() {
-      createError.value = null;
-      if (!displayNameValidity.value.valid) {
+    async function submitAddForm() {
+      addError.value = null;
+      if (!displayNameValidity.value.valid || !deviceIdValidity.value.valid) {
         formChecked.value = true;
         return;
       }
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/sites",
-          { displayName: displayName.value },
+          "http://localhost:443/api/v1/site-devices",
+          {
+            deviceId: deviceId.value,
+            displayName: displayName.value,
+            siteId: props.siteId,
+          },
           {
             timeout: 5000,
             headers: { authorization: await getIdToken() },
           }
         )
         .then(({ data }) => {
-          const siteId = data.id;
-          delete data.id;
-          data.role = SiteUserRoles.OWNER;
-          Object.assign(props.sites, { [siteId]: data });
+          const { id: deviceId, sensors, ...device } = data;
+          device.sensors = sensors.map(({ unit, ...sensor }) => ({
+            ...sensor,
+            unit: SensorUnits[unit],
+          }));
+          Object.assign(props.siteDevices, { [deviceId]: device });
           context.emit("done");
         })
-        .catch((error) => (createError.value = error.message || error))
+        .catch((error) => (addError.value = error.message || error))
         .finally(() => (syncing.value = false));
     }
 
     return {
       formChecked,
       syncing,
-      createError,
+      addError,
+      deviceId,
+      deviceIdValidity,
       displayName,
       displayNameValidity,
-      submitCreateForm,
+      submitAddForm,
     };
   },
 };
@@ -80,8 +95,22 @@ export default {
     class="g-3 mb-3 needs-validation"
     :class="formChecked && 'was-validated'"
     novalidate
-    @submit.prevent="submitCreateForm"
+    @submit.prevent="submitAddForm"
   >
+    <FormInput
+      type="text"
+      size="lg"
+      v-model.trim="deviceId"
+      label="Device Code"
+      invalidFeedback="Please provide your devices code"
+      @update:validity="deviceIdValidity = $event"
+      required
+      :formChecked="formChecked"
+      :pattern="'[0-9A-Fa-f]{12}'"
+      :minlength="12"
+      :maxlength="12"
+      placeholder="E320D8F1F35F"
+    />
     <FormInput
       type="text"
       size="lg"
@@ -91,10 +120,13 @@ export default {
       @update:validity="displayNameValidity = $event"
       required
       :formChecked="formChecked"
+      counter
+      :maxlength="32"
+      class="mb-3"
     />
-    <MDBCol md="12" v-if="createError">
+    <MDBCol md="12" v-if="addError">
       <div class="alert alert-danger text-center p-2 mb-0" role="alert">
-        {{ createError }}
+        {{ addError }}
       </div>
     </MDBCol>
     <MDBCol md="12">
@@ -104,7 +136,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >Create Site</AjaxButton
+        >Add Device</AjaxButton
       >
     </MDBCol>
   </MDBRow>

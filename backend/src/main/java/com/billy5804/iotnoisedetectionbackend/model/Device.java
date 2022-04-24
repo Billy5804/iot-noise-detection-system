@@ -15,6 +15,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -50,14 +52,21 @@ public class Device extends CommonAttributes implements Serializable {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public byte[] getId() {
 		return id;
+	}
+	
+	@JsonGetter(value = "id")
+	public String getIdHex() {
+		return HexFormat.of().formatHex(id);
 	}
 
 	public void setId(byte[] id) {
 		this.id = id;
 	}
 
+	@JsonSetter
 	public void setId(String id) {
 		this.id = HexFormat.of().parseHex(id);
 	}

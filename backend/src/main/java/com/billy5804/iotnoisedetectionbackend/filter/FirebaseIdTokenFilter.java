@@ -18,9 +18,8 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		final String authorization = request.getHeader("Authorization");
-		final String idToken = authorization != null ? authorization.replace("Bearer ", "") : "";
 		try {
-			SecurityContextHolder.getContext().setAuthentication(new FirebaseAuthenticationToken(idToken));
+			SecurityContextHolder.getContext().setAuthentication(new FirebaseAuthenticationToken(authorization));
 			filterChain.doFilter(request, response);
 		} catch (SecurityException e) {
 			response.reset();

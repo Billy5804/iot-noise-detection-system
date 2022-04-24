@@ -5,6 +5,7 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
+import SensorUnits from "@/utilitys/SensorUnits";
 
 export default {
   components: {
@@ -17,14 +18,9 @@ export default {
   emits: ["done"],
 
   props: {
-    sites: {
-      type: Object,
-      required: true,
-    },
-    siteId: {
-      type: String,
-      required: true,
-    },
+    siteId: { type: String, required: true },
+    deviceId: { type: String, required: true },
+    siteDevices: { type: Object, required: true },
   },
 
   setup: function (props, context) {
@@ -47,9 +43,10 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/sites",
+          "http://localhost:443/api/v1/site-devices",
           {
-            id: props.siteId,
+            siteId: props.siteId,
+            deviceId: props.deviceId,
             displayName: newDisplayName.value,
           },
           {
@@ -58,7 +55,12 @@ export default {
           }
         )
         .then(({ data }) => {
-          Object.assign(props.sites[props.siteId], data);
+          const { id: deviceId, sensors, ...device } = data;
+          device.sensors = sensors.map(({ unit, ...sensor }) => ({
+            ...sensor,
+            unit: SensorUnits[unit],
+          }));
+          Object.assign(props.siteDevices, { [deviceId]: device });
           context.emit("done");
         })
         .catch((error) => (updateError.value = error.message || error))
@@ -90,10 +92,13 @@ export default {
       size="lg"
       v-model.trim="newDisplayName"
       label="New Display Name"
-      :placeholder="sites[siteId].displayName"
+      :placeholder="siteDevices[deviceId].displayName"
       invalidFeedback="Please provide a new display name"
       @update:validity="newDisplayNameValidity = $event"
       required
+      counter
+      :maxlength="32"
+      class="mb-3"
       :formChecked="formChecked"
     />
     <MDBCol md="12" v-if="updateError">
@@ -108,7 +113,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >Update Site</AjaxButton
+        >Update Device</AjaxButton
       >
     </MDBCol>
   </MDBRow>

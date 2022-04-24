@@ -133,7 +133,7 @@ void displayNoiseLevel(float decibels) {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Loudness: ");
-  lcd.print(decibels);
+  lcd.print((uint8_t) decibels);
   lcd.print("dB");
 
   if (decibels <= 60) {
@@ -165,7 +165,6 @@ void initDevice() {
 void initSensors() {
   *noiseSensor = {.id = 0,
                   .unit = SensorUnit::DECIBEL,
-                  .latestValue = 49,
                   .loop = noiseSensorLoop};
 }
 

@@ -1,11 +1,12 @@
 package com.billy5804.iotnoisedetectionbackend.repository;
 
-import org.springframework.data.domain.Example;
+import java.util.UUID;
+
 import org.springframework.data.repository.Repository;
 
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistory;
 import com.billy5804.iotnoisedetectionbackend.model.SiteDeviceSensorHistoryPK;
-import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceSensorHistroyExculdeSiteDeviceAndSiteProjection;
+import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called siteRepository
 // CRUD refers Create, Read, Update, Delete
@@ -13,7 +14,9 @@ import com.billy5804.iotnoisedetectionbackend.projection.SiteDeviceSensorHistroy
 public interface SiteDeviceSensorHistoryRepository
 		extends Repository<SiteDeviceSensorHistory, SiteDeviceSensorHistoryPK> {
 
-	Iterable<SiteDeviceSensorHistroyExculdeSiteDeviceAndSiteProjection> findAll(Example<SiteDeviceSensorHistory> siteDeviceSensorHistory);
+	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteDeviceSensorHistoryPKSensorIdAndSiteId(byte[] deviceId, int sensorId, UUID siteId);
+	
+	Iterable<SiteDeviceSensorHistoryOnlyTimestampAndValueAndSensorIdProjection> findBySiteDeviceSensorHistoryPKDeviceIdAndSiteId(byte[] deviceId, UUID siteId);
 
 	void save(SiteDeviceSensorHistory siteDeviceSensorHistory);
 }

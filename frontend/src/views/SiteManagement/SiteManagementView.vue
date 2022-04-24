@@ -13,8 +13,8 @@ import {
   MDBModalBody,
   MDBModalFooter,
 } from "mdb-vue-ui-kit";
-import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
+import { useUserSitesStore } from "@/stores/UserSitesStore";
 import { onBeforeMount, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import SiteOptionsView from "./SiteOptionsView.vue";
@@ -48,6 +48,7 @@ export default {
 
   setup: function (props) {
     const user = useUserStore();
+    const sitesStore = useUserSitesStore();
     const router = useRouter();
 
     const showModal = computed({
@@ -71,24 +72,15 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const sitesAPIPath = "http://localhost:443/api/v1/site-users";
-    const sites = ref(null);
+
+    const sites = computed(() => sitesStore.sites);
 
     onBeforeMount(async () => {
-      const sitesResponse = await axios
-        .get(sitesAPIPath, {
-          timeout: 5000,
-          headers: { authorization: `Bearer ${await user.getIdToken()}` },
-        })
-        .catch((error) => (loadingError.value = error.message || error));
-
-      sites.value = sitesResponse?.data?.reduce((result, { site, role }) => {
-        const siteId = site.id;
-        delete site.id;
-        site.role = role;
-        result[siteId] = site;
-        return result;
-      }, {});
+      if (+new Date() > sitesStore.lastRefreshTime + 1000) {
+        await sitesStore
+          .refreshSites(await user.getIdToken())
+          .catch((error) => (loadingError.value = error.message || error));
+      }
 
       loading.value = false;
     });
@@ -106,7 +98,7 @@ export default {
       <MDBCol v-if="loading">
         <MDBCard aria-hidden="true">
           <MDBCardHeader class="placeholder-glow">
-            <span class="placeholder col-8"></span>
+            <h5 class="placeholder col-8" />
           </MDBCardHeader>
           <MDBCardBody class="placeholder-glow">
             <span class="placeholder col-5"></span>
@@ -125,9 +117,28 @@ export default {
         {{ loadingError }}
       </div>
       <template v-else>
+        <MDBCol
+          v-if="!Object.keys(sites).length"
+          sm="12"
+          md="12"
+          lg="12"
+          xl="12"
+          col="12"
+          class="d-flex"
+        >
+          <RouterLink
+            :to="{ name: 'site-create' }"
+            class="btn btn-success btn-lg mx-auto"
+          >
+            Add first site
+          </RouterLink>
+        </MDBCol>
         <MDBCol v-for="(site, siteId) in sites" :key="siteId">
           <MDBCard>
-            <MDBCardHeader>{{ site.displayName }}</MDBCardHeader>
+            <MDBCardHeader
+              class="h5 m-0 text-truncate"
+              v-text="site.displayName"
+            />
             <MDBCardBody>
               <SiteOptionsView :siteId="siteId" :sites="sites" />
             </MDBCardBody>
@@ -153,7 +164,7 @@ export default {
         v-if="sites[siteId] || ['create', 'invitation'].includes(siteId)"
       >
         <MDBModalHeader>
-          <MDBModalTitle id="siteModalTitle">
+          <MDBModalTitle id="siteModalTitle" class="text-truncate">
             {{
               sites[siteId]
                 ? sites[siteId].displayName

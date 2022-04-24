@@ -44,7 +44,7 @@ export default {
       const siteUsersResponse = await axios
         .get(siteUsersAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId },
         })
         .catch((error) => (loadingError.value = error.message || error));
@@ -129,7 +129,7 @@ export default {
       axios
         .delete(siteUsersAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId, userId },
         })
         .then(() => siteUsers.value.splice(userIndex, 1))
@@ -149,7 +149,7 @@ export default {
       axios
         .delete(`${siteUsersAPIPath}?unauthorised`, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId },
         })
         .then(({ data }) => {

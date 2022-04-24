@@ -50,6 +50,7 @@ public class DeviceSensor extends CommonAttributes implements Serializable {
 //		deviceSensorPK.setDevice(device);
 //	}
 
+	@JsonIgnore
 	public byte[] getDeviceId() {
 		return deviceSensorPK.getDeviceId();
 	}

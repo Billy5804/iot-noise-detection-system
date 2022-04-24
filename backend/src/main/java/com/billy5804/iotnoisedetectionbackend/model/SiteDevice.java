@@ -1,6 +1,7 @@
 package com.billy5804.iotnoisedetectionbackend.model;
 
 import java.io.Serializable;
+import java.util.HexFormat;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -63,10 +64,14 @@ public class SiteDevice extends CommonAttributes implements Serializable {
 	public byte[] getDeviceId() {
 		return siteDevicePK.getDevice().getId();
 	}
-
-	@JsonSetter
+	
 	public void setDeviceId(byte[] deviceId) {
 		siteDevicePK.getDevice().setId(deviceId);
+	}
+	
+	@JsonSetter
+	public void setDeviceId(String deviceId) {
+		setDeviceId(HexFormat.of().parseHex(deviceId));
 	}
 
 	public String getDisplayName() {

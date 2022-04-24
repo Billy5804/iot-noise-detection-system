@@ -17,14 +17,8 @@ export default {
   emits: ["done"],
 
   props: {
-    sites: {
-      type: Object,
-      required: true,
-    },
-    siteId: {
-      type: String,
-      required: true,
-    },
+    siteDevices: { type: Object, required: true },
+    deviceId: { type: String, required: true },
   },
 
   setup: function (props, context) {
@@ -51,13 +45,13 @@ export default {
       }
       syncing.value = true;
       axios
-        .delete("http://localhost:443/api/v1/sites", {
+        .delete("http://localhost:443/api/v1/site-devices", {
           timeout: 5000,
           headers: { authorization: await getIdToken() },
-          params: { siteId: props.siteId },
+          params: { deviceId: props.deviceId },
         })
         .then(() => {
-          delete props.sites[props.siteId];
+          delete props.siteDevices[props.deviceId];
           context.emit("done");
         })
         .catch((error) => (deleteError.value = error.message || error))
@@ -77,10 +71,10 @@ export default {
 </script>
 
 <template>
-  <h2>Are you sure you want to delete this site?</h2>
+  <h2>Are you sure you want to delete this device?</h2>
   <p>
-    This action cannot be undone.<br />All data associated with this site will
-    be lost.
+    This action cannot be undone.<br />All data associated history with this
+    device will be lost.
   </p>
   <MDBRow
     tag="form"
@@ -112,7 +106,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >Delete Site</AjaxButton
+        >Delete Device</AjaxButton
       >
     </MDBCol>
   </MDBRow>

@@ -24,7 +24,9 @@ defineProps({
     type: Boolean,
     default: false,
   },
-  minLength: Number,
+  minlength: Number,
+  maxlength: Number,
+  counter: Boolean,
   min: Number,
   md: {
     type: String,
@@ -70,7 +72,9 @@ const handleValidation = ({ target }) => {
       }`"
       :invalidFeedback="invalidFeedback"
       :required="required"
-      :minLength="minLength"
+      :minlength="minlength"
+      :maxlength="maxlength"
+      :counter="!!counter"
       :min="min"
       :pattern="pattern || RegExp.escape(modelValue)"
       @input="handleValidation"

@@ -37,7 +37,7 @@ export default {
       const siteInvitationsResponse = await axios
         .get(siteInvitationsAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId },
         })
         .catch((error) => (loadingError.value = error.message || error));
@@ -192,7 +192,7 @@ export default {
       axios
         .delete(siteInvitationsAPIPath, {
           timeout: 5000,
-          headers: { authorization: `Bearer ${await getIdToken()}` },
+          headers: { authorization: await getIdToken() },
           params: { id: invitationId },
         })
         .then(() => siteInvitations.value.splice(invitationIndex, 1))

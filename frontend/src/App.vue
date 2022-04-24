@@ -1,6 +1,6 @@
 <script>
 import { useUserStore } from "@/stores/UserStore";
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { useRouter, RouterView } from "vue-router";
 import PageHeader from "./components/PageHeader.vue";
 import LoadingView from "./views/LoadingView.vue";
@@ -22,21 +22,17 @@ export default {
     const user = useUserStore();
     const router = useRouter();
 
-    const userLoading = ref(!user.finishedLoading);
+    const userLoading = computed(() => !user.finishedLoading);
 
-    const loadingWatcher = watch(
-      () => user.finishedLoading,
-      (finishedLoading) => {
-        if (finishedLoading) {
-          const replacePath =
-            routerRedirect(router.currentRoute.value) ||
-            router.currentRoute.value.path;
-          router.replace(replacePath);
-          userLoading.value = false;
-          loadingWatcher();
-        }
+    const loadingWatcher = watch(userLoading, (loading) => {
+      if (!loading) {
+        const replacePath =
+          routerRedirect(router.currentRoute.value) ||
+          router.currentRoute.value.path;
+        router.replace(replacePath);
+        loadingWatcher();
       }
-    );
+    });
 
     const userEmailVerified = computed(() => user.emailVerified);
 
@@ -49,24 +45,8 @@ export default {
     );
     const authorised = computed(() => user.loggedIn);
 
-    const viewRequiresEmailVerification = computed(
-      () => router.currentRoute.value.meta.requireEmailVerification
-    );
-
-    watch(
-      [() => router.currentRoute.value, userEmailVerified],
-      ([currentRoute, emailVerified]) => {
-        if (
-          user.loggedIn &&
-          !emailVerified &&
-          !currentRoute.query?.emailNotVerified
-        ) {
-          router.replace({
-            ...currentRoute,
-            query: { emailNotVerified: true },
-          });
-        }
-      }
+    const bypassEmailVerification = computed(
+      () => router.currentRoute.value.meta.bypassEmailVerification
     );
 
     function routerRedirect(to) {
@@ -90,7 +70,7 @@ export default {
       onHomeView,
       userLoading,
       userEmailVerified,
-      viewRequiresEmailVerification,
+      bypassEmailVerification,
     };
   },
 };
@@ -107,7 +87,7 @@ export default {
         class="mt-3 mb-n4"
       />
       <ForbiddenView
-        v-if="!userEmailVerified && viewRequiresEmailVerification"
+        v-if="!userEmailVerified && !bypassEmailVerification"
         class="container m-auto mt-5"
       />
       <RouterView v-else class="container m-auto mt-5" />
