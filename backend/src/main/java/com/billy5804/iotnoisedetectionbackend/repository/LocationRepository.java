@@ -11,4 +11,6 @@ import com.billy5804.iotnoisedetectionbackend.model.Location;
 
 public interface LocationRepository extends CrudRepository<Location, UUID> {
 
+	Iterable<Location> findBySiteId(UUID siteId);
+
 }
