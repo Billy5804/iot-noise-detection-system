@@ -29,11 +29,10 @@ export const useUserSitesStore = defineStore("UserSitesStore", {
       });
 
       sites.value =
-        sitesResponse?.data?.reduce((result, { site, role, ...siteUser }) => {
-          console.log(siteUser);
+        sitesResponse?.data?.reduce((result, { site, ...siteUser }) => {
           const siteId = site.id;
           delete site.id;
-          site.role = role;
+          Object.assign(site, siteUser);
           result[siteId] = site;
           return result;
         }, {}) || {};
