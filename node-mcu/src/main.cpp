@@ -133,7 +133,7 @@ void displayNoiseLevel(float decibels) {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Loudness: ");
-  lcd.print(decibels);
+  lcd.print((uint8_t) decibels);
   lcd.print("dB");
 
   if (decibels <= 60) {
