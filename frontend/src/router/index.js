@@ -161,6 +161,41 @@ const router = createRouter({
       props: true,
       children: [
         {
+          path: "location",
+          // name: "dashboard-location-overview",
+          component: () =>
+            import("../views/Dashboard/Location/OverviewView.vue"),
+          props: ({ params, name }) => ({
+            locationId: params.locationId,
+            siteId: params.siteId,
+            onModal: name !== "dashboard-location-overview",
+          }),
+          children: [
+            {
+              path: ":locationId?/add",
+              name: "dashboard-location-add",
+              component: () =>
+                import("../views/Dashboard/Location/AddView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId",
+              name: "dashboard-location-overview",
+              component: {}
+            },
+            {
+              path: ":locationId/edit",
+              name: "dashboard-location-edit",
+              component: () =>
+                import("../views/Dashboard/Location/EditView.vue"),
+              props: true,
+            },
+          ],
+        },
+        {
           path: "",
           name: "dashboard-device-overview",
           component: () => import("../views/Dashboard/Device/OverviewView.vue"),
@@ -169,7 +204,7 @@ const router = createRouter({
               ? name.replace("dashboard-device-", "")
               : params.deviceId,
             siteId: params.siteId,
-            ...(name === "dashboard-device-history" && { modalSize: "xl" })
+            ...(name === "dashboard-device-history" && { modalSize: "xl" }),
           }),
           children: [
             {
