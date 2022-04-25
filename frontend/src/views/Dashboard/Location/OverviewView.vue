@@ -139,7 +139,7 @@ export default {
       await setupLocations();
 
       const locationKeys = Object.keys(locations.value);
-      console.log(locationKeys)
+      console.log(locationKeys);
       if (!currentLocation.value && locationKeys.length) {
         await router.replace({
           name: "dashboard-location-overview",
@@ -160,7 +160,7 @@ export default {
       allowedModal,
       SiteUserRoles,
       currentLocation,
-      locations
+      locations,
     };
   },
 };
@@ -190,15 +190,18 @@ export default {
         class="d-flex"
       >
         <RouterLink
-          :to="{ name: 'dashboard-location-add', params: { siteId, locationId } }"
+          :to="{
+            name: 'dashboard-location-add',
+            params: { siteId, locationId },
+          }"
           class="btn btn-success btn-lg mx-auto"
         >
           Add first location
         </RouterLink>
       </MDBCol>
-      {{currentLocation}}
-      {{locationId}}
-      {{locations}}
+      {{ currentLocation }}
+      {{ locationId }}
+      {{ locations }}
       <MDBCol
         v-for="[deviceId, device] in sortedFilteredSiteDevices"
         :key="deviceId"

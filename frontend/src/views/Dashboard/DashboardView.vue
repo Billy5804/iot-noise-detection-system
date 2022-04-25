@@ -13,7 +13,7 @@ export default {
   props: { siteId: { type: String, required: true } },
 
   setup: function (props) {
-    const user = useUserStore();
+    const { getIdToken } = useUserStore();
     const sitesStore = useUserSitesStore();
     const router = useRouter();
 
@@ -33,7 +33,7 @@ export default {
       const siteDevicesResponse = await axios
         .get(siteDevicesAPIPath, {
           timeout: 5000,
-          headers: { authorization: await user.getIdToken() },
+          headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId },
         })
         .catch((error) => (loadingError.value = error.message || error));
@@ -90,7 +90,7 @@ export default {
     onBeforeMount(async () => {
       if (+new Date() > sitesStore.lastRefreshTime + 1000) {
         await sitesStore
-          .refreshSites(await user.getIdToken())
+          .refreshSites(await getIdToken())
           .catch((error) => (loadingError.value = error.message || error));
       }
 
@@ -110,7 +110,7 @@ export default {
       await setupDevices();
 
       WebSocket.connect(
-        await user.getIdToken(),
+        await getIdToken(),
         () => (canSubscribe.value = true),
         console.error
       );

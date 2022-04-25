@@ -42,7 +42,7 @@ export default {
   },
 
   props: {
-    loading: { type: Boolean, required: true},
+    loading: { type: Boolean, required: true },
     siteId: { type: String, required: true },
     currentSiteRole: { type: String, required: true },
     siteDevices: Object,
@@ -263,7 +263,13 @@ export default {
           :role="currentSiteRole"
           @done="showModal = false"
         />
-        <ForbiddenView v-else redirectRoute="/dashboard" />
+        <ForbiddenView
+          v-else
+          :redirectRoute="{
+            name: 'dashboard-device-overview',
+            params: { siteId: props.siteId },
+          }"
+        />
       </MDBModalBody>
     </template>
     <template v-else>
