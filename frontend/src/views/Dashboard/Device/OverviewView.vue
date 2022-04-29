@@ -16,7 +16,7 @@ import {
 import { computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceOptionsView from "./OptionsView.vue";
-import DeviceCardView from "@/components/DeviceCardView.vue";
+import DeviceCard from "@/components/DeviceCard.vue";
 import ForbiddenView from "../../ForbiddenView.vue";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
@@ -38,7 +38,7 @@ export default {
     RouterView,
     DeviceOptionsView,
     ForbiddenView,
-    DeviceCardView,
+    DeviceCard,
   },
 
   props: {
@@ -122,14 +122,14 @@ export default {
         </RouterLink>
       </MDBCol>
       <MDBCol v-for="[deviceId, device] in sortedSiteDevices" :key="deviceId">
-        <DeviceCardView :device="device" :deviceId="deviceId">
+        <DeviceCard :device="device" :deviceId="deviceId">
           <DeviceOptionsView
             :siteId="siteId"
             :deviceId="deviceId"
             :role="currentSiteRole"
             class="d-flex"
           />
-        </DeviceCardView>
+        </DeviceCard>
       </MDBCol>
       <RouterLink
         v-if="
