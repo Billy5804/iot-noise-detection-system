@@ -17,7 +17,6 @@ export default {
   emits: ["done"],
 
   props: {
-    siteId: { type: String, required: true },
     locationId: { type: String, required: true },
     locations: { type: Object, required: true },
   },
@@ -44,7 +43,6 @@ export default {
         .put(
           "http://localhost:443/api/v1/locations",
           {
-            siteId: props.siteId,
             id: props.locationId,
             displayName: newDisplayName.value,
           },
@@ -86,9 +84,9 @@ export default {
       type="text"
       size="lg"
       v-model.trim="newDisplayName"
-      label="New Display Name"
+      label="New Location Name"
       :placeholder="locations[locationId].displayName"
-      invalidFeedback="Please provide a new display name"
+      invalidFeedback="Please provide a new location name"
       @update:validity="newDisplayNameValidity = $event"
       required
       counter
@@ -108,7 +106,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >Update Device</AjaxButton
+        >Update Location</AjaxButton
       >
     </MDBCol>
   </MDBRow>
