@@ -196,6 +196,13 @@ const router = createRouter({
                 import("../views/Dashboard/Location/EditView.vue"),
               props: true,
             },
+            {
+              path: ":locationId/manage-devices",
+              name: "dashboard-location-manage-devices",
+              component: () =>
+                import("../views/Dashboard/Location/ManageDevicesView.vue"),
+              props: true,
+            },
           ],
         },
         {

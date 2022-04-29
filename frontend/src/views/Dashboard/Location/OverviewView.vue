@@ -283,6 +283,8 @@ export default {
           :locations="locations"
           :role="currentSiteRole"
           @done="showModal = false"
+          :siteDevices="siteDevices"
+          :locationDevices="locationDevices"
         />
         <ForbiddenView
           v-else
