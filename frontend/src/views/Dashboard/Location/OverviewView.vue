@@ -5,7 +5,6 @@ import {
   MDBCard,
   MDBCardHeader,
   MDBCardBody,
-  MDBCardText,
   MDBIcon,
   MDBBtn,
   MDBModal,
@@ -15,8 +14,9 @@ import {
   MDBModalFooter,
 } from "mdb-vue-ui-kit";
 import axios from "axios";
-import { ref, computed, onUnmounted, onBeforeMount, watch } from "vue";
+import { ref, computed, onBeforeMount, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
+import DeviceCard from "@/components/DeviceCard.vue";
 import ForbiddenView from "../../ForbiddenView.vue";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
 import { useUserStore } from "@/stores/UserStore";
@@ -28,7 +28,6 @@ export default {
     MDBCard,
     MDBCardHeader,
     MDBCardBody,
-    MDBCardText,
     MDBIcon,
     MDBBtn,
     MDBModal,
@@ -39,6 +38,7 @@ export default {
     RouterLink,
     RouterView,
     ForbiddenView,
+    DeviceCard,
   },
 
   props: {
@@ -121,6 +121,25 @@ export default {
         }, {}) || {};
     }
 
+    async function setupLocationDevices() {
+      const locationDevicesResponse = await axios
+        .get(locationDevicesAPIPath, {
+          timeout: 5000,
+          headers: { authorization: await getIdToken() },
+          params: { locationId: props.locationId },
+        })
+        .catch((error) => (loadingError.value = error.message || error));
+
+      locationDevices.value =
+        locationDevicesResponse?.data?.reduce(
+          (result, { deviceId, ...locationDevice }) => {
+            result[deviceId] = locationDevice;
+            return result;
+          },
+          {}
+        ) || {};
+    }
+
     onBeforeMount(async () => {
       if (props.loading) {
         await new Promise((resolve) => {
@@ -139,7 +158,14 @@ export default {
       await setupLocations();
 
       const locationKeys = Object.keys(locations.value);
-      console.log(locationKeys);
+      if (!locationKeys.length) {
+        router.replace({
+          name: "dashboard-location-overview",
+          params: { siteId: props.siteId },
+        });
+        return;
+      }
+
       if (!currentLocation.value && locationKeys.length) {
         await router.replace({
           name: "dashboard-location-overview",
@@ -149,6 +175,8 @@ export default {
           },
         });
       }
+
+      await setupLocationDevices();
 
       loading.value = false;
     });
@@ -161,13 +189,14 @@ export default {
       SiteUserRoles,
       currentLocation,
       locations,
+      locationDevices,
     };
   },
 };
 </script>
 
 <template>
-  <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
+  <MDBRow class="g-3 mb-3">
     <MDBCol v-if="computedLoading">
       <MDBCard aria-hidden="true">
         <MDBCardHeader class="placeholder-glow">
@@ -183,9 +212,9 @@ export default {
       <MDBCol
         v-if="!currentLocation"
         sm="12"
-        md="12"
-        lg="12"
-        xl="12"
+        md="7"
+        lg="8"
+        xl="9"
         col="12"
         class="d-flex"
       >
@@ -199,29 +228,23 @@ export default {
           Add first location
         </RouterLink>
       </MDBCol>
-      {{ currentLocation }}
-      {{ locationId }}
-      {{ locations }}
-      <MDBCol
-        v-for="[deviceId, device] in sortedFilteredSiteDevices"
-        :key="deviceId"
-      >
-        <MDBCard>
-          <MDBCardHeader class="d-flex">
-            <h5 class="text-truncate m-0" v-text="device.displayName" />
-          </MDBCardHeader>
-          <MDBCardBody>
-            <MDBCardText
-              v-for="(sensor, sensorId) in device.sensors"
-              :key="sensorId"
-              class="text-end"
+      <template v-else>
+        <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
+        </MDBCol>
+        <MDBCol sm="12" md="5" lg="4" xl="3" col="12">
+          <MDBRow class="g-3 mb-3">
+            <MDBCol
+              v-for="(locationDevice, deviceId) in locationDevices"
+              :key="deviceId"
             >
-              {{ sensor.latestValue + sensor.unit.getSymbol() }}
-              <MDBIcon :icon="sensor.unit.getSensorType().getIcon()" />
-            </MDBCardText>
-          </MDBCardBody>
-        </MDBCard>
-      </MDBCol>
+              <DeviceCard
+                :device="siteDevices[deviceId]"
+                :deviceId="deviceId"
+              />
+            </MDBCol>
+          </MDBRow>
+        </MDBCol>
+      </template>
       <RouterLink
         v-if="
           [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
