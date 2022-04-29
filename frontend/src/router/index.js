@@ -168,7 +168,10 @@ const router = createRouter({
           props: ({ params, name }) => ({
             locationId: params.locationId,
             siteId: params.siteId,
-            onModal: name !== "dashboard-location-overview",
+            modalName:
+              name !== "dashboard-location-overview"
+                ? name.replace("dashboard-location-", "")
+                : null,
           }),
           children: [
             {

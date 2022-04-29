@@ -49,7 +49,7 @@ export default {
     locationId: String,
     deviceId: String,
     modalSize: String,
-    onModal: Boolean,
+    modalName: String,
   },
 
   setup: function (props) {
@@ -75,7 +75,7 @@ export default {
     });
 
     const showModal = computed({
-      get: () => !computedLoading.value && props.onModal,
+      get: () => !computedLoading.value && !!props.modalName,
       set: (value) => {
         if (value === false) {
           router.push({
@@ -242,13 +242,15 @@ export default {
     staticBackdrop
     :size="modalSize"
   >
-    <template v-if="locations[locationId] || locationId === 'add'">
+    <template v-if="locations[locationId] || modalName === 'add'">
       <MDBModalHeader>
         <MDBModalTitle id="locationModalTitle">
           {{
-            locations[locationId]
+            modalName === "add"
+              ? "Add Location"
+              : locations[locationId]
               ? locations[locationId].displayName
-              : locationId === "add" && "Add Location"
+              : modalName
           }}
         </MDBModalTitle>
       </MDBModalHeader>
