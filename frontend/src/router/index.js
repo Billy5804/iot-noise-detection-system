@@ -197,6 +197,13 @@ const router = createRouter({
               props: true,
             },
             {
+              path: ":locationId/floor-plan",
+              name: "dashboard-location-floor-plan",
+              component: () =>
+                import("../views/Dashboard/Location/FloorPlan/EditView.vue"),
+              props: true,
+            },
+            {
               path: ":locationId/manage-devices",
               name: "dashboard-location-manage-devices",
               component: () =>
