@@ -12,14 +12,25 @@ import {
   MDBModalTitle,
   MDBModalBody,
   MDBModalFooter,
+  MDBFile,
 } from "mdb-vue-ui-kit";
+import {
+  getStorage,
+  ref as firebaseRef,
+  getDownloadURL,
+} from "firebase/storage";
 import axios from "axios";
 import { ref, computed, onBeforeMount, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceCard from "@/components/DeviceCard.vue";
 import ForbiddenView from "../../ForbiddenView.vue";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
+import { svgOptimiseAndStore } from "@/utilitys/SVGOptimiseAndStore";
 import { useUserStore } from "@/stores/UserStore";
+import { error as toastrError } from "toastr";
+
+import FabricCanvas from "@/components/FabricCanvas.vue";
+import LoadingView from "../../LoadingView.vue";
 
 export default {
   components: {
@@ -38,6 +49,9 @@ export default {
     RouterLink,
     RouterView,
     ForbiddenView,
+    FabricCanvas,
+    MDBFile,
+    LoadingView,
     DeviceCard,
   },
 
@@ -104,6 +118,32 @@ export default {
     const locationDevicesAPIPath =
       "http://localhost:443/api/v1/location-devices";
     const locationDevices = ref(null);
+
+    const floorPlanUpload = ref(null);
+    const storage = getStorage();
+
+    watch(currentLocation, (currentLocation) => {
+      if (!currentLocation) {
+        return;
+      }
+      currentLocation.floorPlan = "loading";
+      getDownloadURL(firebaseRef(storage, `floorPlans/${props.locationId}`))
+        .then((floorPlanURL) => (currentLocation.floorPlan = floorPlanURL))
+        .catch(() => (currentLocation.floorPlan = null));
+    });
+
+    watch(floorPlanUpload, (file) => {
+      if (!file || !file[0]) {
+        return;
+      }
+      currentLocation.value.floorPlan = "loading";
+      floorPlanUpload.value = null;
+
+      svgOptimiseAndStore(file[0], `/floorPlans/${props.locationId}`)
+        .then((blobURL) => (currentLocation.value.floorPlan = blobURL))
+        .catch((error) => toastrError(error.message || error))
+        .finally(() => (currentLocation.value.floorPlan = null));
+    });
 
     async function setupLocations() {
       const locationsResponse = await axios
@@ -189,6 +229,7 @@ export default {
       SiteUserRoles,
       currentLocation,
       locations,
+      floorPlanUpload,
       locationDevices,
     };
   },
@@ -230,6 +271,33 @@ export default {
       </MDBCol>
       <template v-else>
         <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
+          <div v-if="currentLocation.floorPlan === 'loading'">
+            <LoadingView />
+          </div>
+          <div v-else-if="currentLocation.floorPlan">
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-floor-plan',
+                params: { siteId, locationId },
+              }"
+              class="text-info"
+              type="button"
+              title="Change floor plan"
+            >
+              <MDBIcon
+                iconStyle="fas"
+                icon="arrow-right-arrow-left"
+                size="lg"
+              />
+            </RouterLink>
+            <FabricCanvas :backgroundImage="currentLocation.floorPlan" />
+          </div>
+          <MDBFile
+            v-else
+            v-model="floorPlanUpload"
+            label="Add SVG floor plan"
+            accept="image/svg+xml"
+          />
         </MDBCol>
         <MDBCol sm="12" md="5" lg="4" xl="3" col="12">
           <MDBRow class="g-3 mb-3">
