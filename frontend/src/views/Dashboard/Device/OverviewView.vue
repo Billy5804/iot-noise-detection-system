@@ -123,6 +123,11 @@ export default {
         class="d-flex"
       >
         <RouterLink
+          v-if="
+            [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(
+              currentSiteRole
+            )
+          "
           :to="{ name: 'dashboard-device-add', params: { siteId } }"
           class="btn btn-success btn-lg mx-auto"
         >
