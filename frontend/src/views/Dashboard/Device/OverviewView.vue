@@ -155,49 +155,49 @@ export default {
         <MDBIcon iconStyle="fas" size="2x" icon="plus" />
       </RouterLink>
     </template>
+    <MDBModal
+      id="deviceModal"
+      tabindex="-1"
+      labelledby="deviceModalTitle"
+      v-model="showModal"
+      staticBackdrop
+      :size="modalSize"
+    >
+      <template v-if="siteDevices[deviceId] || deviceId === 'add'">
+        <MDBModalHeader>
+          <MDBModalTitle id="deviceModalTitle">
+            {{
+              siteDevices[deviceId]
+                ? siteDevices[deviceId].displayName
+                : deviceId === "add" && "Add Device"
+            }}
+          </MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>
+          <RouterView
+            v-if="allowedModal"
+            :siteDevices="siteDevices"
+            :role="currentSiteRole"
+            @done="showModal = false"
+          />
+          <ForbiddenView
+            v-else
+            :redirectRoute="{
+              name: 'dashboard-device-overview',
+              params: { siteId: props.siteId },
+            }"
+          />
+        </MDBModalBody>
+      </template>
+      <template v-else>
+        <MDBModalHeader>
+          <MDBModalTitle id="deviceModalTitle">Unknown Device</MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>Please choose a different device.</MDBModalBody>
+      </template>
+      <MDBModalFooter>
+        <MDBBtn color="secondary" @click="showModal = false">Close</MDBBtn>
+      </MDBModalFooter>
+    </MDBModal>
   </MDBRow>
-  <MDBModal
-    id="deviceModal"
-    tabindex="-1"
-    labelledby="deviceModalTitle"
-    v-model="showModal"
-    staticBackdrop
-    :size="modalSize"
-  >
-    <template v-if="siteDevices[deviceId] || deviceId === 'add'">
-      <MDBModalHeader>
-        <MDBModalTitle id="deviceModalTitle">
-          {{
-            siteDevices[deviceId]
-              ? siteDevices[deviceId].displayName
-              : deviceId === "add" && "Add Device"
-          }}
-        </MDBModalTitle>
-      </MDBModalHeader>
-      <MDBModalBody>
-        <RouterView
-          v-if="allowedModal"
-          :siteDevices="siteDevices"
-          :role="currentSiteRole"
-          @done="showModal = false"
-        />
-        <ForbiddenView
-          v-else
-          :redirectRoute="{
-            name: 'dashboard-device-overview',
-            params: { siteId: props.siteId },
-          }"
-        />
-      </MDBModalBody>
-    </template>
-    <template v-else>
-      <MDBModalHeader>
-        <MDBModalTitle id="deviceModalTitle">Unknown Device</MDBModalTitle>
-      </MDBModalHeader>
-      <MDBModalBody>Please choose a different device.</MDBModalBody>
-    </template>
-    <MDBModalFooter>
-      <MDBBtn color="secondary" @click="showModal = false">Close</MDBBtn>
-    </MDBModalFooter>
-  </MDBModal>
 </template>
