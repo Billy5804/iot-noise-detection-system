@@ -282,6 +282,26 @@ export default {
       </div>
     </DashboardNavigation>
     <MDBCol
+      v-if="!currentLocation && !computedLoading"
+      sm="12"
+      md="7"
+      lg="8"
+      xl="9"
+      col="12"
+      class="d-flex"
+    >
+      <RouterLink
+        v-if="
+          [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
+        "
+        :to="{
+          name: 'dashboard-location-add',
+          params: { siteId, locationId },
+        }"
+        class="btn btn-success btn-lg mx-auto"
+      >
+        Add first location
+      </RouterLink>
     </MDBCol>
     <template v-else>
       <MDBCol
