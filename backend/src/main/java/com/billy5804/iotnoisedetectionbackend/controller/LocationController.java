@@ -52,21 +52,24 @@ public class LocationController {
 	@PutMapping
 	public ResponseEntity<Location> updateLocation(@RequestBody Location updateLocation) {
 		final AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication();
-		try {
-			final SiteUser authUserSiteUser = siteUserRepository
-					.findById(new SiteUserPK(updateLocation.getSiteId(), authUser.getId())).get();
-			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-			}
-		} catch (NoSuchElementException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
 		Location currentLocation = null;
 		try {
 			currentLocation = locationRepository.findById(updateLocation.getId()).get();
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
+		try {
+			final SiteUser authUserSiteUser = siteUserRepository
+					.findById(new SiteUserPK(currentLocation.getSiteId(), authUser.getId())).get();
+			if (authUserSiteUser.getRole() != SiteUserRole.OWNER && authUserSiteUser.getRole() != SiteUserRole.EDITOR) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+			}
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		
+		updateLocation.setSiteId(currentLocation.getSiteId());
+		
 		updateHelper.copyNonNullProperties(updateLocation, currentLocation);
 
 		return ResponseEntity.ok(locationRepository.save(currentLocation));
