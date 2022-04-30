@@ -195,6 +195,9 @@ const router = createRouter({
               component: () =>
                 import("../views/Dashboard/Location/EditView.vue"),
               props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
             },
             {
               path: ":locationId/delete",
@@ -202,6 +205,9 @@ const router = createRouter({
               component: () =>
                 import("../views/Dashboard/Location/DeleteView.vue"),
               props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
             },
             {
               path: ":locationId/floor-plan",
@@ -209,6 +215,9 @@ const router = createRouter({
               component: () =>
                 import("../views/Dashboard/Location/FloorPlan/EditView.vue"),
               props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
             },
             {
               path: ":locationId/manage-devices",
@@ -216,6 +225,9 @@ const router = createRouter({
               component: () =>
                 import("../views/Dashboard/Location/ManageDevicesView.vue"),
               props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
             },
           ],
         },
