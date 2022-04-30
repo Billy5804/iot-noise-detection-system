@@ -35,7 +35,7 @@ export default {
 
     async function submitUpdateForm() {
       updateError.value = null;
-      if (!newFloorPlan.value && newFloorPlan.value[0]) {
+      if (!newFloorPlan.value || !newFloorPlan.value[0]) {
         formChecked.value = true;
         return;
       }
@@ -49,8 +49,10 @@ export default {
           currentLocation.value.floorPlan = blobURL;
           emit("done");
         })
-        .catch((error) => (updateError.value = error.message || error))
-        .finally(() => (syncing.value = false));
+        .catch((error) => {
+          updateError.value = error.message || error;
+          currentLocation.value.floorPlan = null;
+        });
     }
 
     return {
@@ -78,7 +80,6 @@ export default {
         label="Choose SVG floor plan"
         accept="image/svg+xml"
         invalidFeedback="Please provide a new floor plan"
-        class="mb-3"
         required
       />
     </MDBCol>
