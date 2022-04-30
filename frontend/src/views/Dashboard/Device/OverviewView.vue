@@ -45,6 +45,7 @@ export default {
     loading: { type: Boolean, required: true },
     siteId: { type: String, required: true },
     currentSiteRole: { type: String, required: true },
+    locations: Object,
     siteDevices: Object,
     deviceId: String,
     modalSize: String,

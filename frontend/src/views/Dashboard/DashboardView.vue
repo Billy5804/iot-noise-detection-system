@@ -29,6 +29,25 @@ export default {
       () => sites.value && sites.value[props.siteId]
     );
 
+    const locationsAPIPath = "http://localhost:443/api/v1/locations";
+    const locations = ref(null);
+
+    async function setupLocations() {
+      const locationsResponse = await axios
+        .get(locationsAPIPath, {
+          timeout: 5000,
+          headers: { authorization: await getIdToken() },
+          params: { siteId: props.siteId },
+        })
+        .catch((error) => (loadingError.value = error.message || error));
+
+      locations.value =
+        locationsResponse?.data?.reduce((result, { id, ...location }) => {
+          result[id] = location;
+          return result;
+        }, {}) || {};
+    }
+
     async function setupDevices() {
       const siteDevicesResponse = await axios
         .get(siteDevicesAPIPath, {
@@ -107,7 +126,7 @@ export default {
         });
       }
 
-      await setupDevices();
+      await Promise.all([setupDevices(), setupLocations()]);
 
       WebSocket.connect(
         await getIdToken(),
@@ -125,6 +144,7 @@ export default {
       loadingError,
       currentSite,
       siteDevices,
+      locations,
     };
   },
 };
@@ -149,6 +169,7 @@ export default {
       :loading="loading"
       :currentSiteRole="currentSite.role"
       :siteDevices="siteDevices"
+      :locations="locations"
     />
   </main>
 </template>

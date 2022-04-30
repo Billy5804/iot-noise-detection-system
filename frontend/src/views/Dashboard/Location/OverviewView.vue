@@ -59,6 +59,7 @@ export default {
     loading: { type: Boolean, required: true },
     siteId: { type: String, required: true },
     currentSiteRole: { type: String, required: true },
+    locations: Object,
     siteDevices: Object,
     locationId: String,
     deviceId: String,
@@ -108,11 +109,8 @@ export default {
       );
     });
 
-    const locationsAPIPath = "http://localhost:443/api/v1/locations";
-    const locations = ref(null);
-
     const currentLocation = computed(
-      () => locations.value && locations.value[props.locationId]
+      () => props.locations && props.locations[props.locationId]
     );
 
     const locationDevicesAPIPath =
@@ -144,22 +142,6 @@ export default {
         .catch((error) => toastrError(error.message || error))
         .finally(() => (currentLocation.value.floorPlan = null));
     });
-
-    async function setupLocations() {
-      const locationsResponse = await axios
-        .get(locationsAPIPath, {
-          timeout: 5000,
-          headers: { authorization: await getIdToken() },
-          params: { siteId: props.siteId },
-        })
-        .catch((error) => (loadingError.value = error.message || error));
-
-      locations.value =
-        locationsResponse?.data?.reduce((result, { id, ...location }) => {
-          result[id] = location;
-          return result;
-        }, {}) || {};
-    }
 
     async function setupLocationDevices() {
       const locationDevicesResponse = await axios
@@ -195,9 +177,7 @@ export default {
         });
       }
 
-      await setupLocations();
-
-      const locationKeys = Object.keys(locations.value);
+      const locationKeys = Object.keys(props.locations);
       if (!locationKeys.length) {
         router.replace({
           name: "dashboard-location-overview",
@@ -228,7 +208,6 @@ export default {
       allowedModal,
       SiteUserRoles,
       currentLocation,
-      locations,
       floorPlanUpload,
       locationDevices,
     };
