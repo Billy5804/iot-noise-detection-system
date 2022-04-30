@@ -99,6 +99,5 @@ export default {
 <style>
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
-  height: 100vh;
 }
 </style>
