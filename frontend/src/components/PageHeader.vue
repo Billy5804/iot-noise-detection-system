@@ -212,4 +212,11 @@ const dashboardModal = ref(false);
 .dashboard-sites-navigation hr:last-of-type {
   display: none;
 }
+
+.dropdown-item:last-of-type {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
 </style>
