@@ -75,19 +75,6 @@ export default {
 
     const computedLoading = computed(() => loading.value || props.loading);
 
-    const currentLocationDevices = computed(() => ({}));
-
-    const sortedFilteredSiteDevices = computed(() => {
-      const deviceIds = Object.entries(currentLocationDevices.value).map(
-        ([deviceId]) => deviceId
-      );
-      return Object.entries(props.siteDevices || {})
-        .filter(([deviceId]) => deviceIds.includes(deviceId))
-        .sort(([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
-          return sensorsB[0].latestValue - sensorsA[0].latestValue;
-        });
-    });
-
     const showModal = computed({
       get: () => !computedLoading.value && !!props.modalName,
       set: (value) => {
@@ -116,6 +103,15 @@ export default {
       "http://localhost:443/api/v1/location-devices";
     const locationDevices = ref(null);
     const loadingDevices = ref(true);
+
+    const sortedFilteredSiteDevices = computed(() => {
+      const deviceIds = Object.keys(locationDevices.value);
+      return Object.entries(props.siteDevices || {})
+        .filter(([deviceId]) => deviceIds.includes(deviceId))
+        .sort(([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
+          return sensorsB[0].latestValue - sensorsA[0].latestValue;
+        });
+    });
 
     const floorPlanUpload = ref(null);
 
