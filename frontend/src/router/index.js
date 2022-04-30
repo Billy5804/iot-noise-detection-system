@@ -185,7 +185,7 @@ const router = createRouter({
               },
             },
             {
-              path: ":locationId",
+              path: ":locationId?",
               name: "dashboard-location-overview",
               component: {},
             },
