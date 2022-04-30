@@ -170,7 +170,7 @@ const router = createRouter({
             siteId: params.siteId,
             modalName:
               name !== "dashboard-location-overview"
-                ? name.replace("dashboard-location-", "")
+                ? name?.replace("dashboard-location-", "")
                 : null,
           }),
           children: [
