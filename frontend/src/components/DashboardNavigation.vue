@@ -45,7 +45,7 @@ const locationsDropdown = ref(false);
       <RouterLink
         v-else-if="!Object.keys(locations).length"
         :to="{
-          name: 'dashboard-location-overview',
+          name: 'dashboard-location-add',
           params: { siteId },
         }"
         class="btn btn-dark"

@@ -182,9 +182,10 @@ export default {
       const locationKeys = Object.keys(props.locations);
       if (!locationKeys.length) {
         router.replace({
-          name: "dashboard-location-overview",
+          name: "dashboard-location-add",
           params: { siteId: props.siteId },
         });
+        loading.value = false;
         return;
       }
 
