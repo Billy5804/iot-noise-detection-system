@@ -29,6 +29,7 @@ import { error as toastrError } from "toastr";
 
 import FabricCanvas from "@/components/FabricCanvas.vue";
 import LoadingView from "../../LoadingView.vue";
+import VerticalRule from "../../../components/VerticalRule.vue";
 
 export default {
   components: {
@@ -52,6 +53,7 @@ export default {
     FabricCanvas,
     DeviceCard,
     DashboardNavigation,
+    VerticalRule,
   },
 
   props: {
@@ -315,127 +317,118 @@ export default {
       </RouterLink>
     </MDBCol>
     <template v-else>
-      <MDBCol
-        v-if="!currentLocation"
-        sm="12"
-        md="7"
-        lg="8"
-        xl="9"
-        col="12"
-        class="d-flex"
-      >
+      <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
+        <div
+          v-if="computedLoading || currentLocation.floorPlan === 'loading'"
+          class="position-relative h-100"
+        >
+          <LoadingView />
+        </div>
+        <div v-else-if="currentLocation.floorPlan">
+          <FabricCanvas :backgroundImage="currentLocation.floorPlan" />
+        </div>
+        <MDBFile
+          v-else
+          v-model="floorPlanUpload"
+          label="Add SVG floor plan"
+          accept="image/svg+xml"
+        />
+      </MDBCol>
+      <VerticalRule class="d-md-block d-none" />
+      <MDBCol sm="12" md="5" lg="4" xl="3" col="12">
+        <MDBCard v-if="computedLoading || loadingDevices" aria-hidden="true">
+          <MDBCardHeader class="placeholder-glow">
+            <span class="placeholder col-8"></span>
+          </MDBCardHeader>
+          <MDBCardBody class="placeholder-glow">
+            <span class="col-7 d-inline-block"></span>
+            <span class="placeholder col-5"></span>
+          </MDBCardBody>
+        </MDBCard>
         <RouterLink
+          v-else-if="
+            !Object.keys(locationDevices).length &&
+            [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(
+              currentSiteRole
+            )
+          "
           :to="{
-            name: 'dashboard-location-add',
+            name: 'dashboard-location-manage-devices',
             params: { siteId, locationId },
           }"
-          class="btn btn-success btn-lg mx-auto"
+          class="btn btn-success btn-lg w-100"
         >
-          Add first location
+          Add first location device
         </RouterLink>
+        <MDBRow v-else class="g-3 mb-3">
+          <MDBCol
+            v-for="[deviceId, device] in sortedFilteredSiteDevices"
+            :key="deviceId"
+          >
+            <DeviceCard :device="device" :deviceId="deviceId" />
+          </MDBCol>
+        </MDBRow>
       </MDBCol>
-      <template v-else>
-        <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
-          <div v-if="currentLocation.floorPlan === 'loading'">
-            <LoadingView />
-          </div>
-          <div v-else-if="currentLocation.floorPlan">
-            <RouterLink
-              :to="{
-                name: 'dashboard-location-floor-plan',
-                params: { siteId, locationId },
-              }"
-              class="text-info"
-              type="button"
-              title="Change floor plan"
-            >
-              <MDBIcon
-                iconStyle="fas"
-                icon="arrow-right-arrow-left"
-                size="lg"
-              />
-            </RouterLink>
-            <FabricCanvas :backgroundImage="currentLocation.floorPlan" />
-          </div>
-          <MDBFile
-            v-else
-            v-model="floorPlanUpload"
-            label="Add SVG floor plan"
-            accept="image/svg+xml"
+    </template>
+    <RouterLink
+      v-if="
+        [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
+      "
+      :to="{ name: 'dashboard-location-add', params: { siteId, locationId } }"
+      title="Add Device"
+      class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"
+    >
+      <MDBIcon iconStyle="fas" size="2x" icon="plus" />
+    </RouterLink>
+    <MDBModal
+      id="locationModal"
+      tabindex="-1"
+      labelledby="locationModalTitle"
+      v-model="showModal"
+      staticBackdrop
+      :size="modalSize"
+    >
+      <template v-if="locations[locationId] || modalName === 'add'">
+        <MDBModalHeader>
+          <MDBModalTitle id="locationModalTitle">
+            {{
+              modalName === "add"
+                ? "Add Location"
+                : locations[locationId]
+                ? locations[locationId].displayName
+                : modalName
+            }}
+          </MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>
+          <RouterView
+            v-if="allowedModal"
+            :locations="locations"
+            :role="currentSiteRole"
+            @done="showModal = false"
+            :siteDevices="siteDevices"
+            :locationDevices="locationDevices"
           />
-        </MDBCol>
-        <MDBCol sm="12" md="5" lg="4" xl="3" col="12">
-          <MDBRow class="g-3 mb-3">
-            <MDBCol
-              v-for="(locationDevice, deviceId) in locationDevices"
-              :key="deviceId"
-            >
-              <DeviceCard
-                :device="siteDevices[deviceId]"
-                :deviceId="deviceId"
-              />
-            </MDBCol>
-          </MDBRow>
-        </MDBCol>
+          <ForbiddenView
+            v-else
+            :redirectRoute="{
+              name: 'dashboard-location-overview',
+              params: { siteId: props.siteId },
+            }"
+          />
+        </MDBModalBody>
       </template>
-      <RouterLink
-        v-if="
-          [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
-        "
-        :to="{ name: 'dashboard-location-add', params: { siteId, locationId } }"
-        title="Add Device"
-        class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"
-      >
-        <MDBIcon iconStyle="fas" size="2x" icon="plus" />
-      </RouterLink>
-    </template>
+      <template v-else>
+        <MDBModalHeader>
+          <MDBModalTitle id="locationModalTitle"
+            >Unknown Location</MDBModalTitle
+          >
+        </MDBModalHeader>
+        <MDBModalBody>Please choose a different location.</MDBModalBody>
+      </template>
+      <MDBModalFooter>
+        <MDBBtn color="secondary" @click="showModal = false">Close</MDBBtn>
+      </MDBModalFooter>
+    </MDBModal>
   </MDBRow>
-  <MDBModal
-    id="locationModal"
-    tabindex="-1"
-    labelledby="locationModalTitle"
-    v-model="showModal"
-    staticBackdrop
-    :size="modalSize"
-  >
-    <template v-if="locations[locationId] || modalName === 'add'">
-      <MDBModalHeader>
-        <MDBModalTitle id="locationModalTitle">
-          {{
-            modalName === "add"
-              ? "Add Location"
-              : locations[locationId]
-              ? locations[locationId].displayName
-              : modalName
-          }}
-        </MDBModalTitle>
-      </MDBModalHeader>
-      <MDBModalBody>
-        <RouterView
-          v-if="allowedModal"
-          :locations="locations"
-          :role="currentSiteRole"
-          @done="showModal = false"
-          :siteDevices="siteDevices"
-          :locationDevices="locationDevices"
-        />
-        <ForbiddenView
-          v-else
-          :redirectRoute="{
-            name: 'dashboard-location-overview',
-            params: { siteId: props.siteId },
-          }"
-        />
-      </MDBModalBody>
-    </template>
-    <template v-else>
-      <MDBModalHeader>
-        <MDBModalTitle id="locationModalTitle">Unknown Location</MDBModalTitle>
-      </MDBModalHeader>
-      <MDBModalBody>Please choose a different location.</MDBModalBody>
-    </template>
-    <MDBModalFooter>
-      <MDBBtn color="secondary" @click="showModal = false">Close</MDBBtn>
-    </MDBModalFooter>
-  </MDBModal>
 </template>
