@@ -300,15 +300,7 @@ export default {
         </span>
       </div>
     </DashboardNavigation>
-    <MDBCol
-      v-if="!currentLocation && !computedLoading"
-      sm="12"
-      md="7"
-      lg="8"
-      xl="9"
-      col="12"
-      class="d-flex"
-    >
+    <MDBCol v-if="!currentLocation && !computedLoading" col="12" class="d-flex">
       <RouterLink
         v-if="
           [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
