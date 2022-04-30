@@ -132,18 +132,35 @@ export default {
       setupLocationDevices().then(() => (loadingDevices.value = false));
     }
 
+    async function checkLocationAndRedirect() {
+      const locationKeys = Object.keys(props.locations);
+
+      if (!locationKeys.length) {
+        router.replace({
+          name: "dashboard-location-add",
+          params: { siteId: props.siteId },
+        });
+        loading.value = false;
+        return;
+      }
+
+      if (!currentLocation.value && locationKeys.length) {
+        await router.replace({
+          name: "dashboard-location-overview",
+          params: {
+            siteId: props.siteId,
+            locationId: locationKeys[0],
+          },
+        });
+      }
+    }
+
     watch(currentLocation, (currentLocation) => {
+      if (computedLoading.value) {
+        return;
+      }
       if (!currentLocation) {
-        const locationKeys = Object.keys(props.locations);
-        if (locationKeys.length) {
-          router.replace({
-            name: "dashboard-location-overview",
-            params: {
-              siteId: props.siteId,
-              locationId: locationKeys[0],
-            },
-          });
-        }
+        checkLocationAndRedirect();
         return;
       }
       setupCurrentLocation();
@@ -198,24 +215,10 @@ export default {
         });
       }
 
-      const locationKeys = Object.keys(props.locations);
-      if (!locationKeys.length) {
-        router.replace({
-          name: "dashboard-location-add",
-          params: { siteId: props.siteId },
-        });
-        loading.value = false;
-        return;
-      }
+      await checkLocationAndRedirect();
 
-      if (!currentLocation.value && locationKeys.length) {
-        await router.replace({
-          name: "dashboard-location-overview",
-          params: {
-            siteId: props.siteId,
-            locationId: locationKeys[0],
-          },
-        });
+      if (!loading.value) {
+        return;
       }
 
       setupCurrentLocation();
