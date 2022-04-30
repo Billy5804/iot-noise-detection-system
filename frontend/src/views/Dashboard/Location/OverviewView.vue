@@ -14,11 +14,8 @@ import {
   MDBModalFooter,
   MDBFile,
 } from "mdb-vue-ui-kit";
-import {
-  getStorage,
-  ref as firebaseRef,
-  getDownloadURL,
-} from "firebase/storage";
+import { firebaseStorage } from "@/firebase/database";
+import { ref as firebaseRef, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { ref, computed, onBeforeMount, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
@@ -118,18 +115,40 @@ export default {
     const locationDevicesAPIPath =
       "http://localhost:443/api/v1/location-devices";
     const locationDevices = ref(null);
+    const loadingDevices = ref(true);
 
     const floorPlanUpload = ref(null);
-    const storage = getStorage();
+
+    function setupCurrentLocation() {
+      currentLocation.value.floorPlan = "loading";
+      loadingDevices.value = true;
+
+      getDownloadURL(
+        firebaseRef(firebaseStorage, `floorPlans/${props.locationId}`)
+      )
+        .then(
+          (floorPlanURL) => (currentLocation.value.floorPlan = floorPlanURL)
+        )
+        .catch(() => (currentLocation.value.floorPlan = null));
+
+      setupLocationDevices().then(() => (loadingDevices.value = false));
+    }
 
     watch(currentLocation, (currentLocation) => {
       if (!currentLocation) {
+        const locationKeys = Object.keys(props.locations);
+        if (locationKeys.length) {
+          router.replace({
+            name: "dashboard-location-overview",
+            params: {
+              siteId: props.siteId,
+              locationId: locationKeys[0],
+            },
+          });
+        }
         return;
       }
-      currentLocation.floorPlan = "loading";
-      getDownloadURL(firebaseRef(storage, `floorPlans/${props.locationId}`))
-        .then((floorPlanURL) => (currentLocation.floorPlan = floorPlanURL))
-        .catch(() => (currentLocation.floorPlan = null));
+      setupCurrentLocation();
     });
 
     watch(floorPlanUpload, (file) => {
@@ -141,8 +160,10 @@ export default {
 
       svgOptimiseAndStore(file[0], `/floorPlans/${props.locationId}`)
         .then((blobURL) => (currentLocation.value.floorPlan = blobURL))
-        .catch((error) => toastrError(error.message || error))
-        .finally(() => (currentLocation.value.floorPlan = null));
+        .catch((error) => {
+          toastrError(error.message || error);
+          currentLocation.value.floorPlan = null;
+        });
     });
 
     async function setupLocationDevices() {
@@ -199,7 +220,7 @@ export default {
         });
       }
 
-      await setupLocationDevices();
+      setupCurrentLocation();
 
       loading.value = false;
     });
@@ -213,6 +234,7 @@ export default {
       currentLocation,
       floorPlanUpload,
       locationDevices,
+      loadingDevices,
     };
   },
 };
