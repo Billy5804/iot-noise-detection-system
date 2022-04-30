@@ -16,6 +16,7 @@ import {
 import { computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DeviceOptionsView from "./OptionsView.vue";
+import DashboardNavigation from "@/components/DashboardNavigation.vue";
 import DeviceCard from "@/components/DeviceCard.vue";
 import ForbiddenView from "../../ForbiddenView.vue";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
@@ -39,6 +40,7 @@ export default {
     DeviceOptionsView,
     ForbiddenView,
     DeviceCard,
+    DashboardNavigation,
   },
 
   props: {
@@ -94,6 +96,11 @@ export default {
 
 <template>
   <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">
+    <DashboardNavigation
+      class="w-100"
+      :locations="locations"
+      :siteId="siteId"
+    />
     <MDBCol v-if="loading">
       <MDBCard aria-hidden="true">
         <MDBCardHeader class="placeholder-glow">
