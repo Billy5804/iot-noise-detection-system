@@ -240,7 +240,7 @@ export default {
   <MDBRow class="g-3 mb-3">
     <DashboardNavigation :locations="locations" :siteId="siteId">
       <div
-        v-if="!computedLoading"
+        v-if="!computedLoading && currentLocation"
         class="d-flex align-items-center text-truncate"
       >
         <h2 class="h3 m-0 text-truncate">{{ currentLocation?.displayName }}</h2>
