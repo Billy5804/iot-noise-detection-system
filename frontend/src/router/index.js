@@ -197,6 +197,13 @@ const router = createRouter({
               props: true,
             },
             {
+              path: ":locationId/delete",
+              name: "dashboard-location-delete",
+              component: () =>
+                import("../views/Dashboard/Location/DeleteView.vue"),
+              props: true,
+            },
+            {
               path: ":locationId/floor-plan",
               name: "dashboard-location-floor-plan",
               component: () =>
