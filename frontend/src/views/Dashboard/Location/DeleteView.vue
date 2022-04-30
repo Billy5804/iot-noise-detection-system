@@ -1,6 +1,8 @@
 <script>
 import { ref, shallowRef, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+import { firebaseStorage } from "@/firebase/database";
+import { ref as firebaseRef, deleteObject } from "firebase/storage";
 import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
@@ -44,6 +46,25 @@ export default {
         return;
       }
       syncing.value = true;
+
+      const floorPlanRef = firebaseRef(
+        firebaseStorage,
+        `/floorPlans/${props.locationId}`
+      );
+
+      await deleteObject(floorPlanRef).catch(
+        (error) =>
+          (deleteError.value =
+            error.code !== "storage/object-not-found"
+              ? error.message || error
+              : null)
+      );
+
+      if (deleteError.value) {
+        syncing.value = false;
+        return;
+      }
+
       axios
         .delete("http://localhost:443/api/v1/locations", {
           timeout: 5000,
@@ -71,11 +92,6 @@ export default {
 </script>
 
 <template>
-  <h2>Are you sure you want to delete this location?</h2>
-  <p>
-    This action cannot be undone.<br />All data associated data with this
-    location will be lost.
-  </p>
   <MDBRow
     tag="form"
     class="g-3 mb-3 needs-validation"
@@ -83,6 +99,13 @@ export default {
     novalidate
     @submit.prevent="submitDeleteForm"
   >
+    <MDBCol col="12">
+      <h2>Are you sure you want to delete this location?</h2>
+      <p class="mb-0">
+        This action cannot be undone.<br />All data associated data with this
+        location will be lost.
+      </p>
+    </MDBCol>
     <FormInput
       type="text"
       size="lg"
