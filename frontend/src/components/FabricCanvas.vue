@@ -1,68 +1,110 @@
 <template>
-  <canvas :ref="canvasSetup" class="w-100"></canvas>
+  <div :class="loading ? 'position-relative h-100' : ''">
+    <LoadingView v-if="loading" />
+    <canvas ref="canvasRef"></canvas>
+  </div>
 </template>
 
 <script>
 import { fabric } from "fabric";
+import { ref, onMounted } from "vue";
+import LoadingView from "../views/LoadingView.vue";
 
 export default {
   props: {
-    backgroundImage: String,
+    floorPlanURL: { type: String, required: true },
+    locationDevices: { type: Object, required: true },
   },
 
+  components: { LoadingView },
+
   setup: function (props) {
-    function canvasSetup(canvasRef) {
-      if (!canvasRef) {
-        return;
-      }
-      const canvasParent = canvasRef.parentElement;
-      const canvas = new fabric.Canvas(canvasRef);
-      fabric.Image.fromURL(props.backgroundImage, function (image) {
-        canvas.setWidth(canvasParent.clientWidth);
-        canvas.setHeight((canvas.width / image.width) * image.height);
+    const loading = ref(true);
+    const canvasRef = ref(null);
 
-        canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
-          scaleX: canvas.getWidth() / image.width,
-          scaleY: canvas.getHeight() / image.height,
-        });
-      });
-      const rect = new fabric.Rect({
-        fill: "red",
-        width: 20,
-        height: 20,
-      });
+    fabric.Text.prototype.set({
+      fill: "#000000",
+      stroke: "#ffffff",
+      strokeWidth: 5,
+      paintFirst: "stroke",
+    });
 
-      canvas.add(rect);
-      console.log(canvas);
-
-      // Start a resize observer on the parent of the canvas
-      // new ResizeObserver(() => {
-
-      //   const fabricWidth = canvas.getWidth();
-      //   const fabricHeight = canvas.getHeight();
-      //   const cssWidth = Math.min(canvasParent.clientWidth, fabricWidth);
-      //   const ratio = fabricWidth / canvasParent.clientWidth;
-
-      //   fabric.Object.prototype.set({
-      //     cornerSize: ratio * 10,
-      //     borderScaleFactor: ratio
-      //   });
-
-      //   fabric.Object.prototype.controls.mtr.offsetY = -25 * ratio;
-
-      //   canvas.setDimensions(
-      //     {
-      //       width: cssWidth + 'px',
-      //       height: cssWidth / (fabricWidth / fabricHeight) + 'px'
-      //     },
-      //     { cssOnly: true }
-      //   )
-      //     .requestRenderAll();
-
-      // }).observe(canvasParent);
+    function addDevicesToCanvas(canvas) {
+      const width = canvas.getWidth();
+      const height = canvas.getHeight();
+      props.locationDevices.forEach(
+        ([deviceId, { type, positionX, positionY }]) => {
+          positionX = positionX < 0 ? 0 : (positionX > width ? width : positionX);
+          positionY = positionY < 0 ? 0 : (positionY > height ? height : positionY);
+          
+          canvas.add(new fabric.Text(type.getUnicodeIcon(), {
+            deviceId,
+            left: positionX,
+            top: height - positionY,
+            originX: "center",
+            originY: "center",
+            fontSize: 25 * (width / 833),
+            fontFamily: "FontAwesome",
+            selectable: true,
+            editable: false,
+            _controlsVisibility: {
+              mt: false,
+              mb: false,
+              ml: false,
+              mr: false,
+              bl: false,
+              br: false,
+              tl: false,
+              tr: false,
+              mtr: false,
+            }
+          }));
+        }
+      );
     }
 
-    return { canvasSetup };
+    function scaleCanvas(canvas, width, height, ratio) {
+      canvas.setDimensions({ width: width * ratio, height: height * ratio });
+      canvas.setZoom(ratio);
+    }
+
+    onMounted(async () => {
+      const floorPlan = await new Promise((resolve) =>
+        fabric.Image.fromURL(props.floorPlanURL, (floorPlan) =>
+          resolve(floorPlan)
+        )
+      );
+
+      loading.value = false;
+
+      const canvasParent = canvasRef.value.parentElement;
+      const canvas = new fabric.Canvas(canvasRef.value);
+
+      canvas.setWidth(floorPlan.width);
+      canvas.setHeight(floorPlan.height);
+
+      addDevicesToCanvas(canvas);
+
+      canvas.setBackgroundImage(floorPlan, canvas.renderAll.bind(canvas), {});
+
+      scaleCanvas(
+        canvas,
+        floorPlan.width,
+        floorPlan.height,
+        canvasParent.clientWidth / floorPlan.width
+      );
+
+      new ResizeObserver(() => {
+        scaleCanvas(
+          canvas,
+          floorPlan.width,
+          floorPlan.height,
+          canvasParent.clientWidth / floorPlan.width
+        );
+      }).observe(canvasParent);
+    });
+
+    return { loading, canvasRef };
   },
 };
 </script>
