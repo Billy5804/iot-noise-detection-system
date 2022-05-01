@@ -77,6 +77,7 @@ export default {
     function scaleCanvas(canvas, width, height, ratio) {
       canvas.setDimensions({ width: width * ratio, height: height * ratio });
       canvas.setZoom(ratio);
+      canvas.renderAll();
     }
 
     onMounted(async () => {
