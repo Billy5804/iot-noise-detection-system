@@ -7,18 +7,21 @@
 
 <script>
 import { fabric } from "fabric";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import LoadingView from "@/views/LoadingView.vue";
 
 export default {
   props: {
     floorPlanURL: { type: String, required: true },
     locationDevices: { type: Object, required: true },
+    selectedDeviceId: String,
   },
+
+  emits: ["update:selectedDeviceId"],
 
   components: { LoadingView },
 
-  setup: function (props) {
+  setup: function (props, { emit }) {
     const loading = ref(true);
     const canvasRef = ref(null);
     const deviceIconType = "deviceIcon";
@@ -112,6 +115,16 @@ export default {
         }
       });
 
+      canvas.on("mouse:up", function ({ target }) {
+        if (target?.type === deviceIconType) {
+          const deviceId = target.deviceId;
+          emit(
+            "update:selectedDeviceId",
+            deviceId === props.selectedDeviceId ? null : deviceId
+          );
+        }
+      });
+
       canvas.on("mouse:out", function ({ target }) {
         if (
           target.type === deviceIconType &&
@@ -121,6 +134,21 @@ export default {
           canvas.renderAll();
         }
       });
+
+      watch(
+        () => props.selectedDeviceId,
+        (selectedDeviceId) => {
+          Object.entries(deviceIcons).forEach(([deviceId, deviceIcon]) => {
+            deviceIcon.fontSize =
+              selectedDeviceId === deviceId
+                ? deviceIcon.originalFontSize * 2
+                : deviceIcon.originalFontSize;
+            deviceIcon.fill =
+              selectedDeviceId === deviceId ? "#1266f1" : "#000000";
+          });
+          canvas.renderAll();
+        }
+      );
 
       new ResizeObserver(() => {
         scaleCanvas(

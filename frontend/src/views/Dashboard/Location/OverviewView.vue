@@ -335,7 +335,11 @@ export default {
     <template v-else>
       <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
         <div
-          v-if="computedLoading || currentLocation.floorPlan === 'loading'"
+          v-if="
+            computedLoading ||
+            currentLocation.floorPlan === 'loading' ||
+            loadingDevices
+          "
           class="position-relative h-100"
         >
           <LoadingView />
@@ -344,6 +348,7 @@ export default {
           v-else-if="currentLocation.floorPlan"
           :floorPlanURL="currentLocation.floorPlan"
           :locationDevices="locationDevices"
+          v-model:selectedDeviceId="selectedDeviceId"
         />
         <MDBFile
           v-else
