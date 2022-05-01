@@ -200,7 +200,10 @@ export default {
       locationDevices.value =
         locationDevicesResponse?.data?.reduce(
           (result, { deviceId, ...locationDevice }) => {
-            result[deviceId] = locationDevice;
+            result[deviceId] = Object.assign(
+              { ...props.siteDevices[deviceId] },
+              locationDevice
+            );
             return result;
           },
           {}
