@@ -102,6 +102,26 @@ export default {
         canvasParent.clientWidth / floorPlan.width
       );
 
+      canvas.on("mouse:over", function ({ target }) {
+        if (
+          target?.type === deviceIconType &&
+          target.deviceId !== props.selectedDeviceId
+        ) {
+          target.fontSize = target.originalFontSize * 1.5;
+          canvas.renderAll();
+        }
+      });
+
+      canvas.on("mouse:out", function ({ target }) {
+        if (
+          target.type === deviceIconType &&
+          target.deviceId !== props.selectedDeviceId
+        ) {
+          target.fontSize = target.originalFontSize;
+          canvas.renderAll();
+        }
+      });
+
       new ResizeObserver(() => {
         scaleCanvas(
           canvas,
