@@ -8,7 +8,7 @@
 <script>
 import { fabric } from "fabric";
 import { ref, onMounted } from "vue";
-import LoadingView from "../views/LoadingView.vue";
+import LoadingView from "@/views/LoadingView.vue";
 
 export default {
   props: {
@@ -21,6 +21,8 @@ export default {
   setup: function (props) {
     const loading = ref(true);
     const canvasRef = ref(null);
+    const deviceIconType = "deviceIcon";
+    const deviceIcons = {};
 
     fabric.Text.prototype.set({
       fill: "#000000",
@@ -32,21 +34,26 @@ export default {
     function addDevicesToCanvas(canvas) {
       const width = canvas.getWidth();
       const height = canvas.getHeight();
-      props.locationDevices.forEach(
+      const fontSize = 25 * (width / 833);
+      Object.entries(props.locationDevices).forEach(
         ([deviceId, { type, positionX, positionY }]) => {
-          positionX = positionX < 0 ? 0 : (positionX > width ? width : positionX);
-          positionY = positionY < 0 ? 0 : (positionY > height ? height : positionY);
-          
-          canvas.add(new fabric.Text(type.getUnicodeIcon(), {
+          positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
+          positionY =
+            positionY < 0 ? 0 : positionY > height ? height : positionY;
+
+          deviceIcons[deviceId] = new fabric.Text(type.getUnicodeIcon(), {
             deviceId,
+            type: deviceIconType,
             left: positionX,
             top: height - positionY,
             originX: "center",
             originY: "center",
-            fontSize: 25 * (width / 833),
+            fontSize,
+            originalFontSize: fontSize,
             fontFamily: "FontAwesome",
-            selectable: true,
+            selectable: false,
             editable: false,
+            hoverCursor: "pointer",
             _controlsVisibility: {
               mt: false,
               mb: false,
@@ -57,8 +64,9 @@ export default {
               tl: false,
               tr: false,
               mtr: false,
-            }
-          }));
+            },
+          });
+          canvas.add(deviceIcons[deviceId]);
         }
       );
     }
