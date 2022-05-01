@@ -249,6 +249,7 @@ export default {
       floorPlanUpload,
       locationDevices,
       loadingDevices,
+      selectedDeviceId,
     };
   },
 };
