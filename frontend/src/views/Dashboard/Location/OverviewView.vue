@@ -106,12 +106,20 @@ export default {
     const locationDevices = ref(null);
     const loadingDevices = ref(true);
 
+    const selectedDeviceId = ref(null);
+
     const sortedLocationDevices = computed(() => {
       return Object.entries(locationDevices.value || {}).sort(
         (
           [deviceIdA, { sensors: sensorsA }],
           [deviceIdB, { sensors: sensorsB }]
         ) => {
+          if (selectedDeviceId.value === deviceIdA) {
+            return -1;
+          }
+          if (selectedDeviceId.value === deviceIdB) {
+            return 1;
+          }
           return sensorsB[0].latestValue - sensorsA[0].latestValue;
         }
       );
@@ -374,8 +382,22 @@ export default {
           <MDBCol
             v-for="[deviceId, device] in sortedLocationDevices"
             :key="deviceId"
+            tag="button"
+            type="button"
+            title="Select device"
+            @click="
+              selectedDeviceId = selectedDeviceId === deviceId ? null : deviceId
+            "
           >
-            <DeviceCard :device="device" :deviceId="deviceId" />
+            <DeviceCard
+              :device="device"
+              :deviceId="deviceId"
+              :class="
+                selectedDeviceId === deviceId
+                  ? 'border border-primary border-3'
+                  : ''
+              "
+            />
           </MDBCol>
         </MDBRow>
       </MDBCol>
@@ -442,3 +464,15 @@ export default {
     </MDBModal>
   </MDBRow>
 </template>
+
+<style scoped>
+button.col {
+  background-color: transparent;
+  border: 0.125rem solid transparent;
+  color: #4f4f4f;
+}
+
+button.col .card:hover {
+  box-shadow: 0 4px 10px 0 rgb(0 0 0 / 20%), 0 4px 20px 0 rgb(0 0 0 / 10%);
+}
+</style>
