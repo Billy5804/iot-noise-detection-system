@@ -34,10 +34,10 @@ export default {
       paintFirst: "stroke",
     });
 
-    function addDevicesToCanvas(canvas) {
+    function addDevicesToCanvas(canvas, scale) {
       const width = canvas.getWidth();
       const height = canvas.getHeight();
-      const fontSize = 25 * (width / 833);
+      const fontSize = 25 * scale;
       Object.entries(props.locationDevices).forEach(
         ([deviceId, { type, positionX, positionY }]) => {
           positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
@@ -95,7 +95,46 @@ export default {
       canvas.setWidth(floorPlan.width);
       canvas.setHeight(floorPlan.height);
 
-      addDevicesToCanvas(canvas);
+      const objectScale = floorPlan.width / 833;
+
+      addDevicesToCanvas(canvas, objectScale);
+
+      const tooltipBackground = new fabric.Rect({
+        fill: "#ffffff",
+        rx: 8 * objectScale,
+        ry: 8 * objectScale,
+        originX: "center",
+        originY: "center",
+        width: 110 * objectScale,
+        height: 110 * objectScale,
+        shadow: {
+          offsetY: 8 * objectScale,
+          blur: 15 * objectScale,
+          color: "rgb(0 0 0 / 25%)",
+        },
+      });
+
+      const tooltipText = new fabric.Textbox("", {
+        fontFamily: "'Roboto', sans-serif",
+        fontSize: 15 * objectScale,
+        width: 100 * objectScale,
+        textAlign: "center",
+        splitByGrapheme: true,
+        editable: false,
+        strokeWidth: 0,
+        originX: "center",
+        originY: "center",
+        fill: "#000000",
+      });
+
+      const tooltip = new fabric.Group([tooltipBackground, tooltipText], {
+        width: 110 * objectScale,
+        height: 110 * objectScale,
+        selectable: false,
+        hoverCursor: "normal",
+        originX: "center",
+        originY: "center",
+      });
 
       canvas.setBackgroundImage(floorPlan, canvas.renderAll.bind(canvas), {});
 
@@ -112,6 +151,11 @@ export default {
           target.deviceId !== props.selectedDeviceId
         ) {
           target.fontSize = target.originalFontSize * 1.5;
+          tooltipText.text = props.locationDevices[target.deviceId].displayName;
+          tooltip.left = target.left;
+          tooltip.top =
+            target.top - tooltipBackground.height / 2 - target.height;
+          canvas.add(tooltip);
           canvas.renderAll();
         }
       });
@@ -127,8 +171,9 @@ export default {
       });
 
       canvas.on("mouse:out", function ({ target }) {
+        canvas.remove(tooltip);
         if (
-          target.type === deviceIconType &&
+          target?.type === deviceIconType &&
           target.deviceId !== props.selectedDeviceId
         ) {
           target.fontSize = target.originalFontSize;
