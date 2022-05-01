@@ -106,13 +106,20 @@ export default {
     const locationDevices = ref(null);
     const loadingDevices = ref(true);
 
-    const sortedFilteredSiteDevices = computed(() => {
-      const deviceIds = Object.keys(locationDevices.value);
-      return Object.entries(props.siteDevices || {})
+    const sortedCombinedDevices = computed(() => {
+      const deviceIds = Object.keys(locationDevices.value || {});
+      const sortedAndFilteredSiteDevices = Object.entries(
+        props.siteDevices || {}
+      )
         .filter(([deviceId]) => deviceIds.includes(deviceId))
-        .sort(([, { sensors: sensorsA }], [, { sensors: sensorsB }]) => {
-          return sensorsB[0].latestValue - sensorsA[0].latestValue;
-        });
+        .sort(
+          ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) =>
+            sensorsB[0].latestValue - sensorsA[0].latestValue
+        );
+      sortedAndFilteredSiteDevices.forEach(([deviceId, device]) =>
+        Object.assign(device, locationDevices.value[deviceId])
+      );
+      return sortedAndFilteredSiteDevices;
     });
 
     const floorPlanUpload = ref(null);
@@ -228,7 +235,7 @@ export default {
 
     return {
       computedLoading,
-      sortedFilteredSiteDevices,
+      sortedCombinedDevices,
       showModal,
       allowedModal,
       SiteUserRoles,
@@ -327,9 +334,11 @@ export default {
         >
           <LoadingView />
         </div>
-        <div v-else-if="currentLocation.floorPlan">
-          <FabricCanvas :backgroundImage="currentLocation.floorPlan" />
-        </div>
+        <FabricCanvas
+          v-else-if="currentLocation.floorPlan"
+          :floorPlanURL="currentLocation.floorPlan"
+          :locationDevices="sortedCombinedDevices"
+        />
         <MDBFile
           v-else
           v-model="floorPlanUpload"
@@ -365,7 +374,7 @@ export default {
         </RouterLink>
         <MDBRow v-else class="g-3 mb-3">
           <MDBCol
-            v-for="[deviceId, device] in sortedFilteredSiteDevices"
+            v-for="[deviceId, device] in sortedCombinedDevices"
             :key="deviceId"
           >
             <DeviceCard :device="device" :deviceId="deviceId" />
