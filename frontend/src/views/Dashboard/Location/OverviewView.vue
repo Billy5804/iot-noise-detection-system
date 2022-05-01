@@ -106,20 +106,15 @@ export default {
     const locationDevices = ref(null);
     const loadingDevices = ref(true);
 
-    const sortedCombinedDevices = computed(() => {
-      const deviceIds = Object.keys(locationDevices.value || {});
-      const sortedAndFilteredSiteDevices = Object.entries(
-        props.siteDevices || {}
-      )
-        .filter(([deviceId]) => deviceIds.includes(deviceId))
-        .sort(
-          ([, { sensors: sensorsA }], [, { sensors: sensorsB }]) =>
-            sensorsB[0].latestValue - sensorsA[0].latestValue
-        );
-      sortedAndFilteredSiteDevices.forEach(([deviceId, device]) =>
-        Object.assign(device, locationDevices.value[deviceId])
+    const sortedLocationDevices = computed(() => {
+      return Object.entries(locationDevices.value || {}).sort(
+        (
+          [deviceIdA, { sensors: sensorsA }],
+          [deviceIdB, { sensors: sensorsB }]
+        ) => {
+          return sensorsB[0].latestValue - sensorsA[0].latestValue;
+        }
       );
-      return sortedAndFilteredSiteDevices;
     });
 
     const floorPlanUpload = ref(null);
@@ -238,7 +233,7 @@ export default {
 
     return {
       computedLoading,
-      sortedCombinedDevices,
+      sortedLocationDevices,
       showModal,
       allowedModal,
       SiteUserRoles,
@@ -340,7 +335,7 @@ export default {
         <FabricCanvas
           v-else-if="currentLocation.floorPlan"
           :floorPlanURL="currentLocation.floorPlan"
-          :locationDevices="sortedCombinedDevices"
+          :locationDevices="locationDevices"
         />
         <MDBFile
           v-else
@@ -377,7 +372,7 @@ export default {
         </RouterLink>
         <MDBRow v-else class="g-3 mb-3">
           <MDBCol
-            v-for="[deviceId, device] in sortedCombinedDevices"
+            v-for="[deviceId, device] in sortedLocationDevices"
             :key="deviceId"
           >
             <DeviceCard :device="device" :deviceId="deviceId" />
