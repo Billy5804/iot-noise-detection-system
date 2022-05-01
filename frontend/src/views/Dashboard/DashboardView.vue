@@ -6,6 +6,7 @@ import { onBeforeMount, ref, computed, onUnmounted, watch } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import SensorUnits from "@/utilitys/SensorUnits";
 import WebSocket from "@/utilitys/WebSocket";
+import DeviceTypes from "@/utilitys/DeviceTypes";
 
 export default {
   components: { RouterView },
@@ -59,7 +60,8 @@ export default {
 
       siteDevices.value =
         siteDevicesResponse?.data?.reduce(
-          (result, { id, sensors, ...device }) => {
+          (result, { id, sensors, type, ...device }) => {
+            device.type = DeviceTypes[type];
             device.sensors = sensors.map(({ unit, ...sensor }) => ({
               ...sensor,
               unit: SensorUnits[unit],
