@@ -84,7 +84,11 @@ export default {
     const locationDevicesAPIPath =
       "http://localhost:443/api/v1/location-devices";
     const locationDevices = ref(null);
+    
     const loadingDevices = ref(true);
+
+    const locationFloorPlanURL = ref(null)
+    const loadingFloorPlan = ref(true);
 
     const selectedDeviceId = ref(null);
 
@@ -92,7 +96,8 @@ export default {
       get: () =>
         !computedLoading.value &&
         !!props.modalName &&
-        (props.modalName !== "manage-devices" || !loadingDevices.value),
+        (props.modalName !== "manage-devices" || !loadingDevices.value) &&
+        (props.modalName !== "map-devices" || (!loadingDevices.value && !loadingFloorPlan.value)),
       set: (value) => {
         if (value === false) {
           router.push({
@@ -131,16 +136,18 @@ export default {
     const floorPlanUpload = ref(null);
 
     function setupCurrentLocation() {
-      currentLocation.value.floorPlan = "loading";
+      loadingFloorPlan.value = true;
       loadingDevices.value = true;
+      locationFloorPlanURL.value = null;
 
       getDownloadURL(
         firebaseRef(firebaseStorage, `floorPlans/${props.locationId}`)
       )
         .then(
-          (floorPlanURL) => (currentLocation.value.floorPlan = floorPlanURL)
+          (floorPlanURL) => (locationFloorPlanURL.value = floorPlanURL)
         )
-        .catch(() => (currentLocation.value.floorPlan = null));
+        .catch()
+        .finally(() => loadingFloorPlan.value = false);
 
       setupLocationDevices().then(() => (loadingDevices.value = false));
     }
@@ -183,15 +190,14 @@ export default {
       if (!file || !file[0]) {
         return;
       }
-      currentLocation.value.floorPlan = "loading";
+      loadingFloorPlan.value = true;
+      locationFloorPlanURL.value = null;
       floorPlanUpload.value = null;
 
       svgOptimiseAndStore(file[0], `/floorPlans/${props.locationId}`)
-        .then((blobURL) => (currentLocation.value.floorPlan = blobURL))
-        .catch((error) => {
-          toastrError(error.message || error);
-          currentLocation.value.floorPlan = null;
-        });
+        .then((blobURL) => (locationFloorPlanURL.value = blobURL))
+        .catch((error) => toastrError(error.message || error))
+        .finally(() => loadingFloorPlan.value = false);
     });
 
     async function setupLocationDevices() {
@@ -252,6 +258,8 @@ export default {
       floorPlanUpload,
       locationDevices,
       loadingDevices,
+      locationFloorPlanURL,
+      loadingFloorPlan,
       selectedDeviceId,
     };
   },
@@ -351,14 +359,14 @@ export default {
     <template v-else>
       <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
         <div
-          v-if="computedLoading || currentLocation.floorPlan === 'loading'"
+          v-if="computedLoading || loadingFloorPlan"
           class="position-relative h-100"
         >
           <LoadingView />
         </div>
         <FabricCanvas
-          v-else-if="currentLocation.floorPlan"
-          :floorPlanURL="currentLocation.floorPlan"
+          v-else-if="locationFloorPlanURL"
+          :floorPlanURL="locationFloorPlanURL"
           :locationDevices="locationDevices"
           v-model:selectedDeviceId="selectedDeviceId"
         />
@@ -457,6 +465,7 @@ export default {
             @done="showModal = false"
             :siteDevices="siteDevices"
             :locationDevices="locationDevices"
+            :floorPlanURL="locationFloorPlanURL"
           />
           <ForbiddenView
             v-else

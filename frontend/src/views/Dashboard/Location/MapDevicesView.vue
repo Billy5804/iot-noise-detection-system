@@ -13,8 +13,9 @@ export default {
 
   props: {
     locationId: { type: String, required: true },
-    locations: { type: Object, required: true },
+    // locations: { type: Object, required: true },
     locationDevices: { type: Object, required: true },
+    floorPlanURL: { type: String, required: true }
   },
 
   setup: function (props, { emit }) {
@@ -45,7 +46,7 @@ export default {
   >
     <h2 class="h3">Manage inclusion of devices for this location.</h2>
     <FabricCanvas
-      :floorPlanURL="locations[locationId].floorPlan"
+      :floorPlanURL="floorPlanURL"
       :locationDevices="locationDevices"
       :editable="true"
     />
