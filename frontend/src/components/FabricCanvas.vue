@@ -28,13 +28,6 @@ export default {
     const deviceIconType = "deviceIcon";
     const deviceIcons = {};
 
-    fabric.Text.prototype.set({
-      fill: "#000000",
-      stroke: "#ffffff",
-      strokeWidth: 5,
-      paintFirst: "stroke",
-    });
-
     function drawDevices(canvas, scale, width, height) {
       const fontSize = 25 * scale;
 
@@ -46,6 +39,7 @@ export default {
 
       Object.entries(props.locationDevices || {}).forEach(
         ([deviceId, { type, positionX, positionY }]) => {
+          const selected = deviceId === props.selectedDeviceId;
           positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
           positionY =
             positionY < 0 ? 0 : positionY > height ? height : positionY;
@@ -57,12 +51,16 @@ export default {
             top: positionY,
             originX: "center",
             originY: "center",
-            fontSize,
+            fontSize: selected ? fontSize * 2 : fontSize,
             originalFontSize: fontSize,
             fontFamily: "FontAwesome",
             selectable: props.editable,
             editable: false,
             hoverCursor: "pointer",
+            fill: selected ? "#1266f1" : "#000000",
+            stroke: "#ffffff",
+            strokeWidth: 5,
+            paintFirst: "stroke",
             _controlsVisibility: {
               mt: false,
               mb: false,
@@ -108,11 +106,12 @@ export default {
       drawDevices(canvas, objectScale, width, height);
 
       watch(
-        () => Object.keys(props.locationDevices || {}),
+        () => props.locationDevices,
         () => {
           drawDevices(canvas, objectScale, width, height);
           canvas.renderAll();
-        }
+        },
+        { deep: true }
       );
 
       const tooltipBackground = new fabric.Rect({
