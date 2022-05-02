@@ -27,7 +27,7 @@ import { svgOptimiseAndStore } from "@/utilitys/SVGOptimiseAndStore";
 import { useUserStore } from "@/stores/UserStore";
 import { error as toastrError } from "toastr";
 
-import FabricCanvas from "@/components/FabricCanvas.vue";
+import LocationMapping from "@/components/LocationMapping.vue";
 import LoadingView from "../../LoadingView.vue";
 import VerticalRule from "../../../components/VerticalRule.vue";
 
@@ -50,7 +50,7 @@ export default {
     RouterView,
     ForbiddenView,
     LoadingView,
-    FabricCanvas,
+    LocationMapping,
     DeviceCard,
     DashboardNavigation,
     VerticalRule,
@@ -364,7 +364,7 @@ export default {
         >
           <LoadingView />
         </div>
-        <FabricCanvas
+        <LocationMapping
           v-else-if="locationFloorPlanURL"
           :floorPlanURL="locationFloorPlanURL"
           :locationDevices="locationDevices"

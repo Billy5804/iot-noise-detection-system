@@ -4,10 +4,10 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import AjaxButton from "@/components/AjaxButton.vue";
-import FabricCanvas from "@/components/FabricCanvas.vue";
+import LocationMapping from "@/components/LocationMapping.vue";
 
 export default {
-  components: { AjaxButton, FabricCanvas },
+  components: { AjaxButton, LocationMapping },
 
   emits: ["done"],
 
@@ -107,7 +107,7 @@ export default {
 <template>
   <form class="needs-validation" novalidate @submit.prevent="submitMapForm">
     <h2 class="h3">Position this locations devices on the floor plan.</h2>
-    <FabricCanvas
+    <LocationMapping
       v-if="floorPlanURL"
       :floorPlanURL="floorPlanURL"
       :locationDevices="locationDevices"
