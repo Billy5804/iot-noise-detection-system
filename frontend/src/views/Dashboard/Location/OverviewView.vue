@@ -142,9 +142,7 @@ export default {
         )
         .catch(() => (currentLocation.value.floorPlan = null));
 
-      new Promise((resolve) => setTimeout(resolve, 3000)).then(() =>
-        setupLocationDevices().then(() => (loadingDevices.value = false))
-      );
+      setupLocationDevices().then(() => (loadingDevices.value = false));
     }
 
     async function checkLocationAndRedirect() {
