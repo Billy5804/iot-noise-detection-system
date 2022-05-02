@@ -13,6 +13,7 @@ import LoadingView from "@/views/LoadingView.vue";
 export default {
   props: {
     floorPlanURL: { type: String, required: true },
+    editable: { type: Boolean, default: false },
     locationDevices: Object,
     selectedDeviceId: String,
   },
@@ -58,7 +59,7 @@ export default {
             fontSize,
             originalFontSize: fontSize,
             fontFamily: "FontAwesome",
-            selectable: false,
+            selectable: props.editable,
             editable: false,
             hoverCursor: "pointer",
             _controlsVisibility: {
@@ -161,8 +162,6 @@ export default {
         ) {
           target.fontSize = target.originalFontSize * 1.5;
           tooltipText.text = props.locationDevices[target.deviceId].displayName;
-          console.log(target.left);
-          console.log(target.top);
           tooltip.left = target.left;
           tooltip.top =
             target.top - tooltipBackground.height / 2 - target.height;
@@ -172,7 +171,7 @@ export default {
       });
 
       canvas.on("mouse:up", function ({ target }) {
-        if (target?.type === deviceIconType) {
+        if (!props.editable && target?.type === deviceIconType) {
           const deviceId = target.deviceId;
           emit(
             "update:selectedDeviceId",
@@ -195,6 +194,9 @@ export default {
       watch(
         () => props.selectedDeviceId,
         (selectedDeviceId) => {
+          if (props.editable) {
+            return;
+          }
           Object.entries(deviceIcons).forEach(([deviceId, deviceIcon]) => {
             deviceIcon.fontSize =
               selectedDeviceId === deviceId
