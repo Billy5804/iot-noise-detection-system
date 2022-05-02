@@ -213,7 +213,7 @@ const router = createRouter({
               path: ":locationId/floor-plan",
               name: "dashboard-location-floor-plan",
               component: () =>
-                import("../views/Dashboard/Location/FloorPlan/EditView.vue"),
+                import("../views/Dashboard/Location/ChangeFloorPlanView.vue"),
               props: true,
               meta: {
                 allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
