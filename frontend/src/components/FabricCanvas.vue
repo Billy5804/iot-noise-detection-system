@@ -13,7 +13,7 @@ import LoadingView from "@/views/LoadingView.vue";
 export default {
   props: {
     floorPlanURL: { type: String, required: true },
-    locationDevices: { type: Object, required: true },
+    locationDevices: Object,
     selectedDeviceId: String,
   },
 
@@ -34,11 +34,15 @@ export default {
       paintFirst: "stroke",
     });
 
-    function addDevicesToCanvas(canvas, scale) {
-      const width = canvas.getWidth();
-      const height = canvas.getHeight();
+    function drawDevices(canvas, scale, width, height) {
       const fontSize = 25 * scale;
-      Object.entries(props.locationDevices).forEach(
+
+      Object.values(deviceIcons).forEach((deviceIcon) =>
+        canvas.remove(deviceIcon)
+      );
+      canvas.renderAll();
+
+      Object.entries(props.locationDevices || {}).forEach(
         ([deviceId, { type, positionX, positionY }]) => {
           positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
           positionY =
@@ -48,7 +52,7 @@ export default {
             deviceId,
             type: deviceIconType,
             left: positionX,
-            top: height - positionY,
+            top: positionY,
             originX: "center",
             originY: "center",
             fontSize,
@@ -72,6 +76,7 @@ export default {
           canvas.add(deviceIcons[deviceId]);
         }
       );
+      canvas.renderAll();
     }
 
     function scaleCanvas(canvas, width, height, ratio) {
@@ -82,9 +87,7 @@ export default {
 
     onMounted(async () => {
       const floorPlan = await new Promise((resolve) =>
-        fabric.Image.fromURL(props.floorPlanURL, (floorPlan) =>
-          resolve(floorPlan)
-        )
+        fabric.Image.fromURL(props.floorPlanURL, resolve)
       );
 
       loading.value = false;
@@ -92,12 +95,23 @@ export default {
       const canvasParent = canvasRef.value.parentElement;
       const canvas = new fabric.Canvas(canvasRef.value);
 
-      canvas.setWidth(floorPlan.width);
-      canvas.setHeight(floorPlan.height);
+      const width = floorPlan.width;
+      const height = floorPlan.height;
 
-      const objectScale = floorPlan.width / 833;
+      canvas.setWidth(width);
+      canvas.setHeight(height);
 
-      addDevicesToCanvas(canvas, objectScale);
+      const objectScale = width / 833;
+
+      drawDevices(canvas, objectScale, width, height);
+
+      watch(
+        () => Object.keys(props.locationDevices || {}),
+        () => {
+          drawDevices(canvas, objectScale, width, height);
+          canvas.renderAll();
+        }
+      );
 
       const tooltipBackground = new fabric.Rect({
         fill: "#ffffff",
@@ -138,12 +152,7 @@ export default {
 
       canvas.setBackgroundImage(floorPlan, canvas.renderAll.bind(canvas), {});
 
-      scaleCanvas(
-        canvas,
-        floorPlan.width,
-        floorPlan.height,
-        canvasParent.clientWidth / floorPlan.width
-      );
+      scaleCanvas(canvas, width, height, canvasParent.clientWidth / width);
 
       canvas.on("mouse:over", function ({ target }) {
         if (
@@ -152,6 +161,8 @@ export default {
         ) {
           target.fontSize = target.originalFontSize * 1.5;
           tooltipText.text = props.locationDevices[target.deviceId].displayName;
+          console.log(target.left);
+          console.log(target.top);
           tooltip.left = target.left;
           tooltip.top =
             target.top - tooltipBackground.height / 2 - target.height;
@@ -196,14 +207,9 @@ export default {
         }
       );
 
-      new ResizeObserver(() => {
-        scaleCanvas(
-          canvas,
-          floorPlan.width,
-          floorPlan.height,
-          canvasParent.clientWidth / floorPlan.width
-        );
-      }).observe(canvasParent);
+      new ResizeObserver(() =>
+        scaleCanvas(canvas, width, height, canvasParent.clientWidth / width)
+      ).observe(canvasParent);
     });
 
     return { loading, canvasRef };
