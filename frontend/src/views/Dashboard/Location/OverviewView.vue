@@ -266,60 +266,61 @@ export default {
         class="d-flex align-items-center text-truncate"
       >
         <h2 class="h3 m-0 text-truncate">{{ currentLocation?.displayName }}</h2>
-        <span class="h3 m-0">:</span>
-        <span
+        <template
           v-if="
             [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(
               currentSiteRole
             )
           "
-          class="h4 mb-0"
         >
-          <RouterLink
-            :to="{
-              name: 'dashboard-location-edit',
-              params: { siteId, locationId },
-            }"
-            class="mx-1 text-warning"
-            type="button"
-            title="Edit location"
-          >
-            <MDBIcon iconStyle="fas" icon="edit" />
-          </RouterLink>
-          <RouterLink
-            :to="{
-              name: 'dashboard-location-delete',
-              params: { siteId, locationId },
-            }"
-            class="mx-1 text-danger"
-            type="button"
-            title="Delete location"
-          >
-            <MDBIcon iconStyle="fas" icon="trash-can" />
-          </RouterLink>
-          <RouterLink
-            :to="{
-              name: 'dashboard-location-floor-plan',
-              params: { siteId, locationId },
-            }"
-            class="mx-1 text-info"
-            type="button"
-            title="Change floor plan"
-          >
-            <MDBIcon iconStyle="fas" icon="arrow-right-arrow-left" />
-          </RouterLink>
-          <RouterLink
-            :to="{
-              name: 'dashboard-location-manage-devices',
-              params: { siteId, locationId },
-            }"
-            class="mx-1 text-secondary"
-            type="button"
-            title="Manage devices"
-          >
-            <MDBIcon iconStyle="fas" icon="plus-minus" />
-          </RouterLink>
-        </span>
+          <span class="h3 m-0">:</span>
+          <span class="h4 mb-0">
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-edit',
+                params: { siteId, locationId },
+              }"
+              class="mx-1 text-warning"
+              type="button"
+              title="Edit location"
+            >
+              <MDBIcon iconStyle="fas" icon="edit" />
+            </RouterLink>
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-delete',
+                params: { siteId, locationId },
+              }"
+              class="mx-1 text-danger"
+              type="button"
+              title="Delete location"
+            >
+              <MDBIcon iconStyle="fas" icon="trash-can" />
+            </RouterLink>
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-floor-plan',
+                params: { siteId, locationId },
+              }"
+              class="mx-1 text-info"
+              type="button"
+              title="Change floor plan"
+            >
+              <MDBIcon iconStyle="fas" icon="arrow-right-arrow-left" />
+            </RouterLink>
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-manage-devices',
+                params: { siteId, locationId },
+              }"
+              class="mx-1 text-secondary"
+              type="button"
+              title="Manage devices"
+            >
+              <MDBIcon iconStyle="fas" icon="plus-minus" />
+            </RouterLink>
+          </span>
+        </template>
       </div>
     </DashboardNavigation>
     <MDBCol v-if="!currentLocation && !computedLoading" col="12" class="d-flex">
