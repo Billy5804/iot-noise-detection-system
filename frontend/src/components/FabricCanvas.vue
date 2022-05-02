@@ -38,9 +38,10 @@ export default {
     function drawDevices(canvas, scale, width, height) {
       const fontSize = 25 * scale;
 
-      Object.values(deviceIcons).forEach((deviceIcon) =>
-        canvas.remove(deviceIcon)
-      );
+      Object.entries(deviceIcons).forEach(([deviceId, deviceIcon]) => {
+        canvas.remove(deviceIcon);
+        delete deviceIcons[deviceId];
+      });
       canvas.renderAll();
 
       Object.entries(props.locationDevices || {}).forEach(
