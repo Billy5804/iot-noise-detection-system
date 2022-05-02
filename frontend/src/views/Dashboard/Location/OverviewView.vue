@@ -332,7 +332,7 @@ export default {
                 name: 'dashboard-location-map-devices',
                 params: { siteId, locationId },
               }"
-              class="mx-1 text-info"
+              class="mx-1 text-primary"
               type="button"
               title="Map devices"
             >
