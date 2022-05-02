@@ -77,8 +77,22 @@ export default {
 
     const computedLoading = computed(() => loading.value || props.loading);
 
+    const currentLocation = computed(
+      () => props.locations && props.locations[props.locationId]
+    );
+
+    const locationDevicesAPIPath =
+      "http://localhost:443/api/v1/location-devices";
+    const locationDevices = ref(null);
+    const loadingDevices = ref(true);
+
+    const selectedDeviceId = ref(null);
+
     const showModal = computed({
-      get: () => !computedLoading.value && !!props.modalName,
+      get: () =>
+        !computedLoading.value &&
+        !!props.modalName &&
+        (props.modalName !== "manage-devices" || !loadingDevices.value),
       set: (value) => {
         if (value === false) {
           router.push({
@@ -96,17 +110,6 @@ export default {
         (allowedRoles ? allowedRoles.includes(props.currentSiteRole) : true)
       );
     });
-
-    const currentLocation = computed(
-      () => props.locations && props.locations[props.locationId]
-    );
-
-    const locationDevicesAPIPath =
-      "http://localhost:443/api/v1/location-devices";
-    const locationDevices = ref(null);
-    const loadingDevices = ref(true);
-
-    const selectedDeviceId = ref(null);
 
     const sortedLocationDevices = computed(() => {
       return Object.entries(locationDevices.value || {}).sort(
@@ -139,7 +142,9 @@ export default {
         )
         .catch(() => (currentLocation.value.floorPlan = null));
 
-      setupLocationDevices().then(() => (loadingDevices.value = false));
+      new Promise((resolve) => setTimeout(resolve, 3000)).then(() =>
+        setupLocationDevices().then(() => (loadingDevices.value = false))
+      );
     }
 
     async function checkLocationAndRedirect() {
@@ -336,11 +341,7 @@ export default {
     <template v-else>
       <MDBCol sm="12" md="7" lg="8" xl="9" col="12">
         <div
-          v-if="
-            computedLoading ||
-            currentLocation.floorPlan === 'loading' ||
-            loadingDevices
-          "
+          v-if="computedLoading || currentLocation.floorPlan === 'loading'"
           class="position-relative h-100"
         >
           <LoadingView />
