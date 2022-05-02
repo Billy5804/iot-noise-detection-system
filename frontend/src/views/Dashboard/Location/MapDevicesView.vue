@@ -1,5 +1,6 @@
 <script>
 import { reactive, ref, shallowRef, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import AjaxButton from "@/components/AjaxButton.vue";
@@ -12,13 +13,19 @@ export default {
   emits: ["done"],
 
   props: {
+    siteId: { type: String, required: true },
     locationId: { type: String, required: true },
     // locations: { type: Object, required: true },
     locationDevices: { type: Object, required: true },
-    floorPlanURL: { type: String, required: true }
+    floorPlanURL: String
   },
 
   setup: function (props, { emit }) {
+    const { replace: routerReplace } = useRouter();
+    if (! props.floorPlanURL) {
+      routerReplace({ name: "dashboard-location-floor-plan", params: { siteId: props.siteId, locationId: props.locationId }})
+    }
+
     const { getIdToken } = useUserStore();
     const syncing = ref(false);
 
@@ -46,6 +53,7 @@ export default {
   >
     <h2 class="h3">Manage inclusion of devices for this location.</h2>
     <FabricCanvas
+      v-if="floorPlanURL"
       :floorPlanURL="floorPlanURL"
       :locationDevices="locationDevices"
       :editable="true"
