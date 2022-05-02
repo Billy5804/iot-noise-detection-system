@@ -189,6 +189,16 @@ export default {
         }
       });
 
+      canvas.on("object:moving", function ({ target }) {
+        canvas.remove(tooltip);
+        if (target?.type === deviceIconType) {
+          target.left = target.left < 0 ? 0 : (target.left > width ? width : target.left);
+          target.top = target.top < 0 ? 0 : (target.top > height ? height : target.top);
+          showTooltip(target);
+          canvas.renderAll();
+        }
+      });
+
       canvas.on("mouse:up", function ({ target }) {
         if (!props.editable && target?.type === deviceIconType) {
           const deviceId = target.deviceId;
