@@ -155,17 +155,36 @@ export default {
 
       scaleCanvas(canvas, width, height, canvasParent.clientWidth / width);
 
+      function showTooltip({
+        deviceId,
+        left: deviceLeft,
+        top: deviceTop,
+        originalFontSize,
+      }) {
+        let top = deviceTop - tooltipBackground.height / 2 - originalFontSize;
+        if (top - tooltipBackground.height / 2 <= 0) {
+          top = deviceTop + tooltipBackground.height / 2 + originalFontSize;
+        }
+        const halfTooltip = tooltipBackground.width / 2;
+        const left =
+          deviceLeft - halfTooltip < 0
+            ? halfTooltip
+            : deviceLeft + halfTooltip > width
+            ? width - halfTooltip
+            : deviceLeft;
+        tooltip.top = top;
+        tooltip.left = left;
+        tooltipText.text = props.locationDevices[deviceId].displayName;
+        canvas.add(tooltip);
+      }
+
       canvas.on("mouse:over", function ({ target }) {
         if (
           target?.type === deviceIconType &&
           target.deviceId !== props.selectedDeviceId
         ) {
           target.fontSize = target.originalFontSize * 1.5;
-          tooltipText.text = props.locationDevices[target.deviceId].displayName;
-          tooltip.left = target.left;
-          tooltip.top =
-            target.top - tooltipBackground.height / 2 - target.height;
-          canvas.add(tooltip);
+          showTooltip(target);
           canvas.renderAll();
         }
       });
