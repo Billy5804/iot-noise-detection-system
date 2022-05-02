@@ -32,9 +32,6 @@ public class Location extends CommonAttributes implements Serializable {
 	@Column(columnDefinition = "VARCHAR(32)", updatable = true, nullable = false)
 	private String displayName;
 
-	@Column(columnDefinition = "VARCHAR(255)", updatable = true, nullable = true)
-	private String floorPlan;
-
 	public UUID getId() {
 		return id;
 	}
@@ -57,14 +54,6 @@ public class Location extends CommonAttributes implements Serializable {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public String getFloorPlan() {
-		return floorPlan;
-	}
-
-	public void setFloorPlan(String floorPlan) {
-		this.floorPlan = floorPlan;
 	}
 
 	@Override

@@ -87,7 +87,6 @@ CREATE TABLE `location` (
   `id` binary(16) NOT NULL,
   `site_id` binary(16) NOT NULL,
   `display_name` varchar(32) NOT NULL,
-  `floor_plan` varchar(255) NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`,`site_id`),
@@ -106,3 +105,8 @@ CREATE TABLE `location_device` (
   CONSTRAINT `location_device_ibfk_1` FOREIGN KEY (`location_id`, `site_id`) REFERENCES `location` (`id`, `site_id`) ON DELETE CASCADE,
   CONSTRAINT `location_device_ibfk_2` FOREIGN KEY (`site_id`, `device_id`) REFERENCES `site_device` (`site_id`, `device_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO iot.site (id, display_name) VALUES (UUID_TO_BIN("f6f329b6-a9d9-11ec-b2f6-0242ac130002"), "Test Site");
+INSERT INTO iot.user (id) VALUES (FROM_BASE64("D3SLtLY9sIcoj5ZA2MQCA1U17HA2"));
+INSERT INTO iot.site_user (site_id, user_id, role)
+	VALUES (UUID_TO_BIN("f6f329b6-a9d9-11ec-b2f6-0242ac130002"), FROM_BASE64("D3SLtLY9sIcoj5ZA2MQCA1U17HA2"), 1);
