@@ -6,7 +6,6 @@ import axios from "axios";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FabricCanvas from "@/components/FabricCanvas.vue";
 
-
 export default {
   components: { AjaxButton, FabricCanvas },
 
@@ -17,13 +16,16 @@ export default {
     locationId: { type: String, required: true },
     // locations: { type: Object, required: true },
     locationDevices: { type: Object, required: true },
-    floorPlanURL: String
+    floorPlanURL: String,
   },
 
   setup: function (props, { emit }) {
     const { replace: routerReplace } = useRouter();
-    if (! props.floorPlanURL) {
-      routerReplace({ name: "dashboard-location-floor-plan", params: { siteId: props.siteId, locationId: props.locationId }})
+    if (!props.floorPlanURL) {
+      routerReplace({
+        name: "dashboard-location-floor-plan",
+        params: { siteId: props.siteId, locationId: props.locationId },
+      });
     }
 
     const { getIdToken } = useUserStore();
@@ -46,12 +48,8 @@ export default {
 </script>
 
 <template>
-  <form
-    class="needs-validation"
-    novalidate
-    @submit.prevent="submitMapForm"
-  >
-    <h2 class="h3">Manage inclusion of devices for this location.</h2>
+  <form class="needs-validation" novalidate @submit.prevent="submitMapForm">
+    <h2 class="h3">Position this locations devices on the floor plan.</h2>
     <FabricCanvas
       v-if="floorPlanURL"
       :floorPlanURL="floorPlanURL"

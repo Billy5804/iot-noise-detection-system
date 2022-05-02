@@ -84,10 +84,10 @@ export default {
     const locationDevicesAPIPath =
       "http://localhost:443/api/v1/location-devices";
     const locationDevices = ref(null);
-    
+
     const loadingDevices = ref(true);
 
-    const locationFloorPlanURL = ref(null)
+    const locationFloorPlanURL = ref(null);
     const loadingFloorPlan = ref(true);
 
     const selectedDeviceId = ref(null);
@@ -97,7 +97,8 @@ export default {
         !computedLoading.value &&
         !!props.modalName &&
         (props.modalName !== "manage-devices" || !loadingDevices.value) &&
-        (props.modalName !== "map-devices" || (!loadingDevices.value && !loadingFloorPlan.value)),
+        (props.modalName !== "map-devices" ||
+          (!loadingDevices.value && !loadingFloorPlan.value)),
       set: (value) => {
         if (value === false) {
           router.push({
@@ -143,11 +144,9 @@ export default {
       getDownloadURL(
         firebaseRef(firebaseStorage, `floorPlans/${props.locationId}`)
       )
-        .then(
-          (floorPlanURL) => (locationFloorPlanURL.value = floorPlanURL)
-        )
+        .then((floorPlanURL) => (locationFloorPlanURL.value = floorPlanURL))
         .catch()
-        .finally(() => loadingFloorPlan.value = false);
+        .finally(() => (loadingFloorPlan.value = false));
 
       setupLocationDevices().then(() => (loadingDevices.value = false));
     }
@@ -197,7 +196,7 @@ export default {
       svgOptimiseAndStore(file[0], `/floorPlans/${props.locationId}`)
         .then((blobURL) => (locationFloorPlanURL.value = blobURL))
         .catch((error) => toastrError(error.message || error))
-        .finally(() => loadingFloorPlan.value = false);
+        .finally(() => (loadingFloorPlan.value = false));
     });
 
     async function setupLocationDevices() {
@@ -328,6 +327,7 @@ export default {
               <MDBIcon iconStyle="fas" icon="plus-minus" />
             </RouterLink>
             <RouterLink
+              v-if="locationFloorPlanURL"
               :to="{
                 name: 'dashboard-location-map-devices',
                 params: { siteId, locationId },
