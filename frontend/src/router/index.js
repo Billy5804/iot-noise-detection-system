@@ -172,7 +172,9 @@ const router = createRouter({
               name !== "dashboard-location-overview"
                 ? name?.replace("dashboard-location-", "")
                 : null,
-            ...(name === "dashboard-location-map-devices" && { modalSize: "xl" })
+            ...(name === "dashboard-location-map-devices" && {
+              modalSize: "xl",
+            }),
           }),
           children: [
             {
