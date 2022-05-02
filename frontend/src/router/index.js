@@ -229,6 +229,16 @@ const router = createRouter({
                 allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
               },
             },
+            {
+              path: ":locationId/map-devices",
+              name: "dashboard-location-map-devices",
+              component: () =>
+                import("../views/Dashboard/Location/MapDevicesView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
           ],
         },
         {

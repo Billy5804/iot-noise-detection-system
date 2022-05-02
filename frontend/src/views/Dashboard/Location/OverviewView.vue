@@ -319,6 +319,17 @@ export default {
             >
               <MDBIcon iconStyle="fas" icon="plus-minus" />
             </RouterLink>
+            <RouterLink
+              :to="{
+                name: 'dashboard-location-map-devices',
+                params: { siteId, locationId },
+              }"
+              class="mx-1 text-info"
+              type="button"
+              title="Map devices"
+            >
+              <MDBIcon iconStyle="fas" icon="arrows-up-down-left-right" />
+            </RouterLink>
           </span>
         </template>
       </div>
