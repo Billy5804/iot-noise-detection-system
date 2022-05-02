@@ -18,7 +18,7 @@ export default {
     selectedDeviceId: String,
   },
 
-  emits: ["update:selectedDeviceId"],
+  emits: ["update:selectedDeviceId", "deviceMoved"],
 
   components: { LoadingView },
 
@@ -203,13 +203,22 @@ export default {
       });
 
       canvas.on("mouse:up", function ({ target }) {
-        if (!props.editable && target?.type === deviceIconType) {
+        if (!target?.type === deviceIconType) {
+          return;
+        }
+        if (!props.editable) {
           const deviceId = target.deviceId;
           emit(
             "update:selectedDeviceId",
             deviceId === props.selectedDeviceId ? null : deviceId
           );
+          return;
         }
+        emit("deviceMoved", {
+          deviceId: target.deviceId,
+          positionX: target.left,
+          positionY: target.top,
+        });
       });
 
       canvas.on("mouse:out", function ({ target }) {
