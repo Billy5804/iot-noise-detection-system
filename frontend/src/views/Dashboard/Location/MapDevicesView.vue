@@ -1,5 +1,5 @@
 <script>
-import { reactive, ref, shallowRef, computed } from "vue";
+import { ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
@@ -14,9 +14,9 @@ export default {
   props: {
     siteId: { type: String, required: true },
     locationId: { type: String, required: true },
-    // locations: { type: Object, required: true },
     locationDevices: { type: Object, required: true },
     floorPlanURL: String,
+    siteDevices: { type: Object, required: true },
   },
 
   setup: function (props, { emit }) {
@@ -33,15 +33,72 @@ export default {
 
     const mapError = shallowRef(null);
 
+    const deviceMappings = {};
+
+    function setDeviceMapping({ deviceId, ...positions }) {
+      deviceMappings[deviceId] = positions;
+    }
+
     async function submitMapForm() {
       mapError.value = null;
       syncing.value = true;
+      if (!Object.keys(deviceMappings).length) {
+        emit("done");
+      }
+
+      const authorization = await getIdToken();
+
+      const responses = await Promise.allSettled(
+        Object.entries(deviceMappings).map(
+          ([deviceId, { positionX, positionY }]) =>
+            axios.put(
+              "http://localhost:443/api/v1/location-devices",
+              { locationId: props.locationId, deviceId, positionX, positionY },
+              { timeout: 5000, headers: { authorization } }
+            )
+        )
+      );
+
+      const failedResponses = responses.reduce(
+        (result, { status, reason, value }) => {
+          if (reason?.config?.data) {
+            const deviceId = JSON.parse(reason.config.data || "{}").deviceId;
+            result.push(props.siteDevices[deviceId]?.displayName);
+            return result;
+          }
+          if (value || status === "fulfilled") {
+            const { deviceId, ...locationDevice } = value.data;
+            Object.assign(props.locationDevices, {
+              [deviceId]: { ...props.siteDevices[deviceId], ...locationDevice },
+            });
+            return result;
+          }
+          if (reason || status === "rejected") {
+            mapError.value === reason.message || reason || "An error occurred";
+          }
+          return result;
+        },
+        []
+      );
+
+      mapError.value = failedResponses.length
+        ? `An error occurred mapping the devices: [${failedResponses.join(
+            ",\n"
+          )}]`
+        : "";
+
+      syncing.value = false;
+
+      if (!mapError.value) {
+        emit("done");
+      }
     }
 
     return {
       syncing,
       mapError,
       submitMapForm,
+      setDeviceMapping,
     };
   },
 };
@@ -55,6 +112,7 @@ export default {
       :floorPlanURL="floorPlanURL"
       :locationDevices="locationDevices"
       :editable="true"
+      @deviceMoved="setDeviceMapping"
     />
     <div
       v-if="mapError"
