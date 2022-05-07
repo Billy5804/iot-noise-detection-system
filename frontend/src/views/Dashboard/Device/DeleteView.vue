@@ -88,7 +88,7 @@ export default {
       size="lg"
       v-model.trim="deleteConfirm"
       label="Confirm by typing 'DELETE'"
-      invalidFeedback="Please confirm you want to delete this site"
+      invalidFeedback="Please confirm you want to delete this device"
       @update:validity="deleteConfirmValidity = $event"
       required
       pattern="DELETE"

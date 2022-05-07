@@ -29,7 +29,6 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-		System.out.println(accessor.getCommand());
 		if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 			Authentication user = new FirebaseIdTokenAuthenticationProvider()
 					.authenticate(new FirebaseAuthenticationToken(accessor.getFirstNativeHeader("authorization")));

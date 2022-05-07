@@ -17,7 +17,7 @@ export default {
       default: 10,
     },
     redirectRoute: {
-      type: String,
+      type: [Object, String],
       default: "/",
     },
   },

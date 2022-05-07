@@ -22,7 +22,6 @@ public class NotFoundHandler {
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public ResponseEntity<String> renderDefaultPage() {
 		try {
-			System.out.println(defaultFile.getFile());
 			FileInputStream inputStream = new FileInputStream(defaultFile.getFile());
 			String body = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
 			return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(body);

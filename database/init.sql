@@ -87,7 +87,6 @@ CREATE TABLE `location` (
   `id` binary(16) NOT NULL,
   `site_id` binary(16) NOT NULL,
   `display_name` varchar(32) NOT NULL,
-  `floor_plan` varchar(255) NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`,`site_id`),

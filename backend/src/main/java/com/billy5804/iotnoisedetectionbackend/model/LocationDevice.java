@@ -29,10 +29,10 @@ public class LocationDevice extends CommonAttributes implements Serializable {
 	@Column(columnDefinition = "BINARY(6)", updatable = false, nullable = false)
 	private UUID siteId;
 
-	@Column(columnDefinition = "int", updatable = true, nullable = true)
+	@Column(columnDefinition = "int", name = "position_x", updatable = true, nullable = true)
 	private Integer positionX;
 
-	@Column(columnDefinition = "int", updatable = true, nullable = true)
+	@Column(columnDefinition = "int", name = "position_y", updatable = true, nullable = true)
 	private Integer positionY;
 
 	@JsonIgnore

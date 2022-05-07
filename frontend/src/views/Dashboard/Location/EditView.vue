@@ -5,7 +5,6 @@ import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
-import SensorUnits from "@/utilitys/SensorUnits";
 
 export default {
   components: {
@@ -18,9 +17,8 @@ export default {
   emits: ["done"],
 
   props: {
-    siteId: { type: String, required: true },
-    deviceId: { type: String, required: true },
-    siteDevices: { type: Object, required: true },
+    locationId: { type: String, required: true },
+    locations: { type: Object, required: true },
   },
 
   setup: function (props, context) {
@@ -43,10 +41,9 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/site-devices",
+          "http://localhost:443/api/v1/locations",
           {
-            siteId: props.siteId,
-            deviceId: props.deviceId,
+            id: props.locationId,
             displayName: newDisplayName.value,
           },
           {
@@ -55,12 +52,8 @@ export default {
           }
         )
         .then(({ data }) => {
-          const { id: deviceId, sensors, ...device } = data;
-          device.sensors = sensors.map(({ unit, ...sensor }) => ({
-            ...sensor,
-            unit: SensorUnits[unit],
-          }));
-          Object.assign(props.siteDevices, { [deviceId]: device });
+          const { id: locationId, ...location } = data;
+          Object.assign(props.locations, { [locationId]: location });
           context.emit("done");
         })
         .catch((error) => (updateError.value = error.message || error))
@@ -91,9 +84,9 @@ export default {
       type="text"
       size="lg"
       v-model.trim="newDisplayName"
-      label="New Display Name"
-      :placeholder="siteDevices[deviceId].displayName"
-      invalidFeedback="Please provide a new display name"
+      label="New Location Name"
+      :placeholder="locations[locationId].displayName"
+      invalidFeedback="Please provide a new location name"
       @update:validity="newDisplayNameValidity = $event"
       required
       counter
@@ -113,7 +106,7 @@ export default {
         size="lg"
         class="w-100"
         :syncing="syncing"
-        >Update Device</AjaxButton
+        >Update Location</AjaxButton
       >
     </MDBCol>
   </MDBRow>

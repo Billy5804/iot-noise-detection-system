@@ -3,7 +3,7 @@ import ErrorRedirect from "@/components/ErrorRedirect.vue";
 
 defineProps({
   redirectRoute: {
-    type: String,
+    type: [Object, String],
   },
 });
 </script>

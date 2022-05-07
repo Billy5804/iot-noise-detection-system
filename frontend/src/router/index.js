@@ -156,48 +156,149 @@ const router = createRouter({
     },
     {
       path: "/dashboard/:siteId",
-      name: "dashboard",
+      // name: "dashboard",
       component: DashboardView,
-      props: ({ params, name }) => ({
-        deviceId: ["dashboard-device-add"].includes(name)
-          ? name.replace("dashboard-device-", "")
-          : params.deviceId,
-        siteId: params.siteId,
-        ...(name === "dashboard-device-history" && { modalSize: "xl" }),
-      }),
+      props: true,
       children: [
         {
-          path: "add",
-          name: "dashboard-device-add",
-          component: () => import("../views/Dashboard/DeviceAddView.vue"),
-          props: true,
-          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
+          path: "location",
+          // name: "dashboard-location-overview",
+          component: () =>
+            import("../views/Dashboard/Location/OverviewView.vue"),
+          props: ({ params, name }) => ({
+            locationId: params.locationId,
+            siteId: params.siteId,
+            modalName:
+              name !== "dashboard-location-overview"
+                ? name?.replace("dashboard-location-", "")
+                : null,
+            ...(name === "dashboard-location-map-devices" && {
+              modalSize: "xl",
+            }),
+          }),
+          children: [
+            {
+              path: ":locationId?/add",
+              name: "dashboard-location-add",
+              component: () =>
+                import("../views/Dashboard/Location/AddView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId?",
+              name: "dashboard-location-overview",
+              component: {},
+            },
+            {
+              path: ":locationId/edit",
+              name: "dashboard-location-edit",
+              component: () =>
+                import("../views/Dashboard/Location/EditView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId/delete",
+              name: "dashboard-location-delete",
+              component: () =>
+                import("../views/Dashboard/Location/DeleteView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId/floor-plan",
+              name: "dashboard-location-floor-plan",
+              component: () =>
+                import("../views/Dashboard/Location/ChangeFloorPlanView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId/manage-devices",
+              name: "dashboard-location-manage-devices",
+              component: () =>
+                import("../views/Dashboard/Location/ManageDevicesView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":locationId/map-devices",
+              name: "dashboard-location-map-devices",
+              component: () =>
+                import("../views/Dashboard/Location/MapDevicesView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+          ],
         },
         {
-          path: ":deviceId",
-          name: "dashboard-device-options",
-          component: () => import("../views/Dashboard/DeviceOptionsView.vue"),
-          props: ({ params }) => ({ ...params, iconSize: "2x" }),
-        },
-        {
-          path: ":deviceId/edit",
-          name: "dashboard-device-edit",
-          component: () => import("../views/Dashboard/DeviceEditView.vue"),
-          props: true,
-          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
-        },
-        {
-          path: ":deviceId/delete",
-          name: "dashboard-device-delete",
-          component: () => import("../views/Dashboard/DeviceDeleteView.vue"),
-          props: ({ params }) => ({ deviceId: params.deviceId }),
-          meta: { allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR] },
-        },
-        {
-          path: ":deviceId/history",
-          name: "dashboard-device-history",
-          component: () => import("../views/Dashboard/DeviceHistoryView.vue"),
-          props: true,
+          path: "",
+          name: "dashboard-device-overview",
+          component: () => import("../views/Dashboard/Device/OverviewView.vue"),
+          props: ({ params, name }) => ({
+            deviceId: ["dashboard-device-add"].includes(name)
+              ? name.replace("dashboard-device-", "")
+              : params.deviceId,
+            siteId: params.siteId,
+            ...(name === "dashboard-device-history" && { modalSize: "xl" }),
+          }),
+          children: [
+            {
+              path: "add",
+              name: "dashboard-device-add",
+              component: () => import("../views/Dashboard/Device/AddView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":deviceId",
+              name: "dashboard-device-options",
+              component: () =>
+                import("../views/Dashboard/Device/OptionsView.vue"),
+              props: ({ params }) => ({ ...params, iconSize: "2x" }),
+            },
+            {
+              path: ":deviceId/edit",
+              name: "dashboard-device-edit",
+              component: () => import("../views/Dashboard/Device/EditView.vue"),
+              props: true,
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":deviceId/delete",
+              name: "dashboard-device-delete",
+              component: () =>
+                import("../views/Dashboard/Device/DeleteView.vue"),
+              props: ({ params }) => ({ deviceId: params.deviceId }),
+              meta: {
+                allowedRoles: [SiteUserRoles.OWNER, SiteUserRoles.EDITOR],
+              },
+            },
+            {
+              path: ":deviceId/history",
+              name: "dashboard-device-history",
+              component: () =>
+                import("../views/Dashboard/Device/HistoryView.vue"),
+              props: true,
+            },
+          ],
         },
       ],
     },

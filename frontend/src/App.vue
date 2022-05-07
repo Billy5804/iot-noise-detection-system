@@ -80,7 +80,7 @@ export default {
   <main v-if="userLoading"><LoadingView /></main>
   <template v-else>
     <PageHeader />
-    <RouterView v-if="onEntranceView" class="container m-auto mt-5" />
+    <RouterView v-if="onEntranceView" class="container m-auto mt-5 mb-3" />
     <template v-else-if="authorised || bypassAuth">
       <ConfirmEmailBanner
         v-if="!userEmailVerified && authorised"
@@ -88,11 +88,11 @@ export default {
       />
       <ForbiddenView
         v-if="!userEmailVerified && !bypassEmailVerification"
-        class="container m-auto mt-5"
+        class="container m-auto mt-5 mb-3"
       />
-      <RouterView v-else class="container m-auto mt-5" />
+      <RouterView v-else class="container m-auto mt-5 mb-3" />
     </template>
-    <UnauthorisedView v-else class="container m-auto mt-5" />
+    <UnauthorisedView v-else class="container m-auto mt-5 mb-3" />
   </template>
 </template>
 
