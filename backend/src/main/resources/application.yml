@@ -1,11 +1,11 @@
 server:
   port: 443
-  baseURL: "https://iot.alexroyle.com/"
-#  ssl:
-#   key-store: C:/Certbot/live/iot.alexroyle.com/keystore.p12
-#    key-store-password: ""
-#    keyStoreType: PKCS12
-#    keyAlias: tomcat
+  baseURL: "https://${WEB_SERVICE_HOSTNAME}/"
+  ssl:
+   key-store: /app/certificates/live/${WEB_SERVICE_HOSTNAME}/keystore.p12
+   key-store-password: "${CERT_KEY_STORE_PASSWORD}"
+  keyStoreType: PKCS12
+  keyAlias: tomcat
 spring:
   mvc:
     throw-exception-if-no-handler-found: true
@@ -16,7 +16,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:mysql://localhost:3306/iot
+    url: jdbc:mysql://database:3306/iot
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
