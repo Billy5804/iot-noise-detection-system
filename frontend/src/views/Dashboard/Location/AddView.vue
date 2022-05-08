@@ -43,11 +43,7 @@ export default {
       syncing.value = true;
       axios
         .post(
-          `${
-            import.meta.env.BASE_URL
-              ? import.meta.env.BASE_URL
-              : "http://localhost:443"
-          }/api/v1/locations`,
+          API_V1_URL + "locations",
           {
             siteId: props.siteId,
             displayName: displayName.value,

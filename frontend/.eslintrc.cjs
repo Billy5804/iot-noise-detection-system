@@ -21,4 +21,8 @@ module.exports = {
     "brace-style": ["error", "1tbs", { allowSingleLine: true }],
     curly: "error",
   },
+  globals: {
+    API_V1_URL: "readonly",
+    WS_URL: "readonly",
+  },
 };

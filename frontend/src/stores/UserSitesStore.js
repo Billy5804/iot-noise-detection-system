@@ -3,9 +3,7 @@ import { ref } from "vue";
 import axios from "axios";
 import SiteUserRoles from "@/utilitys/SiteUserRoles";
 
-const siteUsersAPIPath = `${
-  import.meta.env.BASE_URL ? import.meta.env.BASE_URL : "http://localhost:443"
-}/api/v1/site-users`;
+const siteUsersAPIPath = API_V1_URL + "site-users";
 
 const sites = ref(null);
 

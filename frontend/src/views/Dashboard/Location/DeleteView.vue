@@ -66,18 +66,11 @@ export default {
       }
 
       axios
-        .delete(
-          `${
-            import.meta.env.BASE_URL
-              ? import.meta.env.BASE_URL
-              : "http://localhost:443"
-          }/api/v1/locations`,
-          {
-            timeout: 5000,
-            headers: { authorization: await getIdToken() },
-            params: { locationId: props.locationId },
-          }
-        )
+        .delete(API_V1_URL + "locations", {
+          timeout: 5000,
+          headers: { authorization: await getIdToken() },
+          params: { locationId: props.locationId },
+        })
         .then(() => {
           delete props.locations[props.locationId];
           context.emit("done");
