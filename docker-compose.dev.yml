@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./database
+    container_name: database
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - iot
+
+volumes:
+  database: {}
+
+networks:
+  iot: {}
