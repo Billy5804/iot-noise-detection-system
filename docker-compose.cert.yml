@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  certmanager:
+    image: certbot/certbot:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-cert-manager
+    ports:
+      - 80:80
+    volumes:
+      - ${CERTS_PATH:-certificates}:/etc/letsencrypt
+    networks:
+      - iot
+    command: certonly --agree-tos --email ${CERT_RENEW_EMAIL} --non-interactive --standalone --preferred-challenges http -d ${WEB_SERVICE_HOSTNAME}
+
+volumes:
+  certificates: {}
+
+networks:
+  iot: {}
