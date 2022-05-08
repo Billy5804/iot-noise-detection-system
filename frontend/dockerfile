@@ -1,0 +1,17 @@
+FROM node:16-slim
+
+ARG WEB_SERVICE_HOSTNAME
+ENV BASE_URL="https://${WEB_SERVICE_HOSTNAME}"
+
+COPY src /app/src
+COPY public /app/public
+COPY index.html /app
+COPY package.json /app
+COPY vite.config.js /app
+
+WORKDIR /app
+
+RUN yarn
+RUN yarn build
+
+ENTRYPOINT ["yarn", "preview"]
