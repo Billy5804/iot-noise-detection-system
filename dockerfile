@@ -1,4 +1,6 @@
 FROM node:16-slim AS frontend_build
+ARG WEB_SERVICE_HOSTNAME
+ENV BASE_URL="https://${WEB_SERVICE_HOSTNAME}"
 COPY frontend/src /app/src
 COPY frontend/public /app/public
 COPY frontend/index.html /app

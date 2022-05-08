@@ -1,23 +1,38 @@
 version: '3.8'
 
 services:
-  mysql:
+  database:
     build:
       context: ./database
-    # container_name: ${COMPOSE_PROJECT_NAME}-database
-    container_name: database
+    container_name: ${COMPOSE_PROJECT_NAME}-database
     restart: always
-    ports:
-      - "${DB_PORT:-3306}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - database:/var/lib/mysql
     networks:
-      - noise
+      - iot
+
+  webservice:
+    build:
+      context: ./
+      args:
+        - WEB_SERVICE_HOSTNAME=${WEB_SERVICE_HOSTNAME}
+        - CERT_KEY_STORE_PASSWORD=${CERT_KEY_STORE_PASSWORD}
+    container_name: ${COMPOSE_PROJECT_NAME}-web-service
+    restart: always
+    ports:
+      - 443:443
+    depends_on:
+      - database
+    volumes:
+      - ${CERTS_PATH}:/app/certificates
+    networks:
+      - iot
+
 
 volumes:
   database: {}
 
 networks:
-  noise: {}
+  iot: {}
