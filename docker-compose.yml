@@ -26,13 +26,13 @@ services:
     depends_on:
       - database
     volumes:
-      - ${CERTS_PATH}:/app/certificates
+      - ${CERTS_PATH:-certificates}:/app/certificates
     networks:
       - iot
 
-
 volumes:
   database: {}
+  certificates: {}
 
 networks:
   iot: {}
