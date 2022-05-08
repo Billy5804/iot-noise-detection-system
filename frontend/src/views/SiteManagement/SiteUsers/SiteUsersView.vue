@@ -33,7 +33,11 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteUsersAPIPath = "http://localhost:443/api/v1/site-users";
+    const siteUsersAPIPath = `${
+      import.meta.env.BASE_URL
+        ? import.meta.env.BASE_URL
+        : "http://localhost:443"
+    }/api/v1/site-users`;
     const siteUsers = ref([]);
 
     const siteHasUnauthorisedUsers = computed(() =>

@@ -44,7 +44,11 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/sites",
+          `${
+            import.meta.env.BASE_URL
+              ? import.meta.env.BASE_URL
+              : "http://localhost:443"
+          }/api/v1/sites`,
           { displayName: displayName.value },
           {
             timeout: 5000,

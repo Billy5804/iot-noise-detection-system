@@ -89,7 +89,11 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/site-invitations",
+          `${
+            import.meta.env.BASE_URL
+              ? import.meta.env.BASE_URL
+              : "http://localhost:443"
+          }/api/v1/site-invitations`,
           {
             id: props.invitationId,
             displayName: newDisplayName.value,

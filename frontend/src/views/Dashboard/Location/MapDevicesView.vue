@@ -52,7 +52,11 @@ export default {
         Object.entries(deviceMappings).map(
           ([deviceId, { positionX, positionY }]) =>
             axios.put(
-              "http://localhost:443/api/v1/location-devices",
+              `${
+                import.meta.env.BASE_URL
+                  ? import.meta.env.BASE_URL
+                  : "http://localhost:443"
+              }/api/v1/location-devices`,
               { locationId: props.locationId, deviceId, positionX, positionY },
               { timeout: 5000, headers: { authorization } }
             )

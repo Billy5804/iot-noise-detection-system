@@ -45,11 +45,18 @@ export default {
       }
       syncing.value = true;
       axios
-        .delete("http://localhost:443/api/v1/site-devices", {
-          timeout: 5000,
-          headers: { authorization: await getIdToken() },
-          params: { deviceId: props.deviceId },
-        })
+        .delete(
+          `${
+            import.meta.env.BASE_URL
+              ? import.meta.env.BASE_URL
+              : "http://localhost:443"
+          }/api/v1/site-devices`,
+          {
+            timeout: 5000,
+            headers: { authorization: await getIdToken() },
+            params: { deviceId: props.deviceId },
+          }
+        )
         .then(() => {
           delete props.siteDevices[props.deviceId];
           context.emit("done");

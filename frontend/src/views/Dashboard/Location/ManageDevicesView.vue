@@ -63,17 +63,28 @@ export default {
       const responses = await Promise.allSettled([
         ...newDeviceIds.map((deviceId) =>
           axios.post(
-            "http://localhost:443/api/v1/location-devices",
+            `${
+              import.meta.env.BASE_URL
+                ? import.meta.env.BASE_URL
+                : "http://localhost:443"
+            }/api/v1/location-devices`,
             { locationId: props.locationId, deviceId: deviceId },
             { timeout: 5000, headers: { authorization } }
           )
         ),
         ...removeDeviceIds.map((deviceId) =>
-          axios.delete("http://localhost:443/api/v1/location-devices", {
-            timeout: 5000,
-            headers: { authorization },
-            params: { locationId: props.locationId, deviceId: deviceId },
-          })
+          axios.delete(
+            `${
+              import.meta.env.BASE_URL
+                ? import.meta.env.BASE_URL
+                : "http://localhost:443"
+            }/api/v1/location-devices`,
+            {
+              timeout: 5000,
+              headers: { authorization },
+              params: { locationId: props.locationId, deviceId: deviceId },
+            }
+          )
         ),
       ]);
 

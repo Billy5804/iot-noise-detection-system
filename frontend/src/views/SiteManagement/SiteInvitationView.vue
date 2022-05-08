@@ -32,8 +32,11 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteInvitationsAPIPath =
-      "http://localhost:443/api/v1/site-invitations";
+    const siteInvitationsAPIPath = `${
+      import.meta.env.BASE_URL
+        ? import.meta.env.BASE_URL
+        : "http://localhost:443"
+    }/api/v1/site-invitations`;
     const siteInvitation = ref(null);
 
     onBeforeMount(async () => {
@@ -67,7 +70,11 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/site-users",
+          `${
+            import.meta.env.BASE_URL
+              ? import.meta.env.BASE_URL
+              : "http://localhost:443"
+          }/api/v1/site-users`,
           { id: props.invitationId },
           {
             timeout: 5000,

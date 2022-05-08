@@ -10,7 +10,9 @@ import DashboardView from "../views/Dashboard/DashboardView.vue";
 import SiteUserRoles from "../utilitys/SiteUserRoles";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(
+    import.meta.env.BASE_URL ? import.meta.env.BASE_URL : "http://localhost:443"
+  ),
   routes: [
     {
       path: "/register",

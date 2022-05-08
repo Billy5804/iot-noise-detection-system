@@ -41,7 +41,11 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/locations",
+          `${
+            import.meta.env.BASE_URL
+              ? import.meta.env.BASE_URL
+              : "http://localhost:443"
+          }/api/v1/locations`,
           {
             id: props.locationId,
             displayName: newDisplayName.value,
