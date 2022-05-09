@@ -1,6 +1,8 @@
 FROM maven:3.8-openjdk-17 AS build
+ARG SERVICE_ACCOUNT_JSON_PATH
 COPY src /app/src
 COPY pom.xml /app
+COPY $SERVICE_ACCOUNT_JSON_PATH /app/src/main/resources/serviceAccount.json
 RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip
 
 FROM gcr.io/distroless/java17:latest

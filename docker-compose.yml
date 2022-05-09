@@ -17,6 +17,7 @@ services:
     build:
       context: ./
       args:
+        - SERVICE_ACCOUNT_JSON_PATH=${SERVICE_ACCOUNT_JSON_PATH}
         - WEB_SERVICE_HOSTNAME=${WEB_SERVICE_HOSTNAME}
         - CERT_KEY_STORE_PASSWORD=${CERT_KEY_STORE_PASSWORD}
         - API_KEY=${API_KEY}

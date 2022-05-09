@@ -9,8 +9,10 @@ RUN yarn
 RUN yarn build
 
 FROM maven:3.8-openjdk-17 AS build
+ARG SERVICE_ACCOUNT_JSON_PATH
 COPY backend/src /app/src
 COPY backend/pom.xml /app
+COPY $SERVICE_ACCOUNT_JSON_PATH /app/src/main/resources
 COPY --from=frontend_build /app/dist /app/src/main/resources/public
 WORKDIR /app
 RUN mvn clean package -Dmaven.test.skip
