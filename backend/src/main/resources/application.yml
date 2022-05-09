@@ -1,6 +1,7 @@
 server:
   port: 80
   baseURL: "http://localhost/"
+  apiKey: "developmentKey"
 spring:
   profiles:
     active: ${activatedProperties}

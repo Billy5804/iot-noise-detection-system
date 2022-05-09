@@ -19,6 +19,7 @@ services:
       args:
         - WEB_SERVICE_HOSTNAME=${WEB_SERVICE_HOSTNAME}
         - CERT_KEY_STORE_PASSWORD=${CERT_KEY_STORE_PASSWORD}
+        - API_KEY=${API_KEY}
     container_name: ${COMPOSE_PROJECT_NAME}-web-service
     restart: always
     ports:

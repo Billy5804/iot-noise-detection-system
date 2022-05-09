@@ -17,8 +17,10 @@ RUN mvn clean package -Dmaven.test.skip
 
 FROM gcr.io/distroless/java17:latest
 ARG WEB_SERVICE_HOSTNAME
+ARG API_KEY
 ARG CERT_KEY_STORE_PASSWORD
 ENV WEB_SERVICE_HOSTNAME=$WEB_SERVICE_HOSTNAME
+ENV API_KEY=$API_KEY
 ENV CERT_KEY_STORE_PASSWORD=$CERT_KEY_STORE_PASSWORD
 COPY --from=build /app/target/iot-noise-detection-backend-0.0.1-SNAPSHOT.jar /app/iot-noise-detection-backend-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-jar", "-Dspring.profiles.active=prod","/app/iot-noise-detection-backend-0.0.1-SNAPSHOT.jar"]
