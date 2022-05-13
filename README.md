@@ -47,19 +47,26 @@
 6. To start the web service and its database make sure the port 443 is exposed publicly (docker should be able allow access through you firewall on its own but not through your router) in the repository root run the command `docker-compose up` with the optional `-d` flag at the end of the command to start the web service and database detached from the terminal (you can also use the --build flag to rebuild the database and web service images if you change any files are .env variables).
 7. To stop the web service and database in the root of the repository you can run the command `docker-compose down`
 
-### Node mcu v2 based iot noise detection devices
-1. required hardware:
-2. connect pins
-3. in platform io open ./node-mcu as a project
-4. connect device to machine
-5. build and upload (should auto detect device if not check platform io docs)
-
-
-docker-compose -f docker-compose.cert.yml up
-docker-compose -f docker-compose.cert-convert.yml up
-docker-compose up (-d)
-
-docker-compose -f docker-compose.dev.yml -p <project_name> up -d
-
-docker volume prune
-docker system prune -a
+### Node mcu v2 based iot noise level detection devices
+1. To begin you will need the hardware used to make the devices:
+   - [NodeMCU V2 WiFi Amica ESP8266](https://www.amazon.co.uk/gp/product/B0754LZ73Z)
+   - [High Sensitivity Sound Microphone Sensor Detection Module](https://www.amazon.co.uk/gp/product/B07Q1BYDS7)
+   - [Jumper Wires](https://www.amazon.co.uk/Elegoo-120pcs-Multicolored-Breadboard-arduino-colorful/dp/B01EV70C78)
+   - Optional [16x2 LCD Display Module](https://www.amazon.co.uk/gp/product/B09B37WVFX)
+2. connect pins using diagram:
+   1. TODO
+3. Using platform io open ./node-mcu as a project.
+4. Configure the build_flags is the ./node-mcu/platformio.ini file to match the same variable values in the .env file (enter values between \\" e.g. \\"webservice.com\\"):
+   - WEB_SERVICE_HOSTNAME - required - hostname of the web service.
+   - API_KEY - required - api key used by the device to authenticate with the web service.
+5. Connect your device to your machine using a USB-A (pc end) to micro USB B (node mcu end) cable.
+6. In your platform IO environment for the project press the upload button(In vscode this appears along the bottom bar in the form or an arrow pointing right). Pressing the button will cause platform IO to build then upload the code to your device (platform IO should auto detect device if not check platform io docs).
+7. When the device boots up for the first time it will open a portal where you can connect and configure the WiFi network it should use. To do this you will need to:
+   1. Connect a device to its network by connecting to the network with an SSID that starts with "NodeMCU-" (the last few characters are to make the device unique so will vary from device to device).
+   2. Once connected in a browser go to http://192.168.4.1.
+   3. On the page that loads you will see a form where you should enter the details to connect to your network (Only 2.4Ghz WiFi is supported).
+   4. When you have entered all of your network details correctly press the save button.
+   5. If your network details were correct you will lose connection from the device as it cannot host the portal and connect to a network at the same time.
+   6. If you wish to change the network the device uses in the future you can do so by putting the device out of range of the network it is currently using and after about a minute the device will open the portal again.
+8. Using a program such as [PuTTY](https://www.putty.org/) connect over serial to the device using a baud rate of 115200 and the devices Serial line (You can find by using platform IOs device explorer an example name would be COM4 or on windows using Device Manager).
+9. If the device is connected to a network you should see some JSON with an "id" key take note of its value as that is the identifier used in the web service to add your device to a site (The id should be a MAC address without the colons).
