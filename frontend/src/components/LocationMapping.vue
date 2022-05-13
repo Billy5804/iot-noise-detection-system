@@ -28,6 +28,11 @@ export default {
     const deviceIconType = "deviceIcon";
     const deviceIcons = {};
 
+    const rootComputedStyle = getComputedStyle(document.querySelector(":root"));
+    const mdbPrimary = rootComputedStyle.getPropertyValue("--mdb-primary");
+    const mdbWarning = rootComputedStyle.getPropertyValue("--mdb-warning");
+    const mdbDanger = rootComputedStyle.getPropertyValue("--mdb-danger");
+
     function drawDevices(canvas, scale, width, height) {
       const fontSize = 25 * scale;
 
@@ -38,14 +43,22 @@ export default {
       canvas.renderAll();
 
       Object.entries(props.locationDevices || {}).forEach(
-        ([deviceId, { type, positionX, positionY }]) => {
+        ([deviceId, { type, positionX, positionY, sensors }]) => {
           const selected = deviceId === props.selectedDeviceId;
+          const mainSensor = sensors[0];
+          const warningOrDanger =
+            mainSensor.latestValue >= mainSensor.unit.getDangerThreshold()
+              ? mdbDanger
+              : mainSensor.latestValue >= mainSensor.unit.getWarningThreshold()
+              ? mdbWarning
+              : "#000000";
           positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
           positionY =
             positionY < 0 ? 0 : positionY > height ? height : positionY;
 
           deviceIcons[deviceId] = new fabric.Text(type.getUnicodeIcon(), {
             deviceId,
+            warningOrDanger,
             type: deviceIconType,
             left: positionX,
             top: positionY,
@@ -57,7 +70,7 @@ export default {
             selectable: props.editable,
             editable: false,
             hoverCursor: "pointer",
-            fill: selected ? "#1266f1" : "#000000",
+            fill: selected ? mdbPrimary : warningOrDanger,
             stroke: "#ffffff",
             strokeWidth: 5,
             paintFirst: "stroke",
@@ -238,12 +251,13 @@ export default {
             return;
           }
           Object.entries(deviceIcons).forEach(([deviceId, deviceIcon]) => {
-            deviceIcon.fontSize =
-              selectedDeviceId === deviceId
-                ? deviceIcon.originalFontSize * 2
-                : deviceIcon.originalFontSize;
-            deviceIcon.fill =
-              selectedDeviceId === deviceId ? "#1266f1" : "#000000";
+            const selected = selectedDeviceId === deviceId;
+            deviceIcon.fontSize = selected
+              ? deviceIcon.originalFontSize * 2
+              : deviceIcon.originalFontSize;
+            deviceIcon.fill = selected
+              ? mdbPrimary
+              : deviceIcon.warningOrDanger;
           });
           canvas.renderAll();
         }
