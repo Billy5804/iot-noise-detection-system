@@ -53,8 +53,13 @@
    - [High Sensitivity Sound Microphone Sensor Detection Module](https://www.amazon.co.uk/gp/product/B07Q1BYDS7)
    - [Jumper Wires](https://www.amazon.co.uk/Elegoo-120pcs-Multicolored-Breadboard-arduino-colorful/dp/B01EV70C78)
    - Optional [16x2 LCD Display Module](https://www.amazon.co.uk/gp/product/B09B37WVFX)
-2. connect pins using diagram:
-   1. TODO
+2. Connect the Node MCU to the microphone and LCD (if you have one) as shown below:
+   - Microphone wiring:
+   A0 &#8594; OUT, GND &#8594; GND, 3v3 &#8594; VCC
+   <br /><img src="./node-mcu/wiring-diagrams/mic-wiring.jpg" width="250" />
+   - LCD wiring (Optional):
+   D1 &#8594; SCL, D2 &#8594; SDA, VIN &#8594; VCC, GND &#8594; GND
+   <br /><img src="./node-mcu/wiring-diagrams/lcd-wiring.jpg" width="250">
 3. Using platform io open ./node-mcu as a project.
 4. Configure the build_flags is the ./node-mcu/platformio.ini file to match the same variable values in the .env file (enter values between \\" e.g. \\"webservice.com\\"):
    - WEB_SERVICE_HOSTNAME - required - hostname of the web service.
