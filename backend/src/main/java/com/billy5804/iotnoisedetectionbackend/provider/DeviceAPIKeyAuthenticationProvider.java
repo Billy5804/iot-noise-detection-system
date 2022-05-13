@@ -6,6 +6,7 @@ import java.util.HexFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,7 +19,8 @@ public class DeviceAPIKeyAuthenticationProvider implements AuthenticationProvide
 
 	private static final Logger logger = LoggerFactory.getLogger(DeviceAPIKeyAuthenticationProvider.class);
 
-	private static final String API_KEY = "SuperSecretKey";
+	@Value("${server.apiKey}")
+	private String API_KEY;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {

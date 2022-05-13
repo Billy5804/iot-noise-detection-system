@@ -33,7 +33,7 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteUsersAPIPath = "http://localhost:443/api/v1/site-users";
+    const siteUsersAPIPath = API_V1_URL + "site-users";
     const siteUsers = ref([]);
 
     const siteHasUnauthorisedUsers = computed(() =>

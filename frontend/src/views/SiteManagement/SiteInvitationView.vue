@@ -32,8 +32,7 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteInvitationsAPIPath =
-      "http://localhost:443/api/v1/site-invitations";
+    const siteInvitationsAPIPath = API_V1_URL + "site-invitations";
     const siteInvitation = ref(null);
 
     onBeforeMount(async () => {
@@ -67,7 +66,7 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/site-users",
+          API_V1_URL + "site-users",
           { id: props.invitationId },
           {
             timeout: 5000,

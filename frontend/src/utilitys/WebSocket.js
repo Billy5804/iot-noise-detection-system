@@ -7,7 +7,7 @@ let unsubscribe;
 
 export default {
   connect: (authorization, onConnected, onError) => {
-    sockJS = new SockJS("http://localhost:443/ws");
+    sockJS = new SockJS(WS_URL);
     stompClient = Stomp.over(sockJS);
     stompClient.debug = null;
     stompClient.connect({ authorization }, onConnected, onError);

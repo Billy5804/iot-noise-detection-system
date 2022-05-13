@@ -51,7 +51,7 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/site-devices",
+          API_V1_URL + "site-devices",
           {
             deviceId: deviceId.value,
             displayName: displayName.value,

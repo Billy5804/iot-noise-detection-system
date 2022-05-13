@@ -63,13 +63,13 @@ export default {
       const responses = await Promise.allSettled([
         ...newDeviceIds.map((deviceId) =>
           axios.post(
-            "http://localhost:443/api/v1/location-devices",
+            API_V1_URL + "location-devices",
             { locationId: props.locationId, deviceId: deviceId },
             { timeout: 5000, headers: { authorization } }
           )
         ),
         ...removeDeviceIds.map((deviceId) =>
-          axios.delete("http://localhost:443/api/v1/location-devices", {
+          axios.delete(API_V1_URL + "location-devices", {
             timeout: 5000,
             headers: { authorization },
             params: { locationId: props.locationId, deviceId: deviceId },

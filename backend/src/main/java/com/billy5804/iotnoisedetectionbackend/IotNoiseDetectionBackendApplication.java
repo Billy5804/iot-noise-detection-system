@@ -22,7 +22,7 @@ public class IotNoiseDetectionBackendApplication {
 
 		try {
 			InputStream serviceAccount = IotNoiseDetectionBackendApplication.class
-					.getResourceAsStream("/serviceAccountKey.json");
+					.getResourceAsStream("/serviceAccount.json");
 
 			@SuppressWarnings("deprecation")
 			FirebaseOptions options = new FirebaseOptions.Builder()

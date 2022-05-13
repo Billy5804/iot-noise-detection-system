@@ -29,8 +29,7 @@ export default {
 
     const loading = ref(true);
     const loadingError = ref(null);
-    const siteInvitationsAPIPath =
-      "http://localhost:443/api/v1/site-invitations";
+    const siteInvitationsAPIPath = API_V1_URL + "site-invitations";
     const siteInvitations = ref([]);
 
     onBeforeMount(async () => {

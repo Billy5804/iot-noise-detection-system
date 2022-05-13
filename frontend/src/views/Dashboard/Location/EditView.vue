@@ -41,7 +41,7 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/locations",
+          API_V1_URL + "locations",
           {
             id: props.locationId,
             displayName: newDisplayName.value,

@@ -23,14 +23,14 @@ export default {
 
     const sites = computed(() => sitesStore.authorisedSites);
 
-    const siteDevicesAPIPath = "http://localhost:443/api/v1/site-devices";
+    const siteDevicesAPIPath = API_V1_URL + "site-devices";
     const siteDevices = ref(null);
 
     const currentSite = computed(
       () => sites.value && sites.value[props.siteId]
     );
 
-    const locationsAPIPath = "http://localhost:443/api/v1/locations";
+    const locationsAPIPath = API_V1_URL + "locations";
     const locations = ref(null);
 
     async function setupLocations() {

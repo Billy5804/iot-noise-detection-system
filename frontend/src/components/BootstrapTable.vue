@@ -6,7 +6,6 @@
 
 <script>
 import $ from "jquery";
-import "bootstrap/js/dist/dropdown";
 import "bootstrap-table/dist/bootstrap-table";
 import "bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header";
 import { ref, watch, onMounted } from "vue";

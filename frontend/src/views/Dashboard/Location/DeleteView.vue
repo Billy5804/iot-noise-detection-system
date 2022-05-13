@@ -66,7 +66,7 @@ export default {
       }
 
       axios
-        .delete("http://localhost:443/api/v1/locations", {
+        .delete(API_V1_URL + "locations", {
           timeout: 5000,
           headers: { authorization: await getIdToken() },
           params: { locationId: props.locationId },

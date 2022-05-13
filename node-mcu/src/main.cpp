@@ -60,6 +60,8 @@ const String apName = "NodeMCU-" + String(ESP.getChipId(), HEX);
 
 const String macAddress = WiFi.macAddress();
 
+const String apiAddress = "https://" + String(WEB_SERVICE_HOSTNAME) + "/api/v1/devices";
+
 bool wasCaptivePortal = false;
 
 // Function to log to both lcd and serial
@@ -209,11 +211,11 @@ void sendChangesToAPI(bool create = false) {
   String serializedDevice;
   serializeJson(deviceDoc, serializedDevice);
   String hash =
-      experimental::crypto::SHA256::hash(serializedDevice + "SuperSecretKey");
+      experimental::crypto::SHA256::hash(serializedDevice + API_KEY);
 
   Serial.println(serializedDevice);
 
-  fetch.begin("http://192.168.0.35:443/api/v1/devices");
+  fetch.begin(apiAddress);
   fetch.addHeader("Authorization", hash);
   fetch.addHeader("Content-Type", "application/json");
   if (create) {

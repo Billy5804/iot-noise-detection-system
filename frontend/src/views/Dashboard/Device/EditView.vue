@@ -44,7 +44,7 @@ export default {
       syncing.value = true;
       axios
         .put(
-          "http://localhost:443/api/v1/site-devices",
+          API_V1_URL + "site-devices",
           {
             siteId: props.siteId,
             deviceId: props.deviceId,

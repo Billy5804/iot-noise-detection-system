@@ -1,6 +1,5 @@
 package com.billy5804.iotnoisedetectionbackend.handler;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -22,8 +21,7 @@ public class NotFoundHandler {
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public ResponseEntity<String> renderDefaultPage() {
 		try {
-			FileInputStream inputStream = new FileInputStream(defaultFile.getFile());
-			String body = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
+			String body = StreamUtils.copyToString(defaultFile.getInputStream(), Charset.defaultCharset());
 			return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(body);
 		} catch (IOException e) {
 			e.printStackTrace();

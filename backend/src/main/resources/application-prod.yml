@@ -1,0 +1,13 @@
+server:
+  port: 443
+  baseURL: "https://${WEB_SERVICE_HOSTNAME}/"
+  apiKey: "${API_KEY}"
+  ssl:
+   key-store: /app/certificates/live/${WEB_SERVICE_HOSTNAME}/keystore.p12
+   key-store-password: "${CERT_KEY_STORE_PASSWORD}"
+  keyStoreType: PKCS12
+  keyAlias: tomcat
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mysql://database/iot

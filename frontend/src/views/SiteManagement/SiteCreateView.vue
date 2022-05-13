@@ -44,7 +44,7 @@ export default {
       syncing.value = true;
       axios
         .post(
-          "http://localhost:443/api/v1/sites",
+          API_V1_URL + "sites",
           { displayName: displayName.value },
           {
             timeout: 5000,

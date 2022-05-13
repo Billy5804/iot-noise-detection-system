@@ -28,7 +28,7 @@ export default {
 
     onBeforeMount(async () => {
       const historyResponse = await axios
-        .get("http://localhost:443/api/v1/site-device-sensor-history", {
+        .get(API_V1_URL + "site-device-sensor-history", {
           timeout: 5000,
           headers: { authorization: await getIdToken() },
           params: { deviceId: props.deviceId, siteId: props.siteId },

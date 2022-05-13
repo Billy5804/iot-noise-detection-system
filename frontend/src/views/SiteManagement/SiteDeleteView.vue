@@ -51,7 +51,7 @@ export default {
       }
       syncing.value = true;
       axios
-        .delete("http://localhost:443/api/v1/sites", {
+        .delete(API_V1_URL + "sites", {
           timeout: 5000,
           headers: { authorization: await getIdToken() },
           params: { siteId: props.siteId },
