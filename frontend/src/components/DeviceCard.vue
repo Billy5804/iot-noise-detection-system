@@ -6,7 +6,7 @@ import {
   MDBCardText,
   MDBIcon,
 } from "mdb-vue-ui-kit";
-import { ref, onUnmounted } from "vue";
+import { ref, onUnmounted, computed } from "vue";
 
 export default {
   components: {
@@ -20,9 +20,10 @@ export default {
   props: {
     device: { type: Object, required: true },
     deviceId: { type: String, required: true },
+    borderOverride: String,
   },
 
-  setup: function () {
+  setup: function (props) {
     const currentTime = ref(+new Date());
 
     const currentTimeUpdate = setInterval(
@@ -32,7 +33,19 @@ export default {
 
     onUnmounted(() => clearInterval(currentTimeUpdate));
 
-    function getSignalDetails(rssi, lastBeatTime) {
+    const warningOrDangerBorder = computed(() => {
+      const mainSensor = props.device.sensors[0];
+      if (mainSensor.latestValue >= mainSensor.unit.getDangerThreshold()) {
+        return "border-danger";
+      }
+      if (mainSensor.latestValue >= mainSensor.unit.getWarningThreshold()) {
+        return "border-warning";
+      }
+      return "border-white";
+    });
+
+    const signalDetails = computed(() => {
+      const { rssi, lastBeatTime } = props.device;
       if (lastBeatTime + 900000 < currentTime.value) {
         return {
           text: "Offline",
@@ -82,15 +95,18 @@ export default {
           { color: "info", icon: "question" },
         ],
       };
-    }
+    });
 
-    return { getSignalDetails };
+    return { signalDetails, warningOrDangerBorder };
   },
 };
 </script>
 
 <template>
-  <MDBCard>
+  <MDBCard
+    class="border border-3"
+    :class="borderOverride ? borderOverride : warningOrDangerBorder"
+  >
     <MDBCardHeader class="d-flex">
       <h5
         class="text-truncate m-0"
@@ -99,15 +115,10 @@ export default {
       />
       <span
         class="position-relative ms-auto me-1"
-        :title="`Signal: ${
-          getSignalDetails(device.rssi, device.lastBeatTime).text
-        }\nRSSI: ${device.rssi}dBm`"
+        :title="`Signal: ${signalDetails.text}\nRSSI: ${device.rssi}dBm`"
       >
         <MDBIcon
-          v-for="({ icon, color }, index) in getSignalDetails(
-            device.rssi,
-            device.lastBeatTime
-          ).icons"
+          v-for="({ icon, color }, index) in signalDetails.icons"
           :key="index"
           :icon="icon"
           :class="`${

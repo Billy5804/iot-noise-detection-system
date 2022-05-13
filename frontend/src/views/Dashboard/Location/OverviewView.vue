@@ -416,10 +416,8 @@ export default {
             <DeviceCard
               :device="device"
               :deviceId="deviceId"
-              :class="
-                selectedDeviceId === deviceId
-                  ? 'border border-primary border-3'
-                  : ''
+              :borderOverride="
+                selectedDeviceId === deviceId ? 'border-primary' : ''
               "
             />
           </MDBCol>
