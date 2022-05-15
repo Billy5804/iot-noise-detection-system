@@ -1,5 +1,5 @@
 <script>
-import { ref, onBeforeMount } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, RouterView } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
@@ -32,7 +32,7 @@ export default {
     const siteInvitationsAPIPath = API_V1_URL + "site-invitations";
     const siteInvitations = ref([]);
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       const siteInvitationsResponse = await axios
         .get(siteInvitationsAPIPath, {
           timeout: 5000,

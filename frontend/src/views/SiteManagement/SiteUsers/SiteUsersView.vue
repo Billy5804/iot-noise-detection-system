@@ -1,5 +1,5 @@
 <script>
-import { ref, onBeforeMount, computed, shallowRef } from "vue";
+import { ref, onMounted, computed, shallowRef } from "vue";
 import { useRouter, RouterView } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
@@ -40,7 +40,7 @@ export default {
       siteUsers.value.some(({ role }) => role === SiteUserRoles.UNAUTHORISED)
     );
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       const siteUsersResponse = await axios
         .get(siteUsersAPIPath, {
           timeout: 5000,

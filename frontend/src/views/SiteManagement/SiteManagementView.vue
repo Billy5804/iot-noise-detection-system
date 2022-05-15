@@ -15,7 +15,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { useUserStore } from "@/stores/UserStore";
 import { useUserSitesStore } from "@/stores/UserSitesStore";
-import { onBeforeMount, ref, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import SiteOptionsView from "./SiteOptionsView.vue";
 import VerticalRule from "@/components/VerticalRule.vue";
@@ -75,7 +75,7 @@ export default {
 
     const sites = computed(() => sitesStore.sites);
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       if (+new Date() > sitesStore.lastRefreshTime + 1000) {
         await sitesStore
           .refreshSites(await user.getIdToken())
@@ -92,6 +92,8 @@ export default {
 
 <template>
   <main id="site-management-view">
+    {{showModal}}
+    {{allowedModal}}
     <h1 class="text-center">Site Management</h1>
     <hr />
     <MDBRow :cols="['1', 'md-2', 'lg-3', 'xl-4']" class="g-4 mb-3">

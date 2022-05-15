@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
 import { useUserSitesStore } from "@/stores/UserSitesStore";
-import { onBeforeMount, ref, computed, onUnmounted, watch } from "vue";
+import { onMounted, ref, computed, onUnmounted, watch } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import SensorUnits from "@/utilitys/SensorUnits";
 import WebSocket from "@/utilitys/WebSocket";
@@ -108,7 +108,7 @@ export default {
       }
     );
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       if (+new Date() > sitesStore.lastRefreshTime + 1000) {
         await sitesStore
           .refreshSites(await getIdToken())

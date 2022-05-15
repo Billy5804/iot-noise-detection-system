@@ -17,7 +17,7 @@ import {
 import { firebaseStorage } from "@/firebase/database";
 import { ref as firebaseRef, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { ref, computed, onBeforeMount, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DashboardNavigation from "@/components/DashboardNavigation.vue";
 import DeviceCard from "@/components/DeviceCard.vue";
@@ -220,7 +220,7 @@ export default {
         ) || {};
     }
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       if (props.loading) {
         await new Promise((resolve) => {
           const loadingWatcher = watch(
