@@ -1,6 +1,10 @@
 {
   "name": "iot-noise-detection-system-frontend",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": {
+    "name": "Alex Royle"
+  },
+  "license": "SEE LICENSE IN ../LICENSE",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

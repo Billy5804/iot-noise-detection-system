@@ -34,6 +34,7 @@ public class DeviceAPIKeyFilter extends OncePerRequestFilter {
 		}
 	}
 
+//	Allows for body to be read multiple times as usually it can only be read once which is a problem as the controller will need to read it
 	private class BodyCachingRequestWrapper extends HttpServletRequestWrapper {
 
 		private byte[] body;

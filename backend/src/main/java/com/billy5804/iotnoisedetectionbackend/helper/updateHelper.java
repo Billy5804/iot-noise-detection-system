@@ -7,7 +7,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-// https://stackoverflow.com/questions/27818334/jpa-update-only-specific-fields
+// This class allows for partial update model objects to be merged with the existing
+// stored version so that null values aren't saved where they shouldn't be
 public class updateHelper {
 	public static void copyNonNullProperties(Object src, Object target) {
 		BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
