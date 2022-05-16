@@ -153,3 +153,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+backend/src/main/resources/public/
+backend/src/main/resources/serviceAccount.json
+node-mcu/src/echoServer.js

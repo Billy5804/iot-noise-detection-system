@@ -1,7 +1,7 @@
 <script>
 import { ref, onUnmounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
-import toastr from "toastr";
+import { error as toastrError } from "toastr";
 import AjaxButton from "./AjaxButton.vue";
 
 export default {
@@ -30,7 +30,7 @@ export default {
         .then(() => (syncing.value = false))
         .catch((error) => {
           syncing.value = false;
-          toastr.error(error.message || error);
+          toastrError(error.message || error);
         });
       nextSendTime.value = 60;
       reduceCountdown();
@@ -45,7 +45,7 @@ export default {
 };
 </script>
 <template>
-  <div class="alert alert-warning text-center" role="alert">
+  <div class="alert alert-warning text-center mx-3" role="alert">
     <span class="d-inline-block"
       >Your account will be limited until you have verified your
       email.&nbsp;</span

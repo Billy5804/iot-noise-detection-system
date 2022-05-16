@@ -1,10 +1,11 @@
 <template>
-  <table :ref="setTable" />
+  <div>
+    <table :ref="setTable" />
+  </div>
 </template>
 
 <script>
 import $ from "jquery";
-import "bootstrap/js/dist/dropdown";
 import "bootstrap-table/dist/bootstrap-table";
 import "bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header";
 import { ref, watch, onMounted } from "vue";
@@ -29,7 +30,10 @@ export default {
     const $table = ref(null);
 
     function setTable(tableRef) {
-      $table.value = $(tableRef);
+      if (tableRef) {
+        tableRef.parentNode.vueEmit = context.emit;
+        $table.value = $(tableRef);
+      }
     }
 
     const tableMethods = {

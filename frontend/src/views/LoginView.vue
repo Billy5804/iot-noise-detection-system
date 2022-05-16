@@ -1,5 +1,5 @@
 <script>
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter, RouterLink } from "vue-router";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
@@ -30,18 +30,35 @@ export default {
 
     const loginError = shallowRef(null);
 
-    function submitLoginForm() {
+    async function submitLoginForm() {
       loginError.value = null;
       if (!(emailAddressValidity.value.valid && passwordValidity.value.valid)) {
         formChecked.value = true;
         return;
       }
       syncing.value = true;
-      user
+      await user
         .login(emailAddress.value, password.value)
-        .then(() => router.push("/"))
-        .catch((error) => (loginError.value = error.message || error))
-        .finally(() => (syncing.value = false));
+        .then(async () => {
+          if (user.loggedIn) {
+            router.push(user.emailVerified ? "/dashboard" : "/account");
+            return;
+          }
+          await new Promise((resolve) => {
+            const loggedInWatcher = watch(
+              () => user.loggedIn,
+              (loggedIn) => {
+                if (loggedIn) {
+                  resolve();
+                  router.push(user.emailVerified ? "/dashboard" : "/account");
+                  loggedInWatcher();
+                }
+              }
+            );
+          });
+        })
+        .catch((error) => (loginError.value = error.message || error));
+      syncing.value = false;
     }
 
     return {

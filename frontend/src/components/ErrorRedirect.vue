@@ -16,6 +16,10 @@ export default {
       type: Number,
       default: 10,
     },
+    redirectRoute: {
+      type: [Object, String],
+      default: "/",
+    },
   },
 
   setup: function (props) {
@@ -31,7 +35,7 @@ export default {
           countdown();
         }, 1000);
       } else if (counter.value == 0) {
-        router.replace("/");
+        router.replace(props.redirectRoute);
       }
     }
     countdown();
