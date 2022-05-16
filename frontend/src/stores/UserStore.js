@@ -84,7 +84,7 @@ const authUser = ref(null);
 
 onAuthStateChanged(firebaseAuthentication, async (user) => {
   const { refreshSites, clearSites } = useUserSitesStore();
-  if (user) {
+  if (user && user.emailVerified) {
     await refreshSites(await getIdToken(user));
   } else {
     clearSites();

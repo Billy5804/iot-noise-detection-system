@@ -27,7 +27,11 @@ public class FirebaseIdTokenAuthenticationProvider implements AuthenticationProv
 			String userId = firebaseToken.getUid();
 			UserRecord userRecord = FirebaseAuth.getInstance().getUser(userId);
 			logger.info("Requesting user, uid: {}", userRecord.getUid());
-			return new AuthUser(userRecord);
+			final AuthUser authUser = new AuthUser(userRecord);
+			if (!authUser.isAuthenticated()) {
+				throw new SecurityException("Email not verified");
+			}
+			return authUser;
 		} catch (FirebaseAuthException e) {
 			if (e.getErrorCode().equals("id-token-revoked")) {
 				throw new SecurityException("User token has been revoked");
