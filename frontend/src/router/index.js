@@ -155,7 +155,7 @@ const router = createRouter({
       ],
     },
     {
-      path: "/dashboard/:siteId",
+      path: "/dashboard/:siteId?",
       // name: "dashboard",
       component: DashboardView,
       props: true,

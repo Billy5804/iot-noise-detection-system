@@ -12,6 +12,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
+// Web service entrypoint
 @SpringBootApplication
 public class IotNoiseDetectionBackendApplication {
 

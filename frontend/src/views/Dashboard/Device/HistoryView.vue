@@ -1,5 +1,5 @@
 <script>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import ApexChart from "vue3-apexcharts";
@@ -26,7 +26,7 @@ export default {
 
     const sensorsHistory = ref([]);
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       const historyResponse = await axios
         .get(API_V1_URL + "site-device-sensor-history", {
           timeout: 5000,

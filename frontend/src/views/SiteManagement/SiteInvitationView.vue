@@ -1,5 +1,5 @@
 <script>
-import { ref, shallowRef, onBeforeMount } from "vue";
+import { ref, shallowRef, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
 import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
@@ -35,7 +35,7 @@ export default {
     const siteInvitationsAPIPath = API_V1_URL + "site-invitations";
     const siteInvitation = ref(null);
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       const siteInvitationsResponse = await axios
         .get(siteInvitationsAPIPath, {
           timeout: 5000,

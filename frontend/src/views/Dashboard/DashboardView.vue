@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useUserStore } from "@/stores/UserStore";
 import { useUserSitesStore } from "@/stores/UserSitesStore";
-import { onBeforeMount, ref, computed, onUnmounted, watch } from "vue";
+import { onMounted, ref, computed, onUnmounted, watch } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import SensorUnits from "@/utilitys/SensorUnits";
 import WebSocket from "@/utilitys/WebSocket";
@@ -19,6 +19,7 @@ export default {
     const router = useRouter();
 
     const loading = ref(true);
+    const sitesLoading = ref(true);
     const loadingError = ref(null);
 
     const sites = computed(() => sitesStore.authorisedSites);
@@ -108,7 +109,7 @@ export default {
       }
     );
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       if (+new Date() > sitesStore.lastRefreshTime + 1000) {
         await sitesStore
           .refreshSites(await getIdToken())
@@ -128,6 +129,8 @@ export default {
         });
       }
 
+      sitesLoading.value = false;
+
       await Promise.all([setupDevices(), setupLocations()]);
 
       WebSocket.connect(
@@ -143,6 +146,7 @@ export default {
 
     return {
       loading,
+      sitesLoading,
       loadingError,
       currentSite,
       siteDevices,
@@ -167,7 +171,7 @@ export default {
       {{ loadingError }}
     </div>
     <RouterView
-      v-else
+      v-else-if="!sitesLoading"
       :loading="loading"
       :currentSiteRole="currentSite.role"
       :siteDevices="siteDevices"

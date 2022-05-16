@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.billy5804.iotnoisedetectionbackend.filter.FirebaseIdTokenFilter;
 import com.billy5804.iotnoisedetectionbackend.provider.FirebaseIdTokenAuthenticationProvider;
 
+// All API endpoints except devices to check request is comming from an authenticated firebase user.
 @EnableWebSecurity
 @Component
 @EnableGlobalMethodSecurity(securedEnabled = true)

@@ -6,6 +6,7 @@ import { MDBRow, MDBCol } from "mdb-vue-ui-kit";
 import AjaxButton from "@/components/AjaxButton.vue";
 import FormInput from "@/components/FormInput.vue";
 import SensorUnits from "@/utilitys/SensorUnits";
+import DeviceTypes from "@/utilitys/DeviceTypes";
 
 export default {
   components: {
@@ -63,7 +64,8 @@ export default {
           }
         )
         .then(({ data }) => {
-          const { id: deviceId, sensors, ...device } = data;
+          const { id: deviceId, sensors, type, ...device } = data;
+          device.type = DeviceTypes[type];
           device.sensors = sensors.map(({ unit, ...sensor }) => ({
             ...sensor,
             unit: SensorUnits[unit],

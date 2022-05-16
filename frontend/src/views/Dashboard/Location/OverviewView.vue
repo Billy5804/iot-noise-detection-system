@@ -17,7 +17,7 @@ import {
 import { firebaseStorage } from "@/firebase/database";
 import { ref as firebaseRef, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { ref, computed, onBeforeMount, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import DashboardNavigation from "@/components/DashboardNavigation.vue";
 import DeviceCard from "@/components/DeviceCard.vue";
@@ -84,6 +84,22 @@ export default {
     const locationDevicesAPIPath = API_V1_URL + "location-devices";
     const locationDevices = ref(null);
 
+    const mergedLocationDevices = computed(() => {
+      return (
+        locationDevices.value &&
+        Object.entries(locationDevices.value).reduce(
+          (result, [deviceId, locationDevice]) => {
+            result[deviceId] = Object.assign(
+              { ...props.siteDevices[deviceId] },
+              locationDevice
+            );
+            return result;
+          },
+          {}
+        )
+      );
+    });
+
     const loadingDevices = ref(true);
 
     const locationFloorPlanURL = ref(null);
@@ -117,7 +133,7 @@ export default {
     });
 
     const sortedLocationDevices = computed(() => {
-      return Object.entries(locationDevices.value || {}).sort(
+      return Object.entries(mergedLocationDevices.value || {}).sort(
         (
           [deviceIdA, { sensors: sensorsA }],
           [deviceIdB, { sensors: sensorsB }]
@@ -210,17 +226,14 @@ export default {
       locationDevices.value =
         locationDevicesResponse?.data?.reduce(
           (result, { deviceId, ...locationDevice }) => {
-            result[deviceId] = Object.assign(
-              { ...props.siteDevices[deviceId] },
-              locationDevice
-            );
+            result[deviceId] = locationDevice;
             return result;
           },
           {}
         ) || {};
     }
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       if (props.loading) {
         await new Promise((resolve) => {
           const loadingWatcher = watch(
@@ -255,6 +268,7 @@ export default {
       currentLocation,
       floorPlanUpload,
       locationDevices,
+      mergedLocationDevices,
       loadingDevices,
       locationFloorPlanURL,
       loadingFloorPlan,
@@ -365,8 +379,9 @@ export default {
         </div>
         <LocationMapping
           v-else-if="locationFloorPlanURL"
+          :key="locationFloorPlanURL"
           :floorPlanURL="locationFloorPlanURL"
-          :locationDevices="locationDevices"
+          :locationDevices="mergedLocationDevices"
           v-model:selectedDeviceId="selectedDeviceId"
         />
         <MDBFile
@@ -429,7 +444,7 @@ export default {
         [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
       "
       :to="{ name: 'dashboard-location-add', params: { siteId, locationId } }"
-      title="Add Device"
+      title="Add Location"
       class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"
     >
       <MDBIcon iconStyle="fas" size="2x" icon="plus" />
@@ -462,7 +477,7 @@ export default {
             @done="showModal = false"
             :siteDevices="siteDevices"
             :locationDevices="locationDevices"
-            :floorPlanURL="locationFloorPlanURL"
+            v-model:floorPlanURL="locationFloorPlanURL"
           />
           <ForbiddenView
             v-else

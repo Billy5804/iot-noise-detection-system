@@ -52,9 +52,22 @@ export default {
               : mainSensor.latestValue >= mainSensor.unit.getWarningThreshold()
               ? mdbWarning
               : "#000000";
-          positionX = positionX < 0 ? 0 : positionX > width ? width : positionX;
+          positionX =
+            positionX === null
+              ? fontSize / 2
+              : positionX < 0
+              ? 0
+              : positionX > width
+              ? width
+              : positionX;
           positionY =
-            positionY < 0 ? 0 : positionY > height ? height : positionY;
+            positionY === null
+              ? fontSize / 2
+              : positionY < 0
+              ? 0
+              : positionY > height
+              ? height
+              : positionY;
 
           deviceIcons[deviceId] = new fabric.Text(type.getUnicodeIcon(), {
             deviceId,
@@ -215,7 +228,7 @@ export default {
       });
 
       canvas.on("mouse:up", function ({ target }) {
-        if (!target?.type === deviceIconType) {
+        if (target?.type !== deviceIconType) {
           return;
         }
         if (!props.editable) {
@@ -276,7 +289,5 @@ export default {
 <style>
 .canvas-container {
   width: 100% !important;
-  height: 75vh;
-  max-height: 80vh;
 }
 </style>

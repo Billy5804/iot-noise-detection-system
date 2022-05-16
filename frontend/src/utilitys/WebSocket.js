@@ -18,5 +18,5 @@ export default {
     }
     ({ unsubscribe } = stompClient.subscribe(destination, onMessageReceived));
   },
-  disconnect: (onDisconnect) => stompClient.disconnect(onDisconnect),
+  disconnect: (onDisconnect) => stompClient?.disconnect(onDisconnect),
 };
