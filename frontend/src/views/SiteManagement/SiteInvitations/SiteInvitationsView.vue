@@ -72,31 +72,6 @@ export default {
         visible: false,
       },
       {
-        align: "center",
-        visible: !!navigator.share,
-        formatter: (index, { removing }) =>
-          `<button type="button" id="table-share-invitation" title="Share invitation"
-            class="btn text-primary p-0 m-0 shadow-none"${
-              removing ? " disabled" : ""
-            }>
-            <i class="fas fa-share fa-xl"></i>
-          </button>`,
-        events: {
-          "click #table-share-invitation": (event, field, { id }) =>
-            navigator
-              .share({
-                title: "You have been invited to join a site",
-                text: `Hello,
-              ${getDisplayName} has invited you to join the site "${
-                  props.sites[props.siteId].displayName
-                }"
-              If you wish to join the site you can do so by following the link.`,
-                url: `${location.origin}/sites/invitation/${id}`,
-              })
-              .catch(console.error),
-        },
-      },
-      {
         field: "displayName",
         title: "Name",
         sortable: true,
@@ -162,11 +137,11 @@ export default {
       pageList: [10, 25, 50, 100, 200, "All"],
       pageSize: 5,
       icons: {
-        detailOpen: "fa-share fa-lg",
-        detailClose: "fa-minus fa-lg",
+        detailOpen: "fas fa-share fa-lg",
+        detailClose: "fas fa-minus fa-lg",
       },
       detailView: true,
-      detailViewIcon: !navigator.share,
+      detailViewIcon: true,
       detailFormatter: (index, { id }) => {
         const link = `${location.origin}/sites/invitation/${id}`;
         return `<div class="d-flex">
@@ -208,6 +183,21 @@ export default {
         .catch(() => toastrError("Unable to copy invitation link"));
     }
 
+    function share(index, { id }) {
+      navigator.share &&
+        navigator
+          .share({
+            title: "You have been invited to join a site",
+            text: `Hello,
+              ${getDisplayName} has invited you to join the site "${
+              props.sites[props.siteId].displayName
+            }"
+              If you wish to join the site you can do so by following the link.`,
+            url: `${location.origin}/sites/invitation/${id}`,
+          })
+          .catch(console.error);
+    }
+
     return {
       loading,
       loadingError,
@@ -215,6 +205,7 @@ export default {
       tableOptions,
       siteInvitations,
       copyLink,
+      share,
     };
   },
 };
@@ -243,6 +234,7 @@ export default {
         :data="siteInvitations"
         :options="tableOptions"
         @copyLink="copyLink"
+        @onExpandRow="share"
       />
       <MDBBtn
         color="success"
