@@ -87,7 +87,7 @@ export default {
         class="mt-3 mb-n4"
       />
       <ForbiddenView
-        v-if="!userEmailVerified && !bypassEmailVerification"
+        v-if="!userEmailVerified && !bypassEmailVerification && !bypassAuth"
         class="container m-auto mt-5 mb-3"
       />
       <RouterView v-else class="container m-auto mt-5 mb-3" />
