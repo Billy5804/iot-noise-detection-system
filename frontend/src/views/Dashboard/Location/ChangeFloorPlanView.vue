@@ -16,19 +16,12 @@ export default {
 
   props: {
     locationId: { type: String, required: true },
-    locations: { type: Object, required: true },
     floorPlanURL: String,
   },
 
   setup: function (props, { emit }) {
-    const currentLocation = computed(() => props.locations[props.locationId]);
-
     const formChecked = ref(false);
-    const syncing = computed({
-      get: () => currentLocation.value.floorPlan === "loading",
-      set: (loading) =>
-        (currentLocation.value.floorPlan = loading ? "loading" : null),
-    });
+    const syncing = ref(false);
 
     const updateError = shallowRef(null);
 
@@ -53,7 +46,8 @@ export default {
         .catch((error) => {
           updateError.value = error.message || error;
           emit("update:floorPlanURL", null);
-        });
+        })
+        .finally(() => (syncing.value = false));
     }
 
     return {
