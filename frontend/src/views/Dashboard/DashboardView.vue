@@ -19,6 +19,7 @@ export default {
     const router = useRouter();
 
     const loading = ref(true);
+    const sitesLoading = ref(true);
     const loadingError = ref(null);
 
     const sites = computed(() => sitesStore.authorisedSites);
@@ -128,6 +129,8 @@ export default {
         });
       }
 
+      sitesLoading.value = false;
+
       await Promise.all([setupDevices(), setupLocations()]);
 
       WebSocket.connect(
@@ -143,6 +146,7 @@ export default {
 
     return {
       loading,
+      sitesLoading,
       loadingError,
       currentSite,
       siteDevices,
@@ -167,7 +171,7 @@ export default {
       {{ loadingError }}
     </div>
     <RouterView
-      v-else
+      v-else-if="!sitesLoading"
       :loading="loading"
       :currentSiteRole="currentSite.role"
       :siteDevices="siteDevices"
