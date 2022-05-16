@@ -289,7 +289,5 @@ export default {
 <style>
 .canvas-container {
   width: 100% !important;
-  height: 75vh;
-  max-height: 80vh;
 }
 </style>
