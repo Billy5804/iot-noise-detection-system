@@ -115,7 +115,7 @@ export default {
       mapError,
       submitMapForm,
       setDeviceMapping,
-      mergedLocationDevices
+      mergedLocationDevices,
     };
   },
 };
