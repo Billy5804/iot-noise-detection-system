@@ -54,7 +54,7 @@ export default {
         return;
       }
       if (user.loggedIn && to.meta.isEntrance) {
-        return "/account";
+        return user.emailVerified ? "/dashboard" : "/account";
       }
       return;
     }
