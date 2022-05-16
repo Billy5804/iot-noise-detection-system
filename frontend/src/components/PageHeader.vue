@@ -151,9 +151,6 @@ const dashboardModal = ref(false);
               >
             </template>
           </template>
-          <MDBNavbarItem linkClass="px-2" v-else-if="!loggedIn" to="/"
-            >Home</MDBNavbarItem
-          >
           <template v-if="loggedIn">
             <MDBNavbarItem class="ms-md-auto dropdown d-none d-md-inline">
               <MDBDropdown v-model="accountDropdown" align="end">
