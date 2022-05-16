@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+// Config for allowing access to static frontend files.
 @EnableWebMvc
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {

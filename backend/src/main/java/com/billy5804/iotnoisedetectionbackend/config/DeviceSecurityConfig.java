@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.billy5804.iotnoisedetectionbackend.filter.DeviceAPIKeyFilter;
 import com.billy5804.iotnoisedetectionbackend.provider.DeviceAPIKeyAuthenticationProvider;
 
+// Device only API endpoint security config for checking the incoming request is an authenticated device.
 @EnableWebSecurity
 @Component
 @Order(2)
