@@ -215,7 +215,7 @@ export default {
       });
 
       canvas.on("mouse:up", function ({ target }) {
-        if (!target?.type === deviceIconType) {
+        if (target?.type !== deviceIconType) {
           return;
         }
         if (!props.editable) {
