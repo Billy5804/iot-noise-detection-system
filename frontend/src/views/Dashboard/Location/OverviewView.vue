@@ -443,7 +443,7 @@ export default {
         [SiteUserRoles.OWNER, SiteUserRoles.EDITOR].includes(currentSiteRole)
       "
       :to="{ name: 'dashboard-location-add', params: { siteId, locationId } }"
-      title="Add Device"
+      title="Add Location"
       class="btn btn-success btn-lg btn-floating ripple-surface position-fixed bottom-0 end-0 me-3 mb-3"
     >
       <MDBIcon iconStyle="fas" size="2x" icon="plus" />
