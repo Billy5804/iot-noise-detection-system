@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+// This allows for all 404 request to be handled by returning the frontend index.html
 @ControllerAdvice
 public class NotFoundHandler {
 	@Value("${spring.resources.static-locations}" + "index.html")
