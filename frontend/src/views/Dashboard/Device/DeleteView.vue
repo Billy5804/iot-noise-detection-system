@@ -71,11 +71,6 @@ export default {
 </script>
 
 <template>
-  <h2>Are you sure you want to delete this device?</h2>
-  <p>
-    This action cannot be undone.<br />All data associated history with this
-    device will be lost.
-  </p>
   <MDBRow
     tag="form"
     class="g-3 mb-3 needs-validation"
@@ -83,6 +78,13 @@ export default {
     novalidate
     @submit.prevent="submitDeleteForm"
   >
+    <MDBCol col="12">
+      <h2>Are you sure you want to delete this device?</h2>
+      <p class="mb-0">
+        This action cannot be undone.<br />All data associated history with this
+        device will be lost.
+      </p>
+    </MDBCol>
     <FormInput
       type="text"
       size="lg"
