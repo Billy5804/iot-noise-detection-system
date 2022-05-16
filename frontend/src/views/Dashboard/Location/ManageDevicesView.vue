@@ -96,10 +96,7 @@ export default {
           if (value?.config?.method === "post") {
             const { deviceId, ...locationDevice } = value.data;
             Object.assign(props.locationDevices, {
-              [deviceId]: {
-                ...props.siteDevices[deviceId],
-                ...locationDevice,
-              },
+              [deviceId]: locationDevice,
             });
             return result;
           }

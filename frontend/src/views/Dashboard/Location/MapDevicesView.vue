@@ -1,5 +1,5 @@
 <script>
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import axios from "axios";
@@ -35,6 +35,22 @@ export default {
 
     const deviceMappings = {};
 
+    const mergedLocationDevices = computed(() => {
+      return (
+        props.locationDevices &&
+        Object.entries(props.locationDevices).reduce(
+          (result, [deviceId, locationDevice]) => {
+            result[deviceId] = Object.assign(
+              { ...props.siteDevices[deviceId] },
+              locationDevice
+            );
+            return result;
+          },
+          {}
+        )
+      );
+    });
+
     function setDeviceMapping({ deviceId, ...positions }) {
       deviceMappings[deviceId] = positions;
     }
@@ -69,7 +85,7 @@ export default {
           if (value || status === "fulfilled") {
             const { deviceId, ...locationDevice } = value.data;
             Object.assign(props.locationDevices, {
-              [deviceId]: { ...props.siteDevices[deviceId], ...locationDevice },
+              [deviceId]: locationDevice,
             });
             return result;
           }
@@ -99,6 +115,7 @@ export default {
       mapError,
       submitMapForm,
       setDeviceMapping,
+      mergedLocationDevices
     };
   },
 };
@@ -110,7 +127,7 @@ export default {
     <LocationMapping
       v-if="floorPlanURL"
       :floorPlanURL="floorPlanURL"
-      :locationDevices="locationDevices"
+      :locationDevices="mergedLocationDevices"
       :editable="true"
       @deviceMoved="setDeviceMapping"
     />

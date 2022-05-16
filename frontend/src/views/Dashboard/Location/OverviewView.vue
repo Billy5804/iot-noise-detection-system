@@ -84,6 +84,22 @@ export default {
     const locationDevicesAPIPath = API_V1_URL + "location-devices";
     const locationDevices = ref(null);
 
+    const mergedLocationDevices = computed(() => {
+      return (
+        locationDevices.value &&
+        Object.entries(locationDevices.value).reduce(
+          (result, [deviceId, locationDevice]) => {
+            result[deviceId] = Object.assign(
+              { ...props.siteDevices[deviceId] },
+              locationDevice
+            );
+            return result;
+          },
+          {}
+        )
+      );
+    });
+
     const loadingDevices = ref(true);
 
     const locationFloorPlanURL = ref(null);
@@ -117,7 +133,7 @@ export default {
     });
 
     const sortedLocationDevices = computed(() => {
-      return Object.entries(locationDevices.value || {}).sort(
+      return Object.entries(mergedLocationDevices.value || {}).sort(
         (
           [deviceIdA, { sensors: sensorsA }],
           [deviceIdB, { sensors: sensorsB }]
@@ -210,10 +226,7 @@ export default {
       locationDevices.value =
         locationDevicesResponse?.data?.reduce(
           (result, { deviceId, ...locationDevice }) => {
-            result[deviceId] = Object.assign(
-              { ...props.siteDevices[deviceId] },
-              locationDevice
-            );
+            result[deviceId] = locationDevice;
             return result;
           },
           {}
@@ -255,6 +268,7 @@ export default {
       currentLocation,
       floorPlanUpload,
       locationDevices,
+      mergedLocationDevices,
       loadingDevices,
       locationFloorPlanURL,
       loadingFloorPlan,
@@ -366,7 +380,7 @@ export default {
         <LocationMapping
           v-else-if="locationFloorPlanURL"
           :floorPlanURL="locationFloorPlanURL"
-          :locationDevices="locationDevices"
+          :locationDevices="mergedLocationDevices"
           v-model:selectedDeviceId="selectedDeviceId"
         />
         <MDBFile
