@@ -58,7 +58,7 @@ export default {
       syncing.value = true;
       user
         .register(formData)
-        .then(() => router.push("/"))
+        .then(() => router.push("/account"))
         .catch((error) => (registerError.value = error.message || error))
         .finally(() => (syncing.value = false));
     }
