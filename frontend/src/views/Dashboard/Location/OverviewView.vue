@@ -379,6 +379,7 @@ export default {
         </div>
         <LocationMapping
           v-else-if="locationFloorPlanURL"
+          :key="locationFloorPlanURL"
           :floorPlanURL="locationFloorPlanURL"
           :locationDevices="mergedLocationDevices"
           v-model:selectedDeviceId="selectedDeviceId"
@@ -476,7 +477,7 @@ export default {
             @done="showModal = false"
             :siteDevices="siteDevices"
             :locationDevices="locationDevices"
-            :floorPlanURL="locationFloorPlanURL"
+            v-model:floorPlanURL="locationFloorPlanURL"
           />
           <ForbiddenView
             v-else

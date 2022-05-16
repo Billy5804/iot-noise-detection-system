@@ -12,11 +12,12 @@ export default {
     MDBFile,
   },
 
-  emits: ["done"],
+  emits: ["done", "update:floorPlanURL"],
 
   props: {
     locationId: { type: String, required: true },
     locations: { type: Object, required: true },
+    floorPlanURL: String,
   },
 
   setup: function (props, { emit }) {
@@ -46,12 +47,12 @@ export default {
         `/floorPlans/${props.locationId}`
       )
         .then((blobURL) => {
-          currentLocation.value.floorPlan = blobURL;
+          emit("update:floorPlanURL", blobURL);
           emit("done");
         })
         .catch((error) => {
           updateError.value = error.message || error;
-          currentLocation.value.floorPlan = null;
+          emit("update:floorPlanURL", null);
         });
     }
 
